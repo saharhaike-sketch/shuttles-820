@@ -76,6 +76,7 @@ h1,h2,h3{margin:0;line-height:1.2}
 label.f{display:block;margin-bottom:12px}
 label.f span{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
 .in{width:100%;border:1px solid #cfd4c6;background:#fff;border-radius:10px;padding:11px 12px;outline:none}
+input[dir=ltr].in{text-align:right}
 .in:focus{border-color:var(--olive2);box-shadow:0 0 0 3px rgba(62,76,51,.15)}
 textarea.in{min-height:84px;resize:vertical}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
@@ -557,15 +558,15 @@ function loginView(){
     </form>`;
   } else if (t==="soldier") {
     form = `<form data-form="soldierLogin">
-      <label class="f"><span>תעודת זהות</span><input class="in" name="tz" inputmode="numeric" required placeholder="9 ספרות"></label>
-      <label class="f"><span>מספר טלפון</span><input class="in" name="phone" inputmode="tel" required placeholder="05XXXXXXXX" autocomplete="tel"></label>
+      <label class="f"><span>תעודת זהות</span><input class="in" name="tz" inputmode="numeric" dir="ltr" required placeholder="9 ספרות"></label>
+      <label class="f"><span>מספר טלפון</span><input class="in" name="phone" inputmode="tel" dir="ltr" required placeholder="05XXXXXXXX" autocomplete="tel"></label>
       <button class="btn primary block" type="submit">כניסה</button>
       <div class="tiny muted" style="margin-top:10px;text-align:center">בכניסה ראשונה תתבקש להשלים שם ומרחב</div>
     </form>`;
   } else {
     form = `<form data-form="staffLogin">
-      <label class="f"><span>מספר טלפון</span><input class="in" name="phone" inputmode="tel" required placeholder="05XXXXXXXX"></label>
-      <label class="f"><span>קוד כניסה</span><input class="in" name="pin" type="password" required></label>
+      <label class="f"><span>מספר טלפון</span><input class="in" name="phone" inputmode="tel" dir="ltr" required placeholder="05XXXXXXXX"></label>
+      <label class="f"><span>קוד כניסה</span><input class="in" name="pin" dir="ltr" type="password" dir="ltr" required></label>
       <button class="btn primary block" type="submit">כניסת צוות</button>
       <div class="tiny muted" style="margin-top:10px;text-align:center">אנשי קשר מרחב ומפקדי נסיעה — הקוד מתקבל מהמנהל</div>
     </form>`;
@@ -851,12 +852,12 @@ function staffForm(st){
   openModal(`<h3>${st ? "עריכת איש צוות" : (me.role==="admin" ? "איש צוות חדש" : "מפקד נסיעה חדש")}</h3><form data-form="staff">
     <input type="hidden" name="id" value="${esc(st?.id||"")}">
     <label class="f"><span>שם מלא</span><input class="in" name="name" required value="${esc(st?.full_name||"")}"></label>
-    <label class="f"><span>טלפון (משמש לכניסה)</span><input class="in" name="phone" inputmode="tel" required value="${esc(st?.phone||"")}"></label>
+    <label class="f"><span>טלפון (משמש לכניסה)</span><input class="in" name="phone" inputmode="tel" dir="ltr" required value="${esc(st?.phone||"")}"></label>
     ${me.role==="admin" ? `<div class="grid2">
       <label class="f"><span>תפקיד</span><select class="in" name="role" required>${Object.entries(ROLE_LABEL).map(([k,l])=>`<option value="${k}" ${(st?.role||"commander")===k?"selected":""}>${l}</option>`).join("")}</select></label>
       <label class="f"><span>מרחב</span><select class="in" name="region"><option value="">— (למנהל)</option>${REGIONS.map(r=>`<option ${st?.region===r?"selected":""}>${r}</option>`).join("")}</select></label>
     </div>` : `<input type="hidden" name="role" value="commander"><input type="hidden" name="region" value="${esc(me.region)}">`}
-    <label class="f"><span>${st ? "קוד כניסה חדש (השאר ריק כדי לא לשנות)" : "קוד כניסה (4 ספרות לפחות)"}</span><input class="in" name="pin" ${st?"":"required"} minlength="4" autocomplete="new-password"></label>
+    <label class="f"><span>${st ? "קוד כניסה חדש (השאר ריק כדי לא לשנות)" : "קוד כניסה (4 ספרות לפחות)"}</span><input class="in" name="pin" dir="ltr" ${st?"":"required"} minlength="4" autocomplete="new-password"></label>
     <div class="row end"><button type="button" class="btn ghost" data-act="mclose">ביטול</button><button class="btn primary" type="submit">שמירה</button></div>
   </form>`);
 }
