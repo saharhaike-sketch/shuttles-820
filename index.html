@@ -115,6 +115,10 @@ textarea.in{min-height:84px;resize:vertical}
 .alert h3{font-size:17px;color:var(--red);margin-bottom:6px;display:flex;gap:8px;align-items:center}
 .alert p{margin:6px 0}
 .empty{text-align:center;color:var(--muted);padding:36px 16px}
+.stops{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:6px}
+.stp{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:1px 9px;font-size:12.5px;font-weight:600}
+.stopchip{background:var(--blue-soft);color:var(--blue);border-radius:6px;padding:0 7px;font-size:12px;font-weight:700;margin-inline-start:4px}
+.stopgrp{font-size:12.5px;font-weight:800;color:var(--olive2);padding:10px 4px 2px}
 
 /* staff */
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:6px}
@@ -237,6 +241,15 @@ function seatBar(taken, cap){
 }
 const busSvg = (c="#e8a820", s=40) => `<svg width="${s}" height="${s}" viewBox="0 0 48 48" fill="none"><rect x="7" y="6" width="34" height="30" rx="6" fill="${c}"/><rect x="11" y="11" width="26" height="11" rx="2" fill="#2b3524"/><rect x="11" y="26" width="6" height="4" rx="1.5" fill="#2b3524"/><rect x="31" y="26" width="6" height="4" rx="1.5" fill="#2b3524"/><rect x="11" y="35" width="7" height="6" rx="2" fill="${c}"/><rect x="30" y="35" width="7" height="6" rx="2" fill="${c}"/><rect x="21" y="8" width="6" height="2" rx="1" fill="#2b3524" opacity=".5"/></svg>`;
 
+function stopOptions(sh){
+  const out = [];
+  for (const x of [sh.gather_place, ...(sh.stops||[]), sh.release_place]) { const v = String(x||"").trim(); if (v && !out.includes(v)) out.push(v); }
+  return out;
+}
+const releaseLine = sh => sh.release_place || sh.release_time ? `שחרור${sh.release_time?" "+esc(sh.release_time):""}${sh.release_place?" ב"+esc(sh.release_place):""}` : "";
+const stopsLine = sh => (sh.stops&&sh.stops.length) ? `<div class="stops"><span class="tiny muted">מועדות:</span> ${sh.stops.map(x=>`<span class="stp">${esc(x)}</span>`).join("")}</div>` : "";
+function stopSort(sh){ const o = stopOptions(sh); return (a,b)=>((o.indexOf(a.stop)+1||99)-(o.indexOf(b.stop)+1||99)) || String(a.created_at).localeCompare(String(b.created_at)); }
+
 /* ---------------- toast / modal ---------------- */
 function toast(msg, kind=""){
   const el = document.createElement("div"); el.className = "tst "+kind; el.textContent = msg;
@@ -246,12 +259,12 @@ let modalCancel = null;
 function openModal(html){ $("#modalRoot").innerHTML = `<div class="modal-bg" data-act="mbg"><div class="modal">${html}</div></div>`; const f = $("#modalRoot input:not([type=hidden]),#modalRoot select,#modalRoot textarea"); f && setTimeout(()=>f.focus(), 30); }
 function closeModal(){ $("#modalRoot").innerHTML = ""; if (modalCancel){ const c = modalCancel; modalCancel = null; c(); } }
 const modalOpen = () => !!$("#modalRoot").innerHTML;
-function ask(title, text, ok="אישור", danger=false){
+function ask(title, text, ok="אישור", danger=false, pick=null){
   return new Promise(res=>{
     openModal(`<h3>${esc(title)}</h3><div class="muted" style="margin-bottom:18px">${text}</div>
       <div class="row end"><button class="btn ghost" data-act="mclose">ביטול</button><button class="btn ${danger?"danger":"primary"}" id="askOk">${esc(ok)}</button></div>`);
     modalCancel = () => res(false);
-    $("#askOk").onclick = () => { modalCancel = null; $("#modalRoot").innerHTML = ""; res(true); };
+    $("#askOk").onclick = () => { let v = true; if (pick) { v = pick(); if (v===false) return; if (v===null) v = true; } modalCancel = null; $("#modalRoot").innerHTML = ""; res(v); };
   });
 }
 
@@ -273,7 +286,7 @@ async function call(fn, args){
 
 /* ---------------- Demo backend (mirrors schema.sql) ---------------- */
 const Demo = (() => {
-  const KEY = "s820_demo_v2"; let S = null;
+  const KEY = "s820_demo_v3"; let S = null;
   const uid = () => Math.random().toString(36).slice(2,9) + Math.random().toString(36).slice(2,6);
   const fail = m => { throw new Error(m); };
   const nowISO = () => new Date().toISOString();
@@ -297,45 +310,51 @@ const Demo = (() => {
       {id:"c5",full_name:"שי אוחנה",phone:"0500000025",pin:"2222",role:"commander",region:"דרום"}
     ];
     const soon = new Date(Date.now()+10*3600e3); soon.setMinutes(soon.getMinutes()<30?0:30,0,0);
+    const nextDow = (dow,h,m,addWeeks=0) => { const d = new Date(); d.setHours(h,m,0,0); let diff = (dow - d.getDay() + 7) % 7; if (diff===0 && d < new Date()) diff = 7; d.setDate(d.getDate()+diff+addWeeks*7); return d.toISOString(); };
+    const N_STOPS_A = ["רכבת הרצליה","רכבת נתניה","מחלף אור עקיבא","מחלף גבעת אולגה","יוקנעם"];
     const shuttles = [
-      {id:"s1",region:"מרכז",route:"ת\"א מרכז ← בסיס",depart_at:at(1,6,15),capacity:30,commander_id:"c1",notes:"איסוף: תחנה מרכזית, רציף 7"},
-      {id:"s2",region:"מרכז",route:"חדרה ← בסיס",depart_at:at(1,6,30),capacity:30,commander_id:"c2",notes:"איסוף: רכבת חדרה מערב"},
-      {id:"s3",region:"מרכז",route:"ת\"א מרכז ← בסיס",depart_at:at(2,6,15),capacity:30,commander_id:"c1",notes:"איסוף: תחנה מרכזית, רציף 7"},
-      {id:"s8",region:"מרכז",route:"ראשל\"צ ← בסיס",depart_at:soon.toISOString(),capacity:30,commander_id:"c2",notes:"איסוף: קניון הזהב"},
-      {id:"s4",region:"צפון",route:"חיפה ← בסיס",depart_at:at(1,5,45),capacity:30,commander_id:"c3",notes:"איסוף: חוף הכרמל"},
-      {id:"s5",region:"ירושלים",route:"ירושלים ← בסיס",depart_at:at(1,6,0),capacity:30,commander_id:"c4",notes:"איסוף: תחנה מרכזית"},
-      {id:"s6",region:"דרום",route:"באר שבע ← בסיס",depart_at:at(1,5,30),capacity:30,commander_id:"c5",notes:""},
-      {id:"s7",region:"מרכז",route:"ת\"א מרכז ← בסיס",depart_at:at(-1,6,15),capacity:30,commander_id:"c1",notes:""}
+      {id:"s1",region:"מרכז",route:"ת\"א מרכז ← בסיס",gather_place:"ת\"א מרכז",stops:["רכבת השלום","מחלף גלילות"],release_place:"בסיס",release_time:"08:00",depart_at:at(1,6,15),capacity:55,commander_id:"c1",notes:"רציף 7"},
+      {id:"s2",region:"מרכז",route:"חדרה ← בסיס",gather_place:"רכבת חדרה מערב",stops:["רכבת נתניה"],release_place:"בסיס",release_time:"08:00",depart_at:at(1,6,30),capacity:55,commander_id:"c2",notes:""},
+      {id:"s3",region:"מרכז",route:"ת\"א מרכז ← בסיס",gather_place:"ת\"א מרכז",stops:["רכבת השלום","מחלף גלילות"],release_place:"בסיס",release_time:"08:00",depart_at:at(2,6,15),capacity:55,commander_id:"c1",notes:"רציף 7"},
+      {id:"s8",region:"מרכז",route:"ראשל\"צ ← בסיס",gather_place:"קניון הזהב ראשל\"צ",stops:[],release_place:"בסיס",release_time:"07:30",depart_at:soon.toISOString(),capacity:55,commander_id:"c2",notes:""},
+      {id:"n1",region:"צפון",route:"בית חיל האוויר הרצליה ← מישר",gather_place:"בית חיל האוויר הרצליה",stops:N_STOPS_A,release_place:"מישר",release_time:"15:00",depart_at:nextDow(0,10,0),capacity:55,commander_id:"c3",notes:""},
+      {id:"n2",region:"צפון",route:"בית חיל האוויר הרצליה ← מישר",gather_place:"בית חיל האוויר הרצליה",stops:["רכבת הרצליה","רכבת נתניה","מחלף גבעת אולגה","מחלף אור עקיבא","יוקנעם"],release_place:"מישר",release_time:"15:00",depart_at:nextDow(1,10,0),capacity:55,commander_id:"c3",notes:""},
+      {id:"n3",region:"צפון",route:"מישר ← רכבת הרצליה",gather_place:"מישר",stops:["רכבת ראש העין"],release_place:"רכבת הרצליה",release_time:"12:00",depart_at:nextDow(4,7,0),capacity:55,commander_id:"c3",notes:""},
+      {id:"n4",region:"צפון",route:"מישר ← ת\"א סבידור",gather_place:"מישר",stops:["יוקנעם","מחלף אור עקיבא","גבעת אולגה","נתניה","גלילות"],release_place:"ת\"א סבידור",release_time:"12:00",depart_at:nextDow(4,7,0),capacity:55,commander_id:null,notes:""},
+      {id:"s5",region:"ירושלים",route:"ירושלים ← בסיס",gather_place:"ירושלים תחנה מרכזית",stops:[],release_place:"בסיס",release_time:"08:30",depart_at:at(1,6,0),capacity:55,commander_id:"c4",notes:""},
+      {id:"s6",region:"דרום",route:"באר שבע ← בסיס",gather_place:"באר שבע מרכז",stops:[],release_place:"בסיס",release_time:"08:00",depart_at:at(1,5,30),capacity:55,commander_id:"c5",notes:""},
+      {id:"s7",region:"מרכז",route:"ת\"א מרכז ← בסיס",gather_place:"ת\"א מרכז",stops:["רכבת השלום"],release_place:"בסיס",release_time:"08:00",depart_at:at(-1,6,15),capacity:55,commander_id:"c1",notes:""}
     ];
     const soldiers = [
       {tz:"123456789",first_name:"אביב",last_name:"כהן",phone:"0521234567",region:"מרכז",blocked:false,block_note:null,appeal:null,created_at:nowISO()},
       {tz:"987654321",first_name:"שגיא",last_name:"לוי",phone:"0527654321",region:"מרכז",blocked:false,block_note:null,appeal:null,created_at:nowISO()}
     ];
-    const plan = {"מרכז":36,"צפון":32,"ירושלים":22,"דרום":14};
+    const plan = {"מרכז":70,"צפון":60,"ירושלים":22,"דרום":14};
     let n = 0;
     for (const reg of REGIONS) for (let i=0;i<plan[reg];i++){
       n++; soldiers.push({tz:String(300000000+n*7919), first_name:pick(FN), last_name:pick(LN), phone:"05"+(2+Math.floor(R()*3))+String(1000000+Math.floor(R()*8999999)), region:reg, blocked:false, block_note:null, appeal:null, created_at:nowISO()});
     }
     const regs = [];
     const byReg = r => soldiers.filter(s=>s.region===r && s.tz!=="123456789" && s.tz!=="987654321");
-    const add = (sh, list, status="registered") => list.forEach((s,i)=>regs.push({id:uid(),shuttle_id:sh,tz:s.tz,status,resolved:false,created_at:new Date(Date.now()-(list.length-i)*600e3).toISOString()}));
+    const add = (sh, list, status="registered") => { const shx = shuttles.find(x=>x.id===sh); const opts = stopOptions(shx); list.forEach((s,i)=>regs.push({id:uid(),shuttle_id:sh,tz:s.tz,status,resolved:false,stop:opts.length?opts[i%opts.length]:null,created_at:new Date(Date.now()-(list.length-i)*600e3).toISOString()})); };
     const mz = byReg("מרכז");
-    add("s1", mz.slice(0,30));
-    add("s2", mz.slice(10,27));
-    add("s3", mz.slice(20,31));
-    add("s8", mz.slice(2,14));
-    add("s4", byReg("צפון").slice(0,30));
+    add("s1", mz.slice(0,55));
+    add("s2", mz.slice(10,42));
+    add("s3", mz.slice(20,51));
+    add("s8", mz.slice(2,20));
+    const nz = byReg("צפון");
+    add("n1", nz.slice(0,41)); add("n2", nz.slice(5,33)); add("n3", nz.slice(0,17)); add("n4", nz.slice(20,55));
     add("s5", byReg("ירושלים").slice(0,19));
     add("s6", byReg("דרום").slice(0,11));
     // demo soldier: registered to s3 (cancellable) and s8 (<24h)
     add("s3", [soldiers[0]]); add("s8", [soldiers[0]]);
     // yesterday: arrived + 2 no-shows
     add("s7", mz.slice(4,24), "arrived");
-    add("s7", [soldiers[1], mz[30]], "no_show");
+    add("s7", [soldiers[1], mz[60]], "no_show");
     const S0 = {staff, soldiers, shuttles, registrations:regs};
     const note = `נרשמת לשאטל "ת"א מרכז ← בסיס" ב-${fmtDM(at(-1,6,15))} 06:15 ולא הגעת.`;
-    for (const s of [soldiers[1], mz[30]]) { s.blocked = true; s.block_note = note; }
-    mz[30].appeal = "היה לי גימלים מהרופא ושכחתי לבטל, מצטער. מצרף אישור.";
+    for (const s of [soldiers[1], mz[60]]) { s.blocked = true; s.block_note = note; }
+    mz[60].appeal = "היה לי גימלים מהרופא ושכחתי לבטל, מצטער. מצרף אישור.";
     return S0;
   }
   function load(){ S = store.get(KEY); if (!S || !S.staff) { S = seed(); save(); } }
@@ -361,8 +380,8 @@ const Demo = (() => {
     const c = staffById(sh.commander_id);
     const passengers = S.registrations.filter(r=>r.shuttle_id===sh.id && active(r))
       .sort((a,b)=>a.created_at.localeCompare(b.created_at))
-      .map(r=>{ const so = S.soldiers.find(x=>x.tz===r.tz)||{}; return {reg_id:r.id,status:r.status,tz:r.tz,first_name:so.first_name,last_name:so.last_name,phone:so.phone,created_at:r.created_at}; });
-    return {...sh, commander_name:c?.full_name||null, commander_phone:c?.phone||null, taken:passengers.length, passengers};
+      .map(r=>{ const so = S.soldiers.find(x=>x.tz===r.tz)||{}; return {reg_id:r.id,status:r.status,tz:r.tz,first_name:so.first_name,last_name:so.last_name,phone:so.phone,created_at:r.created_at,stop:r.stop||null}; });
+    return {...sh, stops:sh.stops||[], commander_name:c?.full_name||null, commander_phone:c?.phone||null, taken:passengers.length, passengers};
   }
   const out = {
     reset(){ S = seed(); save(); },
@@ -380,21 +399,22 @@ const Demo = (() => {
       const s = sAuth(p_tz,p_phone); const lim = Date.now()-6*3600e3;
       const shuttles = S.shuttles.filter(sh=>sh.region===s.region && new Date(sh.depart_at).getTime()>lim).sort(byDep).map(sh=>{
         const c = staffById(sh.commander_id); const m = S.registrations.find(r=>r.shuttle_id===sh.id && r.tz===s.tz && active(r));
-        return {id:sh.id,region:sh.region,route:sh.route,depart_at:sh.depart_at,capacity:sh.capacity,notes:sh.notes,commander_name:c?.full_name||null,commander_phone:c?.phone||null,taken:takenOf(sh.id),mine:m?{id:m.id,status:m.status}:null};
+        return {id:sh.id,region:sh.region,route:sh.route,depart_at:sh.depart_at,capacity:sh.capacity,notes:sh.notes,gather_place:sh.gather_place||null,stops:sh.stops||[],release_place:sh.release_place||null,release_time:sh.release_time||null,commander_name:c?.full_name||null,commander_phone:c?.phone||null,taken:takenOf(sh.id),mine:m?{id:m.id,status:m.status,stop:m.stop||null}:null};
       });
       const ct = S.staff.find(x=>x.role==="region" && x.region===s.region);
       const {created_at, ...sol} = s;
       return {soldier:sol, shuttles, contact: ct?{full_name:ct.full_name,phone:ct.phone}:null};
     },
-    soldier_register({p_tz,p_phone,p_shuttle_id}){
+    soldier_register({p_tz,p_phone,p_shuttle_id,p_stop}){
       const s = sAuth(p_tz,p_phone);
       if (s.blocked) fail("ההרשמה שלך חסומה עד להסדרת אי-הגעה קודמת");
       const sh = S.shuttles.find(x=>x.id===p_shuttle_id); if (!sh) fail("השאטל לא נמצא");
       if (sh.region!==s.region) fail("ניתן להירשם רק לשאטלים של המרחב שלך");
       if (new Date(sh.depart_at)<=new Date()) fail("השאטל כבר יצא");
       if (S.registrations.some(r=>r.shuttle_id===sh.id && r.tz===s.tz && active(r))) fail("כבר נרשמת לשאטל הזה");
+      const opts = stopOptions(sh); if (opts.length && !opts.includes(p_stop)) fail("יש לבחור תחנה");
       if (takenOf(sh.id)>=sh.capacity) fail("השאטל מלא");
-      S.registrations.push({id:uid(),shuttle_id:sh.id,tz:s.tz,status:"registered",resolved:false,created_at:nowISO()}); save(); return {ok:true};
+      S.registrations.push({id:uid(),shuttle_id:sh.id,tz:s.tz,status:"registered",resolved:false,stop:p_stop||null,created_at:nowISO()}); save(); return {ok:true};
     },
     soldier_cancel({p_tz,p_phone,p_reg_id}){
       const s = sAuth(p_tz,p_phone); const r = S.registrations.find(x=>x.id===p_reg_id && x.tz===s.tz);
@@ -415,13 +435,13 @@ const Demo = (() => {
         contacts: S.staff.filter(s=>s.role==="region").map(s=>({region:s.region,full_name:s.full_name,phone:s.phone}))
       };
     },
-    staff_save_shuttle({p_phone,p_pin,p_id,p_region,p_route,p_depart_at,p_capacity,p_commander_id,p_notes}){
+    staff_save_shuttle({p_phone,p_pin,p_id,p_region,p_route,p_depart_at,p_capacity,p_commander_id,p_notes,p_gather_place,p_stops,p_release_place,p_release_time}){
       const me = tAuth(p_phone,p_pin); if (me.role==="commander") fail("אין הרשאה");
       const region = me.role==="region" ? me.region : p_region;
       if (!REGIONS.includes(region)) fail("יש לבחור מרחב");
-      if (!String(p_route||"").trim()) fail("יש למלא מסלול");
+      if (!String(p_route||"").trim()) fail("יש למלא מקום התייצבות ומקום שחרור");
       if (!p_depart_at) fail("יש למלא תאריך ושעה");
-      const rec = {region, route:p_route.trim(), depart_at:p_depart_at, capacity:+p_capacity||30, commander_id:p_commander_id||null, notes:(p_notes||"").trim()||null};
+      const rec = {region, route:p_route.trim(), depart_at:p_depart_at, capacity:+p_capacity||55, commander_id:p_commander_id||null, notes:(p_notes||"").trim()||null, gather_place:(p_gather_place||"").trim()||null, stops:Array.isArray(p_stops)?p_stops:[], release_place:(p_release_place||"").trim()||null, release_time:(p_release_time||"").trim()||null};
       if (!p_id) { const id = uid(); S.shuttles.push({id, ...rec}); save(); return {id}; }
       const sh = S.shuttles.find(x=>x.id===p_id); if (!sh) fail("השאטל לא נמצא");
       if (me.role==="region" && sh.region!==me.region) fail("אין הרשאה");
@@ -615,7 +635,8 @@ function soldierCard(sh, blocked){
   return `<div class="card sc ${m?"mine":""}">
     <div class="tbig">${fmtTime(sh.depart_at)}</div>
     <div><div class="route">${esc(sh.route)}</div>
-      <div class="meta">${sh.notes ? esc(sh.notes)+" · " : ""}מפקד נסיעה: ${esc(sh.commander_name || "טרם שובץ")}</div></div>
+      <div class="meta">התייצבות ${fmtTime(sh.depart_at)}${sh.gather_place?" ב"+esc(sh.gather_place):""}${releaseLine(sh)?" · "+releaseLine(sh):""}</div>
+      <div class="meta">${sh.notes ? esc(sh.notes)+" · " : ""}מפקד נסיעה: ${esc(sh.commander_name || "טרם שובץ")}${m&&m.stop?` · התחנה שלך: <b>${esc(m.stop)}</b>`:""}</div>${stopsLine(sh)}</div>
     <div class="foot"><div class="row" style="flex:1;min-width:150px;gap:8px">${seatBar(sh.taken, sh.capacity)}<span class="seatsn">${sh.taken}/${sh.capacity}</span></div></div>
     <div class="foot" style="margin-top:6px">${action}</div>
   </div>`;
@@ -719,7 +740,8 @@ function staffShuttleCard(s, open){
     <div class="shc-h" data-act="toggle" data-id="${esc(s.id)}">
       <div class="tbig">${fmtTime(s.depart_at)}</div>
       <div><div class="route">${esc(s.route)} ${data.me.role==="admin"?`<span class="chip region" style="font-size:11.5px">${esc(s.region)}</span>`:""}</div>
-        <div class="meta">${s.notes?esc(s.notes)+" · ":""}מפקד נסיעה: ${esc(s.commander_name||"טרם שובץ")}${n?` · <b style="color:var(--red)">${n} לא הגיעו</b>`:""}</div></div>
+        <div class="meta">התייצבות ${fmtTime(s.depart_at)}${s.gather_place?" ב"+esc(s.gather_place):""}${releaseLine(s)?" · "+releaseLine(s):""}</div>
+        <div class="meta">${s.notes?esc(s.notes)+" · ":""}מפקד נסיעה: ${esc(s.commander_name||"טרם שובץ")}${n?` · <b style="color:var(--red)">${n} לא הגיעו</b>`:""}</div>${stopsLine(s)}</div>
       <div class="seatbox"><div class="row"><span class="seatsn">${s.taken}/${s.capacity} רשומים</span>${full?`<span class="chip full">מלא</span>`:""}</div>${seatBar(s.taken,s.capacity)}</div>
     </div>`;
   if (open) {
@@ -728,7 +750,7 @@ function staffShuttleCard(s, open){
         <div class="counts"><span class="chip wait">טרם סומנו ${w}</span><span class="chip ok">הגיעו ${a}</span><span class="chip bad">לא הגיעו ${n}</span></div>
         ${canManage() ? `<div class="row" style="gap:6px">
           <button class="btn ghost sm" data-act="editShuttle" data-id="${esc(s.id)}">עריכה</button>
-          <button class="btn ghost sm" data-act="dupShuttle" data-id="${esc(s.id)}">שכפול ליום הבא</button>
+          <button class="btn ghost sm" data-act="dupShuttle" data-id="${esc(s.id)}">שכפול לשבוע הבא</button>
           <button class="btn ghost sm" data-act="copyList" data-id="${esc(s.id)}">העתק רשימה</button>
           <button class="btn ghost sm" data-act="delShuttle" data-id="${esc(s.id)}" style="color:var(--red)">מחיקה</button></div>`
           : `<button class="btn ghost sm" data-act="copyList" data-id="${esc(s.id)}">העתק רשימה</button>`}
@@ -736,7 +758,9 @@ function staffShuttleCard(s, open){
     if (!s.passengers.length) h += `<div class="small muted" style="padding:6px 2px">אין עדיין נרשמים</div>`;
     else {
       h += `<ul class="pl">`;
-      s.passengers.forEach((p,i)=>{
+      let lastStop = null;
+      s.passengers.slice().sort(stopSort(s)).forEach((p,i)=>{
+        if (stopOptions(s).length && p.stop !== lastStop) { lastStop = p.stop; h += `<li class="stopgrp">📍 ${esc(p.stop||"ללא תחנה")} · ${s.passengers.filter(x=>x.stop===p.stop).length}</li>`; }
         h += `<li class="pr ${p.status==="no_show"?"ns":""}">
           <div class="idx">${i+1}</div>
           <div><div class="nm">${esc(p.first_name)} ${esc(p.last_name)}</div><div class="ph">${telLink(p.phone)} · ת"ז ${esc(p.tz)}</div></div>
@@ -792,8 +816,8 @@ function staffMgmtView(){
 function shuttleForm(sh, dup){
   const me = data.me;
   let d = sh ? localParts(sh.depart_at) : null;
-  if (sh && dup) { const x = new Date(sh.depart_at); x.setDate(x.getDate()+1); d = localParts(x.toISOString()); }
-  if (!d) { const x = new Date(); x.setDate(x.getDate()+1); x.setHours(6,30,0,0); d = localParts(x.toISOString()); }
+  if (sh && dup) { const x = new Date(sh.depart_at); x.setDate(x.getDate()+7); d = localParts(x.toISOString()); }
+  if (!d) { const x = new Date(); x.setDate(x.getDate()+1); x.setHours(7,0,0,0); d = localParts(x.toISOString()); }
   const region = sh ? sh.region : (me.role==="region" ? me.region : (ui.region!=="all" ? ui.region : ""));
   const cmds = data.staff.filter(s=>s.role==="commander");
   const opts = REGIONS.filter(r=>me.role==="admin"||r===me.region).map(r=>{
@@ -804,16 +828,21 @@ function shuttleForm(sh, dup){
   openModal(`<h3>${title}</h3><form data-form="shuttle">
     <input type="hidden" name="id" value="${sh && !dup ? esc(sh.id) : ""}">
     ${me.role==="admin" ? `<label class="f"><span>מרחב</span><select class="in" name="region" required><option value="">בחר…</option>${REGIONS.map(r=>`<option ${region===r?"selected":""}>${r}</option>`).join("")}</select></label>` : `<input type="hidden" name="region" value="${esc(me.region)}">`}
-    <label class="f"><span>מסלול</span><input class="in" name="route" required placeholder="לדוגמה: חדרה ← בסיס" value="${esc(sh?.route||"")}"></label>
     <div class="grid2">
       <label class="f"><span>תאריך</span><input class="in" type="date" name="date" required value="${d.date}"></label>
-      <label class="f"><span>שעת יציאה</span><input class="in" type="time" name="time" required value="${d.time}"></label>
+      <label class="f"><span>שעת התייצבות</span><input class="in" type="time" name="time" required value="${d.time}"></label>
+    </div>
+    <label class="f"><span>מקום התייצבות</span><input class="in" name="gather" required placeholder="לדוגמה: בית חיל האוויר הרצליה" value="${esc(sh?.gather_place||"")}"></label>
+    <label class="f"><span>מועדות (תחנות בדרך) — כל תחנה בשורה נפרדת</span><textarea class="in" name="stops" placeholder="רכבת הרצליה&#10;רכבת נתניה&#10;מחלף אור עקיבא">${esc((sh?.stops||[]).join("\n"))}</textarea></label>
+    <div class="grid2">
+      <label class="f"><span>מקום שחרור</span><input class="in" name="release" required placeholder="לדוגמה: מישר" value="${esc(sh?.release_place||"")}"></label>
+      <label class="f"><span>שעת שחרור</span><input class="in" type="time" name="release_time" value="${esc(sh?.release_time||"")}"></label>
     </div>
     <div class="grid2">
-      <label class="f"><span>מקומות באוטובוס</span><input class="in" type="number" min="1" max="80" name="capacity" required value="${sh?.capacity||30}"></label>
+      <label class="f"><span>מקומות באוטובוס</span><input class="in" type="number" min="1" max="80" name="capacity" required value="${sh?.capacity||55}"></label>
       <label class="f"><span>מפקד נסיעה</span><select class="in" name="commander"><option value="">טרם שובץ</option>${opts}</select></label>
     </div>
-    <label class="f"><span>נקודת איסוף / הערות</span><input class="in" name="notes" placeholder="לדוגמה: רציף 7, תחנה מרכזית" value="${esc(sh?.notes||"")}"></label>
+    <label class="f"><span>הערות (לא חובה)</span><input class="in" name="notes" placeholder="לדוגמה: להגיע 10 דקות לפני" value="${esc(sh?.notes||"")}"></label>
     <div class="row end"><button type="button" class="btn ghost" data-act="mclose">ביטול</button><button class="btn primary" type="submit">שמירה</button></div>
   </form>`);
 }
@@ -870,9 +899,12 @@ document.addEventListener("click", async e => {
       }
       case "register": {
         const s = data.shuttles.find(x=>x.id===id);
-        const ok = await ask("הרשמה לשאטל", `<b>${esc(s.route)}</b><br>${dayLabel(s.depart_at)} · ${fmtTime(s.depart_at)}<br><br>בהרשמה אתה מתחייב להגיע. ביטול אפשרי עד 24 שעות לפני היציאה. <b>אי-הגעה תחסום הרשמה עתידית לשאטלים.</b>`, "אני נרשם");
-        if (!ok) return;
-        await call("soldier_register", {...cred(), p_shuttle_id:id}); await reload(); toast("נרשמת בהצלחה ✓"); break;
+        const opts = stopOptions(s);
+        const ok = await ask("הרשמה לשאטל", `<b>${esc(s.route)}</b><br>${dayLabel(s.depart_at)} · התייצבות ${fmtTime(s.depart_at)}${s.gather_place?" ב"+esc(s.gather_place):""}${releaseLine(s)?"<br>"+releaseLine(s):""}
+          ${opts.length?`<label class="f" style="margin-top:14px"><span>מאיזו תחנה אתה עולה? (בנסיעה הביתה — איפה אתה יורד)</span><span class="tiny muted" style="font-weight:400">המקום שלך באוטובוס נשמר מהתחנה שבחרת</span><select class="in" id="stopSel"><option value="">בחר תחנה…</option>${opts.map(o=>`<option>${esc(o)}</option>`).join("")}</select></label>`:"<br><br>"}
+          בהרשמה אתה מתחייב להגיע. ביטול אפשרי עד 24 שעות לפני היציאה. <b>אי-הגעה תחסום הרשמה עתידית לשאטלים.</b>`, "אני נרשם", false, () => { if (!opts.length) return null; const v = $("#stopSel").value; if (!v) { toast("יש לבחור תחנה","err"); return false; } return v; });
+        if (ok===false) return;
+        await call("soldier_register", {...cred(), p_shuttle_id:id, p_stop: typeof ok==="string" ? ok : null}); await reload(); toast("נרשמת בהצלחה ✓"); break;
       }
       case "cancel": {
         const ok = await ask("ביטול הגעה", "לבטל את ההרשמה לשאטל? המקום יתפנה לחייל אחר.", "ביטול הגעה", true); if (!ok) return;
@@ -902,7 +934,8 @@ document.addEventListener("click", async e => {
       }
       case "copyList": {
         const s = findSh(id);
-        const txt = `🚌 ${s.route} · ${dayLabel(s.depart_at)} · ${fmtTime(s.depart_at)}\nמפקד נסיעה: ${s.commander_name||"—"}\nרשומים: ${s.taken}/${s.capacity}\n\n` + s.passengers.map((p,i)=>`${i+1}. ${p.first_name} ${p.last_name} · ${p.phone}${p.status==="arrived"?" ✓":p.status==="no_show"?" ✗":""}`).join("\n");
+        let lastSt = null;
+        const txt = `🚌 ${s.route} · ${dayLabel(s.depart_at)}\nהתייצבות ${fmtTime(s.depart_at)}${s.gather_place?" ב"+s.gather_place:""}${s.release_time||s.release_place?` · שחרור ${s.release_time||""} ${s.release_place?"ב"+s.release_place:""}`:""}\nמפקד נסיעה: ${s.commander_name||"—"}\nרשומים: ${s.taken}/${s.capacity}\n` + s.passengers.slice().sort(stopSort(s)).map((p,i)=>{ let hd=""; if (p.stop!==lastSt){ lastSt=p.stop; hd=`\n📍 ${p.stop||"ללא תחנה"}\n`; } return hd+`${i+1}. ${p.first_name} ${p.last_name} · ${p.phone}${p.status==="arrived"?" ✓":p.status==="no_show"?" ✗":""}`; }).join("\n");
         try { await navigator.clipboard.writeText(txt); toast("הרשימה הועתקה — אפשר להדביק בוואטסאפ"); }
         catch(err){ openModal(`<h3>רשימת נוסעים</h3><textarea class="in" style="min-height:260px" readonly>${esc(txt)}</textarea><div class="row end" style="margin-top:10px"><button class="btn ghost" data-act="mclose">סגירה</button></div>`); }
         break;
@@ -952,7 +985,8 @@ const FORMS = {
   async shuttle(f){
     const dt = new Date(`${f.date}T${f.time}`);
     if (isNaN(dt)) throw new Error("תאריך או שעה לא תקינים");
-    await call("staff_save_shuttle", {...cred(), p_id:f.id||null, p_region:f.region, p_route:f.route, p_depart_at:dt.toISOString(), p_capacity:+f.capacity, p_commander_id:f.commander||null, p_notes:f.notes||""});
+    const stops = String(f.stops||"").split(/[\n,]+/).map(x=>x.trim()).filter(Boolean);
+    await call("staff_save_shuttle", {...cred(), p_id:f.id||null, p_region:f.region, p_route:`${f.gather.trim()} ← ${f.release.trim()}`, p_depart_at:dt.toISOString(), p_capacity:+f.capacity||55, p_commander_id:f.commander||null, p_notes:f.notes||"", p_gather_place:f.gather, p_stops:stops, p_release_place:f.release, p_release_time:f.release_time||""});
     closeModal(); await reload(); toast("השאטל נשמר ✓");
   },
   async staff(f){
