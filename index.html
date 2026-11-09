@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2b3524">
+<title>מערך שאטלים 820</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2f3ee; --card:#fff; --ink:#1b211a; --muted:#697264; --line:#e1e4da; --soft:#f7f8f4;
+  --olive:#2b3524; --olive2:#3e4c33; --amber:#e8a820; --amber-soft:#fdf3dc;
+  --green:#2c8547; --green-soft:#e5f3e9; --red:#c43a2d; --red-soft:#fbe9e7; --blue:#2a5ea6; --blue-soft:#e6eefa;
+  --r:14px; --shadow:0 1px 2px rgba(20,30,15,.06),0 4px 14px rgba(20,30,15,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Heebo,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--blue)}
+.muted{color:var(--muted)} .small{font-size:13px} .tiny{font-size:12px}
+.hide{display:none!important}
+
+/* top bar */
+.top{background:var(--olive);color:#fff;position:sticky;top:0;z-index:20}
+.top-in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;white-space:nowrap}
+.logo .n{background:var(--amber);color:var(--olive);border-radius:7px;padding:1px 7px;font-weight:900;letter-spacing:.5px}
+.who{margin-inline-start:auto;display:flex;align-items:center;gap:10px;font-size:13px}
+.who .role{opacity:.75}
+.iconbtn{background:rgba(255,255,255,.1);border:0;color:#fff;border-radius:9px;padding:7px 10px;cursor:pointer;font-size:13px}
+.iconbtn:hover{background:rgba(255,255,255,.2)}
+.demo-ribbon{background:var(--amber);color:var(--olive);text-align:center;font-size:12.5px;font-weight:700;padding:5px 10px}
+
+/* layout */
+.wrap{max-width:1180px;margin:0 auto;padding:18px 16px 60px}
+.narrow{max-width:640px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:16px}
+.tab{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 15px;cursor:pointer;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.tab.on{background:var(--olive);color:#fff;border-color:var(--olive)}
+.badge{background:var(--red);color:#fff;border-radius:999px;font-size:11.5px;padding:0 7px;line-height:19px;font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.end{justify-content:flex-end}
+.between{justify-content:space-between}
+.grow{flex:1}
+h1,h2,h3{margin:0;line-height:1.2}
+.section-title{font-size:13px;font-weight:700;color:var(--muted);margin:22px 2px 10px;letter-spacing:.2px}
+
+/* buttons */
+.btn{border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:filter .15s,transform .05s}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.primary{background:var(--olive);color:#fff}
+.btn.primary:hover{filter:brightness(1.15)}
+.btn.amber{background:var(--amber);color:var(--olive)}
+.btn.ghost{background:var(--soft);border:1px solid var(--line)}
+.btn.ghost:hover{background:#eef0e8}
+.btn.danger{background:var(--red);color:#fff}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:8px}
+.btn.block{width:100%}
+.lnk{background:none;border:0;color:var(--blue);cursor:pointer;padding:0;font-weight:600}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.chip.region{background:var(--olive2);color:#fff}
+.chip.ok{background:var(--green-soft);color:var(--green)}
+.chip.bad{background:var(--red-soft);color:var(--red)}
+.chip.wait{background:#eef0ea;color:var(--muted)}
+.chip.full{background:var(--red);color:#fff}
+.chip.info{background:var(--blue-soft);color:var(--blue)}
+.chip.warn{background:var(--amber-soft);color:#94680a}
+
+/* forms */
+label.f{display:block;margin-bottom:12px}
+label.f span{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
+.in{width:100%;border:1px solid #cfd4c6;background:#fff;border-radius:10px;padding:11px 12px;outline:none}
+.in:focus{border-color:var(--olive2);box-shadow:0 0 0 3px rgba(62,76,51,.15)}
+textarea.in{min-height:84px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+
+/* login */
+.login-wrap{max-width:440px;margin:0 auto;padding:34px 16px 60px}
+.brand{text-align:center;margin-bottom:22px}
+.brand .busic{width:74px;height:74px;margin:0 auto 12px;background:var(--olive);border-radius:20px;display:grid;place-items:center;box-shadow:var(--shadow)}
+.brand h1{font-size:28px;font-weight:900}
+.brand h1 b{color:var(--olive2);background:var(--amber);padding:0 8px;border-radius:8px}
+.brand p{color:var(--muted);margin:8px 0 0}
+.login{padding:18px}
+.seg{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:11px;padding:3px;margin-bottom:16px}
+.seg button{flex:1;border:0;background:none;padding:9px;border-radius:9px;cursor:pointer;font-weight:700;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.demo-box{margin-top:16px;padding:14px;border:1px dashed #c9b27a;background:#fffaf0;border-radius:var(--r)}
+.demo-box h4{margin:0 0 8px;font-size:14px}
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+
+/* soldier */
+.hello{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:14px}
+.hello h2{font-size:23px;font-weight:800}
+.rules{font-size:13px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:6px}
+.day{font-size:14px;font-weight:800;margin:20px 2px 9px;color:var(--olive2)}
+.sc{padding:14px;margin-bottom:10px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:start}
+.sc.mine{border-color:var(--olive2);box-shadow:0 0 0 2px rgba(62,76,51,.18),var(--shadow)}
+.tbig{font-size:26px;font-weight:900;letter-spacing:.5px;line-height:1;padding-top:2px;font-variant-numeric:tabular-nums}
+.route{font-weight:800;font-size:16px}
+.meta{font-size:13px;color:var(--muted)}
+.sc .foot{grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.bar{height:7px;background:#e9ece4;border-radius:9px;overflow:hidden;min-width:90px;flex:1}
+.bar i{display:block;height:100%;border-radius:9px;background:var(--green)}
+.bar.mid i{background:var(--amber)} .bar.max i{background:var(--red)}
+.seatsn{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.alert{border-radius:var(--r);padding:16px;margin-bottom:14px}
+.alert.red{background:var(--red-soft);border:1px solid #f0c3bd}
+.alert h3{font-size:17px;color:var(--red);margin-bottom:6px;display:flex;gap:8px;align-items:center}
+.alert p{margin:6px 0}
+.empty{text-align:center;color:var(--muted);padding:36px 16px}
+
+/* staff */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:6px}
+.stat{padding:14px}
+.stat .v{font-size:26px;font-weight:900;font-variant-numeric:tabular-nums}
+.stat .l{font-size:12.5px;color:var(--muted);font-weight:600}
+.stat.red .v{color:var(--red)}
+.regions{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.regbox{padding:14px}
+.reghead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.reghead h3{font-size:17px;font-weight:800}
+.mini{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer;background:var(--soft);display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;align-items:center}
+.mini:hover{border-color:#b9c0ad;background:#fff}
+.mini.isfull{background:#fff6f5;border-color:#efc6c1}
+.mini .tm{font-weight:900;font-size:18px;font-variant-numeric:tabular-nums}
+.mini .sub{grid-column:2/4;font-size:12.5px;color:var(--muted)}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.toolbar select{width:auto;padding:8px 10px}
+.shc{margin-bottom:10px;overflow:hidden}
+.shc-h{display:grid;grid-template-columns:auto 1fr minmax(150px,220px);gap:4px 14px;align-items:center;padding:13px 14px;cursor:pointer}
+.shc-h:hover{background:var(--soft)}
+.seatbox{display:flex;flex-direction:column;gap:5px;align-items:stretch}
+.seatbox .row{justify-content:space-between}
+.shc-b{border-top:1px solid var(--line);padding:12px 14px;background:#fcfcfa}
+.counts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.pl{list-style:none;margin:0;padding:0}
+.pr{display:grid;grid-template-columns:26px 1fr auto;gap:2px 10px;align-items:center;padding:9px 4px;border-bottom:1px solid #eef0ea}
+.pr:last-child{border-bottom:0}
+.pr .idx{color:var(--muted);font-size:12.5px;font-variant-numeric:tabular-nums;text-align:center}
+.pr .nm{font-weight:700}
+.pr .ph{font-size:12.5px;color:var(--muted)}
+.pr .acts{display:flex;gap:5px;align-items:center}
+.mk{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 9px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+.mk.y.on{background:var(--green);border-color:var(--green);color:#fff}
+.mk.n.on{background:var(--red);border-color:var(--red);color:#fff}
+.mk.x{color:var(--muted)}
+.pr.ns{background:#fff5f4}
+.blk{padding:14px;margin-bottom:10px}
+.appeal{background:var(--soft);border-right:3px solid var(--amber);padding:8px 10px;border-radius:8px;margin:8px 0;font-size:14px}
+table.t{width:100%;border-collapse:collapse}
+table.t th,table.t td{text-align:right;padding:10px 12px;border-bottom:1px solid var(--line);font-size:14px}
+table.t th{font-size:12.5px;color:var(--muted);font-weight:700;background:var(--soft)}
+
+/* modal + toast */
+.modal-bg{position:fixed;inset:0;background:rgba(15,20,12,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.modal{background:#fff;border-radius:16px;max-width:480px;width:100%;max-height:92vh;overflow:auto;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.modal h3{font-size:19px;margin-bottom:12px}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.tst{background:var(--olive);color:#fff;padding:10px 16px;border-radius:11px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.2);max-width:90vw;animation:pop .2s ease}
+.tst.err{background:var(--red)}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.loading{display:grid;place-items:center;min-height:60vh;color:var(--muted)}
+
+@media (max-width:860px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .regions{grid-template-columns:1fr}
+  .shc-h{grid-template-columns:auto 1fr}
+  .shc-h .seatbox{grid-column:1/-1}
+}
+@media (max-width:480px){
+  .grid2{grid-template-columns:1fr}
+  .who .nmx{display:none}
+  .pr{grid-template-columns:22px 1fr}
+  .pr .acts{grid-column:2;justify-content:flex-start;margin-top:4px}
+}
+</style>
+</head>
+<body>
+<div id="app"><div class="loading">טוען…</div></div>
+<div id="modalRoot"></div>
+<div id="toast"></div>
+
+<script>
+/* ======================================================================
+   הגדרות חיבור — להפעלה אמיתית מלא את שני הערכים מ-Supabase
+   (Project Settings > API). כשהם ריקים האתר רץ במצב הדגמה.
+   ====================================================================== */
+const CONFIG = {
+  SUPABASE_URL: "https://bmyputipcqbnhizijtmm.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_awk-JVRLT6Cje9aJJXYuKw_qGjBtK6q"
+};
+
+const REGIONS = ["צפון","מרכז","ירושלים","דרום"];
+const ROLE_LABEL = {admin:"מנהל מערך", region:"איש קשר מרחב", commander:"מפקד נסיעה"};
+const LIVE = !!(CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY);
+const H24 = 24*3600*1000;
+
+/* ---------------- utils ---------------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const digits = s => String(s || "").replace(/\D/g, "");
+const store = {
+  get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+const pad = n => String(n).padStart(2,"0");
+const fmtTime = iso => { const d = new Date(iso); return pad(d.getHours())+":"+pad(d.getMinutes()); };
+const fmtDM = iso => { const d = new Date(iso); return pad(d.getDate())+"/"+pad(d.getMonth()+1); };
+const WD = ["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"];
+function dayKey(iso){ const d = new Date(iso); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function dayLabel(iso){
+  const d = new Date(iso), t = new Date(); t.setHours(0,0,0,0);
+  const dd = new Date(d); dd.setHours(0,0,0,0);
+  const diff = Math.round((dd - t)/86400000);
+  const base = "יום "+WD[d.getDay()]+" · "+fmtDM(iso);
+  if (diff === 0) return "היום · "+base;
+  if (diff === 1) return "מחר · "+base;
+  if (diff === -1) return "אתמול · "+base;
+  return base;
+}
+const startOfToday = () => { const t = new Date(); t.setHours(0,0,0,0); return t.getTime(); };
+function localParts(iso){ const d = new Date(iso); return {date:`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`, time:`${pad(d.getHours())}:${pad(d.getMinutes())}`}; }
+const telLink = p => `<a href="tel:${esc(p)}">${esc(p)}</a>`;
+function waLink(phone, text){ const d = digits(phone); const intl = d.startsWith("0") ? "972"+d.slice(1) : d; return `https://wa.me/${intl}?text=${encodeURIComponent(text)}`; }
+function seatBar(taken, cap){
+  const p = Math.min(100, Math.round(taken/cap*100));
+  const cls = taken >= cap ? "max" : p >= 80 ? "mid" : "";
+  return `<div class="bar ${cls}"><i style="width:${p}%"></i></div>`;
+}
+const busSvg = (c="#e8a820", s=40) => `<svg width="${s}" height="${s}" viewBox="0 0 48 48" fill="none"><rect x="7" y="6" width="34" height="30" rx="6" fill="${c}"/><rect x="11" y="11" width="26" height="11" rx="2" fill="#2b3524"/><rect x="11" y="26" width="6" height="4" rx="1.5" fill="#2b3524"/><rect x="31" y="26" width="6" height="4" rx="1.5" fill="#2b3524"/><rect x="11" y="35" width="7" height="6" rx="2" fill="${c}"/><rect x="30" y="35" width="7" height="6" rx="2" fill="${c}"/><rect x="21" y="8" width="6" height="2" rx="1" fill="#2b3524" opacity=".5"/></svg>`;
+
+/* ---------------- toast / modal ---------------- */
+function toast(msg, kind=""){
+  const el = document.createElement("div"); el.className = "tst "+kind; el.textContent = msg;
+  $("#toast").appendChild(el); setTimeout(()=>el.remove(), kind==="err"?4200:2600);
+}
+let modalCancel = null;
+function openModal(html){ $("#modalRoot").innerHTML = `<div class="modal-bg" data-act="mbg"><div class="modal">${html}</div></div>`; const f = $("#modalRoot input:not([type=hidden]),#modalRoot select,#modalRoot textarea"); f && setTimeout(()=>f.focus(), 30); }
+function closeModal(){ $("#modalRoot").innerHTML = ""; if (modalCancel){ const c = modalCancel; modalCancel = null; c(); } }
+const modalOpen = () => !!$("#modalRoot").innerHTML;
+function ask(title, text, ok="אישור", danger=false){
+  return new Promise(res=>{
+    openModal(`<h3>${esc(title)}</h3><div class="muted" style="margin-bottom:18px">${text}</div>
+      <div class="row end"><button class="btn ghost" data-act="mclose">ביטול</button><button class="btn ${danger?"danger":"primary"}" id="askOk">${esc(ok)}</button></div>`);
+    modalCancel = () => res(false);
+    $("#askOk").onclick = () => { modalCancel = null; $("#modalRoot").innerHTML = ""; res(true); };
+  });
+}
+
+/* ======================================================================
+   API — Supabase (אמיתי) או Demo (בדפדפן)
+   ====================================================================== */
+async function call(fn, args){
+  if (!LIVE) { await new Promise(r=>setTimeout(r,120)); return Demo[fn](JSON.parse(JSON.stringify(args||{}))); }
+  const base = CONFIG.SUPABASE_URL.replace(/\/$/,"");
+  const r = await fetch(`${base}/rest/v1/rpc/${fn}`, {
+    method:"POST",
+    headers: Object.assign({ "Content-Type":"application/json", apikey:CONFIG.SUPABASE_ANON_KEY }, CONFIG.SUPABASE_ANON_KEY.startsWith("sb_") ? {} : { Authorization:"Bearer "+CONFIG.SUPABASE_ANON_KEY }),
+    body: JSON.stringify(args||{})
+  });
+  const txt = await r.text(); let d = null; try{ d = txt ? JSON.parse(txt) : null; }catch(e){}
+  if (!r.ok) throw new Error((d && (d.message || d.hint)) || "שגיאת שרת");
+  return d;
+}
+
+/* ---------------- Demo backend (mirrors schema.sql) ---------------- */
+const Demo = (() => {
+  const KEY = "s820_demo_v2"; let S = null;
+  const uid = () => Math.random().toString(36).slice(2,9) + Math.random().toString(36).slice(2,6);
+  const fail = m => { throw new Error(m); };
+  const nowISO = () => new Date().toISOString();
+  function at(day,h,m){ const d = new Date(); d.setDate(d.getDate()+day); d.setHours(h,m,0,0); return d.toISOString(); }
+  function rng(seed){ return () => { seed = (seed*1103515245+12345) & 0x7fffffff; return seed/0x7fffffff; }; }
+  function seed(){
+    const R = rng(820);
+    const pick = a => a[Math.floor(R()*a.length)];
+    const FN = ["אור","נועם","איתי","יונתן","עידו","דניאל","אורי","רועי","תומר","עומר","אביב","יהלי","שקד","נוי","מאיה","רוני","טל","הדר","ליה","עדי","גיל","אלעד","מתן","בר","ספיר","ליאור","אריאל","שחר","עמית","יובל"];
+    const LN = ["כהן","לוי","מזרחי","פרץ","ביטון","דהן","אברהם","פרידמן","אזולאי","מלכה","חדד","גבאי","שמעוני","בן דוד","עמר","יוסף","אוחיון","ששון","קליין","רוזן"];
+    const staff = [
+      {id:"a1",full_name:"סהר חייקה",phone:"0500000001",pin:"1234",role:"admin",region:null},
+      {id:"r1",full_name:"עומר לוי",phone:"0500000011",pin:"1111",role:"region",region:"צפון"},
+      {id:"r2",full_name:"מיכל אברהם",phone:"0500000012",pin:"1111",role:"region",region:"מרכז"},
+      {id:"r3",full_name:"דוד מזרחי",phone:"0500000013",pin:"1111",role:"region",region:"ירושלים"},
+      {id:"r4",full_name:"נועה פרץ",phone:"0500000014",pin:"1111",role:"region",region:"דרום"},
+      {id:"c1",full_name:"איתי שמעוני",phone:"0500000021",pin:"2222",role:"commander",region:"מרכז"},
+      {id:"c2",full_name:"רון ביטון",phone:"0500000022",pin:"2222",role:"commander",region:"מרכז"},
+      {id:"c3",full_name:"אלון גבאי",phone:"0500000023",pin:"2222",role:"commander",region:"צפון"},
+      {id:"c4",full_name:"יובל דהן",phone:"0500000024",pin:"2222",role:"commander",region:"ירושלים"},
+      {id:"c5",full_name:"שי אוחנה",phone:"0500000025",pin:"2222",role:"commander",region:"דרום"}
+    ];
+    const soon = new Date(Date.now()+10*3600e3); soon.setMinutes(soon.getMinutes()<30?0:30,0,0);
+    const shuttles = [
+      {id:"s1",region:"מרכז",route:"ת\"א מרכז ← בסיס",depart_at:at(1,6,15),capacity:30,commander_id:"c1",notes:"איסוף: תחנה מרכזית, רציף 7"},
+      {id:"s2",region:"מרכז",route:"חדרה ← בסיס",depart_at:at(1,6,30),capacity:30,commander_id:"c2",notes:"איסוף: רכבת חדרה מערב"},
+      {id:"s3",region:"מרכז",route:"ת\"א מרכז ← בסיס",depart_at:at(2,6,15),capacity:30,commander_id:"c1",notes:"איסוף: תחנה מרכזית, רציף 7"},
+      {id:"s8",region:"מרכז",route:"ראשל\"צ ← בסיס",depart_at:soon.toISOString(),capacity:30,commander_id:"c2",notes:"איסוף: קניון הזהב"},
+      {id:"s4",region:"צפון",route:"חיפה ← בסיס",depart_at:at(1,5,45),capacity:30,commander_id:"c3",notes:"איסוף: חוף הכרמל"},
+      {id:"s5",region:"ירושלים",route:"ירושלים ← בסיס",depart_at:at(1,6,0),capacity:30,commander_id:"c4",notes:"איסוף: תחנה מרכזית"},
+      {id:"s6",region:"דרום",route:"באר שבע ← בסיס",depart_at:at(1,5,30),capacity:30,commander_id:"c5",notes:""},
+      {id:"s7",region:"מרכז",route:"ת\"א מרכז ← בסיס",depart_at:at(-1,6,15),capacity:30,commander_id:"c1",notes:""}
+    ];
+    const soldiers = [
+      {tz:"123456789",first_name:"אביב",last_name:"כהן",phone:"0521234567",region:"מרכז",blocked:false,block_note:null,appeal:null,created_at:nowISO()},
+      {tz:"987654321",first_name:"שגיא",last_name:"לוי",phone:"0527654321",region:"מרכז",blocked:false,block_note:null,appeal:null,created_at:nowISO()}
+    ];
+    const plan = {"מרכז":36,"צפון":32,"ירושלים":22,"דרום":14};
+    let n = 0;
+    for (const reg of REGIONS) for (let i=0;i<plan[reg];i++){
+      n++; soldiers.push({tz:String(300000000+n*7919), first_name:pick(FN), last_name:pick(LN), phone:"05"+(2+Math.floor(R()*3))+String(1000000+Math.floor(R()*8999999)), region:reg, blocked:false, block_note:null, appeal:null, created_at:nowISO()});
+    }
+    const regs = [];
+    const byReg = r => soldiers.filter(s=>s.region===r && s.tz!=="123456789" && s.tz!=="987654321");
+    const add = (sh, list, status="registered") => list.forEach((s,i)=>regs.push({id:uid(),shuttle_id:sh,tz:s.tz,status,resolved:false,created_at:new Date(Date.now()-(list.length-i)*600e3).toISOString()}));
+    const mz = byReg("מרכז");
+    add("s1", mz.slice(0,30));
+    add("s2", mz.slice(10,27));
+    add("s3", mz.slice(20,31));
+    add("s8", mz.slice(2,14));
+    add("s4", byReg("צפון").slice(0,30));
+    add("s5", byReg("ירושלים").slice(0,19));
+    add("s6", byReg("דרום").slice(0,11));
+    // demo soldier: registered to s3 (cancellable) and s8 (<24h)
+    add("s3", [soldiers[0]]); add("s8", [soldiers[0]]);
+    // yesterday: arrived + 2 no-shows
+    add("s7", mz.slice(4,24), "arrived");
+    add("s7", [soldiers[1], mz[30]], "no_show");
+    const S0 = {staff, soldiers, shuttles, registrations:regs};
+    const note = `נרשמת לשאטל "ת"א מרכז ← בסיס" ב-${fmtDM(at(-1,6,15))} 06:15 ולא הגעת.`;
+    for (const s of [soldiers[1], mz[30]]) { s.blocked = true; s.block_note = note; }
+    mz[30].appeal = "היה לי גימלים מהרופא ושכחתי לבטל, מצטער. מצרף אישור.";
+    return S0;
+  }
+  function load(){ S = store.get(KEY); if (!S || !S.staff) { S = seed(); save(); } }
+  function save(){ store.set(KEY, S); }
+  load();
+
+  const active = r => r.status !== "cancelled";
+  const takenOf = id => S.registrations.filter(r=>r.shuttle_id===id && active(r)).length;
+  const staffById = id => S.staff.find(s=>s.id===id);
+  const byDep = (a,b) => new Date(a.depart_at) - new Date(b.depart_at);
+  const pub = s => ({id:s.id, full_name:s.full_name, phone:s.phone, role:s.role, region:s.region});
+  function sAuth(tz, phone){ const s = S.soldiers.find(x=>x.tz===digits(tz)); if (!s || s.phone!==digits(phone)) fail('ת"ז או מספר טלפון שגויים'); return s; }
+  function tAuth(phone, pin){ const s = S.staff.find(x=>x.phone===digits(phone)); if (!s || s.pin!==pin) fail("טלפון או קוד שגויים"); return s; }
+  const seesShuttle = (me, sh) => me.role==="admin" || (me.role==="region" && sh.region===me.region) || (me.role==="commander" && sh.commander_id===me.id);
+  const manages = (me, region) => me.role==="admin" || (me.role==="region" && me.region===region);
+  function refreshBlock(tz, note){
+    const so = S.soldiers.find(x=>x.tz===tz); if (!so) return;
+    const b = S.registrations.some(r=>r.tz===tz && r.status==="no_show" && !r.resolved);
+    so.blocked = b;
+    if (!b) { so.block_note = null; so.appeal = null; } else if (note) so.block_note = note;
+  }
+  function staffShuttle(sh){
+    const c = staffById(sh.commander_id);
+    const passengers = S.registrations.filter(r=>r.shuttle_id===sh.id && active(r))
+      .sort((a,b)=>a.created_at.localeCompare(b.created_at))
+      .map(r=>{ const so = S.soldiers.find(x=>x.tz===r.tz)||{}; return {reg_id:r.id,status:r.status,tz:r.tz,first_name:so.first_name,last_name:so.last_name,phone:so.phone,created_at:r.created_at}; });
+    return {...sh, commander_name:c?.full_name||null, commander_phone:c?.phone||null, taken:passengers.length, passengers};
+  }
+  const out = {
+    reset(){ S = seed(); save(); },
+    soldier_login({p_tz,p_phone}){ const s = S.soldiers.find(x=>x.tz===digits(p_tz)); if (!s) return {exists:false}; if (s.phone!==digits(p_phone)) fail('מספר הטלפון לא תואם לת"ז הזו'); return {exists:true}; },
+    soldier_signup({p_tz,p_first_name,p_last_name,p_phone,p_region}){
+      if (digits(p_tz).length<5) fail('ת"ז לא תקינה');
+      if (digits(p_phone).length!==10) fail("מספר טלפון לא תקין");
+      if (!REGIONS.includes(p_region)) fail("יש לבחור מרחב");
+      if (!String(p_first_name||"").trim() || !String(p_last_name||"").trim()) fail("יש למלא שם פרטי ושם משפחה");
+      if (S.soldiers.some(x=>x.tz===digits(p_tz))) fail('ת"ז זו כבר רשומה במערכת');
+      S.soldiers.push({tz:digits(p_tz),first_name:p_first_name.trim(),last_name:p_last_name.trim(),phone:digits(p_phone),region:p_region,blocked:false,block_note:null,appeal:null,created_at:nowISO()});
+      save(); return {ok:true};
+    },
+    soldier_home({p_tz,p_phone}){
+      const s = sAuth(p_tz,p_phone); const lim = Date.now()-6*3600e3;
+      const shuttles = S.shuttles.filter(sh=>sh.region===s.region && new Date(sh.depart_at).getTime()>lim).sort(byDep).map(sh=>{
+        const c = staffById(sh.commander_id); const m = S.registrations.find(r=>r.shuttle_id===sh.id && r.tz===s.tz && active(r));
+        return {id:sh.id,region:sh.region,route:sh.route,depart_at:sh.depart_at,capacity:sh.capacity,notes:sh.notes,commander_name:c?.full_name||null,commander_phone:c?.phone||null,taken:takenOf(sh.id),mine:m?{id:m.id,status:m.status}:null};
+      });
+      const ct = S.staff.find(x=>x.role==="region" && x.region===s.region);
+      const {created_at, ...sol} = s;
+      return {soldier:sol, shuttles, contact: ct?{full_name:ct.full_name,phone:ct.phone}:null};
+    },
+    soldier_register({p_tz,p_phone,p_shuttle_id}){
+      const s = sAuth(p_tz,p_phone);
+      if (s.blocked) fail("ההרשמה שלך חסומה עד להסדרת אי-הגעה קודמת");
+      const sh = S.shuttles.find(x=>x.id===p_shuttle_id); if (!sh) fail("השאטל לא נמצא");
+      if (sh.region!==s.region) fail("ניתן להירשם רק לשאטלים של המרחב שלך");
+      if (new Date(sh.depart_at)<=new Date()) fail("השאטל כבר יצא");
+      if (S.registrations.some(r=>r.shuttle_id===sh.id && r.tz===s.tz && active(r))) fail("כבר נרשמת לשאטל הזה");
+      if (takenOf(sh.id)>=sh.capacity) fail("השאטל מלא");
+      S.registrations.push({id:uid(),shuttle_id:sh.id,tz:s.tz,status:"registered",resolved:false,created_at:nowISO()}); save(); return {ok:true};
+    },
+    soldier_cancel({p_tz,p_phone,p_reg_id}){
+      const s = sAuth(p_tz,p_phone); const r = S.registrations.find(x=>x.id===p_reg_id && x.tz===s.tz);
+      if (!r) fail("הרישום לא נמצא"); if (r.status!=="registered") fail("לא ניתן לבטל רישום זה");
+      const sh = S.shuttles.find(x=>x.id===r.shuttle_id);
+      if (Date.now() > new Date(sh.depart_at).getTime()-H24) fail("לא ניתן לבטל פחות מ-24 שעות לפני היציאה. פנה לאיש הקשר במרחב.");
+      r.status = "cancelled"; save(); return {ok:true};
+    },
+    soldier_appeal({p_tz,p_phone,p_text}){ const s = sAuth(p_tz,p_phone); if (!String(p_text||"").trim()) fail("יש לכתוב הסבר"); s.appeal = p_text.trim().slice(0,500); save(); return {ok:true}; },
+    staff_login({p_phone,p_pin}){ return pub(tAuth(p_phone,p_pin)); },
+    staff_data({p_phone,p_pin}){
+      const me = tAuth(p_phone,p_pin); const lim = Date.now()-14*86400e3;
+      return {
+        me: pub(me),
+        staff: S.staff.filter(s=>me.role==="admin" || (me.role==="region" && s.region===me.region) || s.id===me.id).map(pub),
+        shuttles: S.shuttles.filter(sh=>new Date(sh.depart_at).getTime()>lim && seesShuttle(me,sh)).sort(byDep).map(staffShuttle),
+        blocked: me.role==="commander" ? [] : S.soldiers.filter(so=>so.blocked && (me.role==="admin" || so.region===me.region)).map(so=>({tz:so.tz,first_name:so.first_name,last_name:so.last_name,phone:so.phone,region:so.region,block_note:so.block_note,appeal:so.appeal})),
+        contacts: S.staff.filter(s=>s.role==="region").map(s=>({region:s.region,full_name:s.full_name,phone:s.phone}))
+      };
+    },
+    staff_save_shuttle({p_phone,p_pin,p_id,p_region,p_route,p_depart_at,p_capacity,p_commander_id,p_notes}){
+      const me = tAuth(p_phone,p_pin); if (me.role==="commander") fail("אין הרשאה");
+      const region = me.role==="region" ? me.region : p_region;
+      if (!REGIONS.includes(region)) fail("יש לבחור מרחב");
+      if (!String(p_route||"").trim()) fail("יש למלא מסלול");
+      if (!p_depart_at) fail("יש למלא תאריך ושעה");
+      const rec = {region, route:p_route.trim(), depart_at:p_depart_at, capacity:+p_capacity||30, commander_id:p_commander_id||null, notes:(p_notes||"").trim()||null};
+      if (!p_id) { const id = uid(); S.shuttles.push({id, ...rec}); save(); return {id}; }
+      const sh = S.shuttles.find(x=>x.id===p_id); if (!sh) fail("השאטל לא נמצא");
+      if (me.role==="region" && sh.region!==me.region) fail("אין הרשאה");
+      Object.assign(sh, rec); save(); return {id:p_id};
+    },
+    staff_delete_shuttle({p_phone,p_pin,p_id}){
+      const me = tAuth(p_phone,p_pin); const sh = S.shuttles.find(x=>x.id===p_id); if (!sh) fail("השאטל לא נמצא");
+      if (!manages(me, sh.region)) fail("אין הרשאה");
+      S.shuttles = S.shuttles.filter(x=>x.id!==p_id); S.registrations = S.registrations.filter(r=>r.shuttle_id!==p_id); save(); return {ok:true};
+    },
+    staff_mark({p_phone,p_pin,p_reg_id,p_status}){
+      const me = tAuth(p_phone,p_pin);
+      if (!["registered","arrived","no_show"].includes(p_status)) fail("סטטוס לא חוקי");
+      const r = S.registrations.find(x=>x.id===p_reg_id); if (!r || r.status==="cancelled") fail("הרישום לא נמצא");
+      const sh = S.shuttles.find(x=>x.id===r.shuttle_id); if (!seesShuttle(me, sh)) fail("אין הרשאה");
+      r.status = p_status; r.resolved = false;
+      refreshBlock(r.tz, p_status==="no_show" ? `נרשמת לשאטל "${sh.route}" ב-${fmtDM(sh.depart_at)} ${fmtTime(sh.depart_at)} ולא הגעת.` : null);
+      save(); return {ok:true};
+    },
+    staff_remove_reg({p_phone,p_pin,p_reg_id}){
+      const me = tAuth(p_phone,p_pin); const r = S.registrations.find(x=>x.id===p_reg_id); if (!r) fail("הרישום לא נמצא");
+      const sh = S.shuttles.find(x=>x.id===r.shuttle_id); if (!manages(me, sh.region)) fail("אין הרשאה");
+      r.status = "cancelled"; refreshBlock(r.tz, null); save(); return {ok:true};
+    },
+    staff_release({p_phone,p_pin,p_tz}){
+      const me = tAuth(p_phone,p_pin); const so = S.soldiers.find(x=>x.tz===p_tz); if (!so) fail("החייל לא נמצא");
+      if (!manages(me, so.region)) fail("אין הרשאה");
+      S.registrations.forEach(r=>{ if (r.tz===p_tz && r.status==="no_show") r.resolved = true; });
+      so.blocked = false; so.block_note = null; so.appeal = null; save(); return {ok:true};
+    },
+    staff_save_staff({p_phone,p_pin,p_id,p_full_name,p_new_phone,p_new_pin,p_role,p_region}){
+      const me = tAuth(p_phone,p_pin); if (me.role==="commander") fail("אין הרשאה");
+      const role = me.role==="region" ? "commander" : p_role;
+      const region = me.role==="region" ? me.region : role==="admin" ? null : p_region;
+      if (!ROLE_LABEL[role]) fail("תפקיד לא חוקי");
+      if (role!=="admin" && !REGIONS.includes(region)) fail("יש לבחור מרחב");
+      if (!String(p_full_name||"").trim()) fail("יש למלא שם");
+      const ph = digits(p_new_phone); if (ph.length!==10) fail("מספר טלפון לא תקין");
+      if (S.staff.some(s=>s.phone===ph && s.id!==p_id)) fail("מספר הטלפון כבר קיים במערכת");
+      if (!p_id) { if (String(p_new_pin||"").length<4) fail("קוד כניסה חייב להיות לפחות 4 תווים"); const id = uid(); S.staff.push({id,full_name:p_full_name.trim(),phone:ph,pin:p_new_pin,role,region}); save(); return {id}; }
+      const t = S.staff.find(s=>s.id===p_id); if (!t) fail("איש הצוות לא נמצא");
+      if (me.role==="region" && !(t.role==="commander" && t.region===me.region)) fail("אין הרשאה");
+      Object.assign(t, {full_name:p_full_name.trim(), phone:ph, role, region}); if (p_new_pin) t.pin = p_new_pin;
+      save(); return {id:p_id};
+    },
+    staff_delete_staff({p_phone,p_pin,p_id}){
+      const me = tAuth(p_phone,p_pin); if (me.id===p_id) fail("לא ניתן למחוק את עצמך");
+      const t = S.staff.find(s=>s.id===p_id); if (!t) fail("איש הצוות לא נמצא");
+      if (!(me.role==="admin" || (me.role==="region" && t.role==="commander" && t.region===me.region))) fail("אין הרשאה");
+      S.staff = S.staff.filter(s=>s.id!==p_id); S.shuttles.forEach(sh=>{ if (sh.commander_id===p_id) sh.commander_id = null; }); save(); return {ok:true};
+    }
+  };
+  return out;
+})();
+
+/* ======================================================================
+   App state
+   ====================================================================== */
+const SKEY = "s820_session";
+let session = store.get(SKEY);
+let data = null;
+const ui = { loginTab:"soldier", signup:null, tab:null, region:"all", past:false, open:{} };
+
+const cred = () => session.type==="soldier" ? {p_tz:session.tz, p_phone:session.phone} : {p_phone:session.phone, p_pin:session.pin};
+async function load(){
+  data = session.type==="soldier" ? await call("soldier_home", cred()) : await call("staff_data", cred());
+}
+async function reload(){ await load(); render(); }
+async function startSession(s){
+  session = s; store.set(SKEY, s);
+  ui.tab = null; ui.open = {}; ui.region = "all"; ui.past = false;
+  try { await load(); } catch(e){ session = null; store.del(SKEY); data = null; throw e; }
+  render();
+}
+function logout(){ session = null; data = null; store.del(SKEY); ui.signup = null; render(); }
+
+/* ======================================================================
+   Views
+   ====================================================================== */
+function render(){
+  const app = $("#app");
+  const ribbon = LIVE ? "" : `<div class="demo-ribbon">מצב הדגמה — הנתונים נשמרים רק בדפדפן הזה. לחיבור אמיתי יש למלא פרטי Supabase.</div>`;
+  if (!session || !data) { app.innerHTML = ribbon + loginView(); return; }
+  app.innerHTML = ribbon + topBar() + (session.type==="soldier" ? soldierView() : staffView());
+}
+
+function topBar(){
+  let nm, role;
+  if (session.type==="soldier") { nm = data.soldier.first_name+" "+data.soldier.last_name; role = "חייל · מרחב "+data.soldier.region; }
+  else { nm = data.me.full_name; role = ROLE_LABEL[data.me.role] + (data.me.region ? " · "+data.me.region : ""); }
+  return `<div class="top"><div class="top-in">
+    <div class="logo">${busSvg("#e8a820",28)} מערך שאטלים <span class="n">820</span></div>
+    <div class="who"><div><b class="nmx">${esc(nm)}</b> <span class="role">${esc(role)}</span></div>
+      <button class="iconbtn" data-act="refresh" title="רענון">⟳</button>
+      <button class="iconbtn" data-act="logout">יציאה</button></div>
+  </div></div>`;
+}
+
+/* ---------- login ---------- */
+function loginView(){
+  const t = ui.loginTab;
+  let form;
+  if (t==="soldier" && ui.signup) {
+    form = `<form data-form="signup">
+      <div class="small muted" style="margin-bottom:12px">ת"ז ${esc(ui.signup.tz)} עדיין לא רשומה. השלם פרטים פעם אחת:</div>
+      <div class="grid2">
+        <label class="f"><span>שם פרטי</span><input class="in" name="first" required autocomplete="given-name"></label>
+        <label class="f"><span>שם משפחה</span><input class="in" name="last" required autocomplete="family-name"></label>
+      </div>
+      <label class="f"><span>מרחב מגורים</span><select class="in" name="region" required><option value="">בחר מרחב…</option>${REGIONS.map(r=>`<option>${r}</option>`).join("")}</select></label>
+      <button class="btn primary block" type="submit">הרשמה למערכת</button>
+      <div style="text-align:center;margin-top:10px"><button type="button" class="lnk" data-act="unsignup">חזרה</button></div>
+    </form>`;
+  } else if (t==="soldier") {
+    form = `<form data-form="soldierLogin">
+      <label class="f"><span>תעודת זהות</span><input class="in" name="tz" inputmode="numeric" required placeholder="9 ספרות"></label>
+      <label class="f"><span>מספר טלפון</span><input class="in" name="phone" inputmode="tel" required placeholder="05XXXXXXXX" autocomplete="tel"></label>
+      <button class="btn primary block" type="submit">כניסה</button>
+      <div class="tiny muted" style="margin-top:10px;text-align:center">בכניסה ראשונה תתבקש להשלים שם ומרחב</div>
+    </form>`;
+  } else {
+    form = `<form data-form="staffLogin">
+      <label class="f"><span>מספר טלפון</span><input class="in" name="phone" inputmode="tel" required placeholder="05XXXXXXXX"></label>
+      <label class="f"><span>קוד כניסה</span><input class="in" name="pin" type="password" required></label>
+      <button class="btn primary block" type="submit">כניסת צוות</button>
+      <div class="tiny muted" style="margin-top:10px;text-align:center">אנשי קשר מרחב ומפקדי נסיעה — הקוד מתקבל מהמנהל</div>
+    </form>`;
+  }
+  const demo = LIVE ? "" : `<div class="demo-box"><h4>כניסה מהירה להדגמה</h4>
+    <div class="demo-grid">
+      <button class="btn ghost sm" data-act="demo" data-v="admin">👑 מנהל מערך (סהר)</button>
+      <button class="btn ghost sm" data-act="demo" data-v="region">📍 איש קשר מרחב מרכז</button>
+      <button class="btn ghost sm" data-act="demo" data-v="commander">🚌 מפקד נסיעה</button>
+      <button class="btn ghost sm" data-act="demo" data-v="soldier">🪖 חייל</button>
+      <button class="btn ghost sm" data-act="demo" data-v="blocked">⛔ חייל שלא הגיע</button>
+      <button class="btn ghost sm" data-act="demoReset">↺ איפוס נתוני הדגמה</button>
+    </div></div>`;
+  return `<div class="login-wrap">
+    <div class="brand"><div class="busic">${busSvg("#e8a820",46)}</div><h1>מערך שאטלים <b>820</b></h1><p>הרשמה לשאטלים · מעקב הגעה · שליטה במרחבים</p></div>
+    <div class="card login">
+      <div class="seg"><button data-act="ltab" data-v="soldier" class="${t==="soldier"?"on":""}">אני חייל</button><button data-act="ltab" data-v="staff" class="${t==="staff"?"on":""}">צוות ומפקדים</button></div>
+      ${form}
+    </div>${demo}</div>`;
+}
+
+/* ---------- soldier ---------- */
+function soldierView(){
+  const s = data.soldier, c = data.contact;
+  let h = `<main class="wrap narrow">
+    <div class="hello"><div><div class="muted small">שלום,</div><h2>${esc(s.first_name)} ${esc(s.last_name)}</h2></div><span class="chip region">מרחב ${esc(s.region)}</span></div>`;
+  if (s.blocked) {
+    h += `<div class="alert red">
+      <h3>⛔ ההרשמה שלך לשאטלים חסומה</h3>
+      <p>${esc(s.block_note || "נרשמת לשאטל ולא הגעת.")}</p>
+      <p>כדי להשתחרר מהחסימה יש להסדיר את הנושא מול איש הקשר במרחב${c ? `: <b>${esc(c.full_name)}</b> · ${telLink(c.phone)}` : "."}</p>
+      ${s.appeal
+        ? `<div class="appeal"><div class="tiny muted">ההסבר שלך נשלח וממתין לטיפול:</div>${esc(s.appeal)}</div><button class="lnk small" data-act="editAppeal">עריכת ההסבר</button>`
+        : appealForm("")}
+    </div>`;
+  }
+  h += `<div class="rules">🕐 ביטול הגעה אפשרי עד <b>24 שעות</b> לפני היציאה &nbsp;·&nbsp; ⚠️ נרשמת ולא הגעת? ההרשמה לשאטלים נחסמת עד להסדרה</div>`;
+  const list = data.shuttles;
+  if (!list.length) h += `<div class="card empty">אין כרגע שאטלים פתוחים במרחב ${esc(s.region)}</div>`;
+  let last = "";
+  for (const sh of list) {
+    const k = dayKey(sh.depart_at);
+    if (k !== last) { h += `<div class="day">${dayLabel(sh.depart_at)}</div>`; last = k; }
+    h += soldierCard(sh, s.blocked);
+  }
+  return h + `</main>`;
+}
+function appealForm(v){
+  return `<form data-form="appeal" style="margin-top:10px">
+    <textarea class="in" name="text" maxlength="500" placeholder="מה קרה? ההסבר יגיע לאיש הקשר במרחב" required>${esc(v)}</textarea>
+    <div class="row end" style="margin-top:8px"><button class="btn danger sm" type="submit">שליחת הסבר</button></div></form>`;
+}
+function soldierCard(sh, blocked){
+  const now = Date.now(), dep = new Date(sh.depart_at).getTime();
+  const departed = dep <= now, canCancel = dep - now > H24, full = sh.taken >= sh.capacity, m = sh.mine;
+  let action = "";
+  if (m) {
+    if (m.status==="arrived") action = `<span class="chip ok">✓ הגעת</span>`;
+    else if (m.status==="no_show") action = `<span class="chip bad">לא הגעת</span>`;
+    else if (departed) action = `<span class="chip info">רשום</span>`;
+    else if (canCancel) action = `<span class="chip ok">✓ רשום</span><span class="tiny muted">ביטול עד ${fmtDM(new Date(dep-H24).toISOString())} ${fmtTime(new Date(dep-H24).toISOString())}</span><button class="btn ghost sm" data-act="cancel" data-id="${esc(m.id)}" style="margin-inline-start:auto">ביטול הגעה</button>`;
+    else action = `<span class="chip ok">✓ רשום</span><span class="tiny muted" style="margin-inline-start:auto">פחות מ-24 שעות — לא ניתן לבטל. לבירור: איש הקשר במרחב</span>`;
+  } else if (departed) action = `<span class="chip wait">השאטל יצא</span>`;
+  else if (blocked) action = `<button class="btn ghost sm" disabled style="margin-inline-start:auto">ההרשמה חסומה</button>`;
+  else if (full) action = `<span class="chip full">מלא</span>`;
+  else action = `<button class="btn primary sm" data-act="register" data-id="${esc(sh.id)}" style="margin-inline-start:auto">הרשמה לשאטל</button>`;
+  return `<div class="card sc ${m?"mine":""}">
+    <div class="tbig">${fmtTime(sh.depart_at)}</div>
+    <div><div class="route">${esc(sh.route)}</div>
+      <div class="meta">${sh.notes ? esc(sh.notes)+" · " : ""}מפקד נסיעה: ${esc(sh.commander_name || "טרם שובץ")}</div></div>
+    <div class="foot"><div class="row" style="flex:1;min-width:150px;gap:8px">${seatBar(sh.taken, sh.capacity)}<span class="seatsn">${sh.taken}/${sh.capacity}</span></div></div>
+    <div class="foot" style="margin-top:6px">${action}</div>
+  </div>`;
+}
+
+/* ---------- staff ---------- */
+function staffView(){
+  const me = data.me;
+  const tabs = me.role==="admin" ? [["overview","תמונת מצב"],["shuttles","שאטלים"],["blocked","חסומים"],["staff","צוות"]]
+    : me.role==="region" ? [["shuttles","שאטלים"],["blocked","חסומים"],["staff","מפקדי נסיעה"]]
+    : [["mine","הנסיעות שלי"]];
+  if (!ui.tab || !tabs.some(t=>t[0]===ui.tab)) ui.tab = tabs[0][0];
+  const nb = data.blocked.length;
+  let h = `<main class="wrap"><div class="tabs">${tabs.map(([k,l])=>`<button class="tab ${ui.tab===k?"on":""}" data-act="tab" data-v="${k}">${l}${k==="blocked"&&nb?` <span class="badge">${nb}</span>`:""}</button>`).join("")}</div>`;
+  if (ui.tab==="overview") h += overviewView();
+  else if (ui.tab==="shuttles") h += shuttlesView();
+  else if (ui.tab==="blocked") h += blockedView();
+  else if (ui.tab==="staff") h += staffMgmtView();
+  else h += commanderView();
+  return h + `</main>`;
+}
+const canManage = () => data.me.role==="admin" || data.me.role==="region";
+const countBy = (sh, st) => sh.passengers.filter(p=>p.status===st).length;
+
+function overviewView(){
+  const t0 = startOfToday();
+  const up = data.shuttles.filter(s=>new Date(s.depart_at).getTime() >= t0);
+  const seats = up.reduce((a,s)=>a+s.capacity,0), taken = up.reduce((a,s)=>a+s.taken,0);
+  const fulls = up.filter(s=>s.taken>=s.capacity).length;
+  const ns = data.shuttles.reduce((a,s)=>a+countBy(s,"no_show"),0);
+  let h = `<div class="stats">
+    <div class="card stat"><div class="v">${up.length}</div><div class="l">שאטלים קרובים</div></div>
+    <div class="card stat"><div class="v">${taken}<span class="muted" style="font-size:16px">/${seats}</span></div><div class="l">מקומות תפוסים</div></div>
+    <div class="card stat ${fulls?"red":""}"><div class="v">${fulls}</div><div class="l">אוטובוסים מלאים</div></div>
+    <div class="card stat ${ns?"red":""}"><div class="v">${ns}</div><div class="l">לא הגיעו (14 יום)</div></div>
+    <div class="card stat ${data.blocked.length?"red":""}"><div class="v">${data.blocked.length}</div><div class="l">חיילים חסומים</div></div>
+  </div><div class="section-title">לפי מרחב — מהיום והלאה</div><div class="regions">`;
+  for (const r of REGIONS) {
+    const list = up.filter(s=>s.region===r);
+    const ct = data.contacts.find(c=>c.region===r);
+    const rt = list.reduce((a,s)=>a+s.taken,0), rc = list.reduce((a,s)=>a+s.capacity,0);
+    h += `<div class="card regbox"><div class="reghead"><div><h3>מרחב ${r}</h3>
+        <div class="small muted">איש קשר: ${ct ? esc(ct.full_name)+" · "+telLink(ct.phone) : "<b style='color:var(--red)'>לא הוגדר</b>"}</div></div>
+        <div style="text-align:left"><div class="seatsn">${rt}/${rc}</div><div class="tiny muted">${list.length} שאטלים</div></div></div>`;
+    if (!list.length) h += `<div class="small muted" style="padding:8px 2px">אין שאטלים מתוכננים</div>`;
+    for (const s of list) {
+      const full = s.taken >= s.capacity;
+      h += `<div class="mini ${full?"isfull":""}" data-act="openShuttle" data-id="${esc(s.id)}">
+        <div class="tm">${fmtTime(s.depart_at)}</div>
+        <div><b>${esc(s.route)}</b></div>
+        <div class="row" style="gap:6px">${full?`<span class="chip full">מלא</span>`:""}<span class="seatsn">${s.taken}/${s.capacity}</span></div>
+        <div class="sub">${dayLabel(s.depart_at)} · מפקד: ${esc(s.commander_name||"—")}</div>
+      </div>`;
+    }
+    h += `</div>`;
+  }
+  return h + `</div>`;
+}
+
+function shuttlesView(){
+  const me = data.me, t0 = startOfToday();
+  let list = data.shuttles.filter(s => ui.past ? new Date(s.depart_at).getTime() < t0 : new Date(s.depart_at).getTime() >= t0);
+  if (me.role==="admin" && ui.region!=="all") list = list.filter(s=>s.region===ui.region);
+  if (ui.past) list = list.slice().reverse();
+  let h = `<div class="toolbar">
+    ${me.role==="admin" ? `<select class="in" data-change="region"><option value="all">כל המרחבים</option>${REGIONS.map(r=>`<option ${ui.region===r?"selected":""}>${r}</option>`).join("")}</select>` : `<span class="chip region">מרחב ${esc(me.region)}</span>`}
+    <div class="seg" style="margin:0;width:auto"><button data-act="past" data-v="0" class="${!ui.past?"on":""}">קרובים</button><button data-act="past" data-v="1" class="${ui.past?"on":""}">קודמים</button></div>
+    <div class="grow"></div>
+    <button class="btn amber" data-act="newShuttle">＋ שאטל חדש</button>
+  </div>`;
+  if (!list.length) return h + `<div class="card empty">${ui.past ? "אין שאטלים קודמים (14 יום אחרונים)" : "אין שאטלים מתוכננים. לחץ \"שאטל חדש\" כדי ליצור."}</div>`;
+  let last = "";
+  for (const s of list) {
+    const k = dayKey(s.depart_at);
+    if (k!==last) { h += `<div class="day">${dayLabel(s.depart_at)}</div>`; last = k; }
+    h += staffShuttleCard(s, !!ui.open[s.id]);
+  }
+  return h;
+}
+
+function commanderView(){
+  const now = Date.now();
+  const t0 = startOfToday();
+  const all = data.shuttles.filter(s=>new Date(s.depart_at).getTime() > now - 3*86400e3);
+  const list = [...all.filter(s=>new Date(s.depart_at).getTime() >= t0), ...all.filter(s=>new Date(s.depart_at).getTime() < t0).reverse()];
+  let h = `<div class="rules" style="margin-bottom:14px">סמן לכל חייל <b>הגיע</b> או <b>לא הגיע</b> בזמן העלייה לאוטובוס. חייל שסומן "לא הגיע" נחסם להרשמה עד שאיש הקשר במרחב משחרר אותו.</div>`;
+  if (!list.length) return h + `<div class="card empty">לא שובצת כמפקד נסיעה לשאטל קרוב</div>`;
+  let last = "";
+  for (const s of list) {
+    const k = dayKey(s.depart_at);
+    if (k!==last) { h += `<div class="day">${dayLabel(s.depart_at)}</div>`; last = k; }
+    h += staffShuttleCard(s, ui.open[s.id] !== false);
+  }
+  return h;
+}
+
+function staffShuttleCard(s, open){
+  const full = s.taken >= s.capacity;
+  const a = countBy(s,"arrived"), n = countBy(s,"no_show"), w = countBy(s,"registered");
+  let h = `<div class="card shc" id="sh-${esc(s.id)}">
+    <div class="shc-h" data-act="toggle" data-id="${esc(s.id)}">
+      <div class="tbig">${fmtTime(s.depart_at)}</div>
+      <div><div class="route">${esc(s.route)} ${data.me.role==="admin"?`<span class="chip region" style="font-size:11.5px">${esc(s.region)}</span>`:""}</div>
+        <div class="meta">${s.notes?esc(s.notes)+" · ":""}מפקד נסיעה: ${esc(s.commander_name||"טרם שובץ")}${n?` · <b style="color:var(--red)">${n} לא הגיעו</b>`:""}</div></div>
+      <div class="seatbox"><div class="row"><span class="seatsn">${s.taken}/${s.capacity} רשומים</span>${full?`<span class="chip full">מלא</span>`:""}</div>${seatBar(s.taken,s.capacity)}</div>
+    </div>`;
+  if (open) {
+    h += `<div class="shc-b">
+      <div class="row between" style="margin-bottom:10px">
+        <div class="counts"><span class="chip wait">טרם סומנו ${w}</span><span class="chip ok">הגיעו ${a}</span><span class="chip bad">לא הגיעו ${n}</span></div>
+        ${canManage() ? `<div class="row" style="gap:6px">
+          <button class="btn ghost sm" data-act="editShuttle" data-id="${esc(s.id)}">עריכה</button>
+          <button class="btn ghost sm" data-act="dupShuttle" data-id="${esc(s.id)}">שכפול ליום הבא</button>
+          <button class="btn ghost sm" data-act="copyList" data-id="${esc(s.id)}">העתק רשימה</button>
+          <button class="btn ghost sm" data-act="delShuttle" data-id="${esc(s.id)}" style="color:var(--red)">מחיקה</button></div>`
+          : `<button class="btn ghost sm" data-act="copyList" data-id="${esc(s.id)}">העתק רשימה</button>`}
+      </div>`;
+    if (!s.passengers.length) h += `<div class="small muted" style="padding:6px 2px">אין עדיין נרשמים</div>`;
+    else {
+      h += `<ul class="pl">`;
+      s.passengers.forEach((p,i)=>{
+        h += `<li class="pr ${p.status==="no_show"?"ns":""}">
+          <div class="idx">${i+1}</div>
+          <div><div class="nm">${esc(p.first_name)} ${esc(p.last_name)}</div><div class="ph">${telLink(p.phone)} · ת"ז ${esc(p.tz)}</div></div>
+          <div class="acts">
+            <button class="mk y ${p.status==="arrived"?"on":""}" data-act="mark" data-reg="${esc(p.reg_id)}" data-st="arrived" data-cur="${p.status}">✓ הגיע</button>
+            <button class="mk n ${p.status==="no_show"?"on":""}" data-act="mark" data-reg="${esc(p.reg_id)}" data-st="no_show" data-cur="${p.status}">✗ לא הגיע</button>
+            ${canManage()?`<button class="mk x" title="הסרה מהשאטל" data-act="removeReg" data-reg="${esc(p.reg_id)}" data-name="${esc(p.first_name+" "+p.last_name)}">הסר</button>`:""}
+          </div></li>`;
+      });
+      h += `</ul>`;
+    }
+    h += `</div>`;
+  }
+  return h + `</div>`;
+}
+
+function blockedView(){
+  const list = data.blocked;
+  let h = `<div class="rules" style="margin-bottom:14px">חיילים שנרשמו ולא הגיעו. כל עוד הם ברשימה — לא יכולים להירשם לשאטל. אחרי בירור לחץ <b>שחרור חסימה</b>.</div>`;
+  if (!list.length) return h + `<div class="card empty">אין חיילים חסומים 👌</div>`;
+  for (const b of list) {
+    const msg = `היי ${b.first_name}, כאן מערך שאטלים 820. ${b.block_note || "נרשמת לשאטל ולא הגעת."} ההרשמה שלך לשאטלים חסומה עד להסדרה — נא לחזור אליי.`;
+    h += `<div class="card blk"><div class="row between">
+        <div><b style="font-size:16px">${esc(b.first_name)} ${esc(b.last_name)}</b> ${data.me.role==="admin"?`<span class="chip region">${esc(b.region)}</span>`:""}
+          <div class="small muted">${telLink(b.phone)} · ת"ז ${esc(b.tz)}</div></div>
+        <div class="row" style="gap:6px">
+          <a class="btn ghost sm" href="${waLink(b.phone,msg)}" target="_blank" rel="noopener">💬 וואטסאפ</a>
+          <button class="btn primary sm" data-act="release" data-tz="${esc(b.tz)}" data-name="${esc(b.first_name+" "+b.last_name)}">שחרור חסימה</button>
+        </div></div>
+      <div class="small" style="margin-top:8px;color:var(--red)">${esc(b.block_note||"")}</div>
+      ${b.appeal ? `<div class="appeal"><div class="tiny muted">הסבר החייל:</div>${esc(b.appeal)}</div>` : `<div class="tiny muted" style="margin-top:6px">החייל עדיין לא שלח הסבר</div>`}
+    </div>`;
+  }
+  return h;
+}
+
+function staffMgmtView(){
+  const me = data.me;
+  const order = {admin:0, region:1, commander:2};
+  const list = data.staff.slice().sort((a,b)=>order[a.role]-order[b.role] || String(a.region).localeCompare(String(b.region)) || a.full_name.localeCompare(b.full_name));
+  let h = `<div class="toolbar"><div class="small muted">${me.role==="admin" ? "מנהלים, אנשי קשר מרחב ומפקדי נסיעה. כל אחד נכנס עם הטלפון שלו וקוד כניסה." : "מפקדי הנסיעה של המרחב שלך."}</div><div class="grow"></div>
+    <button class="btn amber" data-act="newStaff">＋ ${me.role==="admin"?"איש צוות חדש":"מפקד נסיעה חדש"}</button></div>
+    <div class="card" style="overflow-x:auto"><table class="t"><thead><tr><th>שם</th><th>תפקיד</th><th>מרחב</th><th>טלפון</th><th></th></tr></thead><tbody>`;
+  for (const s of list) {
+    const editable = me.role==="admin" || (s.role==="commander" && s.region===me.region);
+    h += `<tr><td><b>${esc(s.full_name)}</b>${s.id===me.id?` <span class="chip info">את/ה</span>`:""}</td><td>${ROLE_LABEL[s.role]}</td><td>${esc(s.region||"—")}</td><td>${telLink(s.phone)}</td>
+      <td style="text-align:left;white-space:nowrap">${editable?`<button class="btn ghost sm" data-act="editStaff" data-id="${esc(s.id)}">עריכה</button>${s.id!==me.id?` <button class="btn ghost sm" style="color:var(--red)" data-act="delStaff" data-id="${esc(s.id)}">מחיקה</button>`:""}`:""}</td></tr>`;
+  }
+  return h + `</tbody></table></div>`;
+}
+
+/* ---------- forms in modal ---------- */
+function shuttleForm(sh, dup){
+  const me = data.me;
+  let d = sh ? localParts(sh.depart_at) : null;
+  if (sh && dup) { const x = new Date(sh.depart_at); x.setDate(x.getDate()+1); d = localParts(x.toISOString()); }
+  if (!d) { const x = new Date(); x.setDate(x.getDate()+1); x.setHours(6,30,0,0); d = localParts(x.toISOString()); }
+  const region = sh ? sh.region : (me.role==="region" ? me.region : (ui.region!=="all" ? ui.region : ""));
+  const cmds = data.staff.filter(s=>s.role==="commander");
+  const opts = REGIONS.filter(r=>me.role==="admin"||r===me.region).map(r=>{
+    const c = cmds.filter(x=>x.region===r); if (!c.length) return "";
+    return `<optgroup label="${r}">${c.map(x=>`<option value="${esc(x.id)}" ${sh&&sh.commander_id===x.id?"selected":""}>${esc(x.full_name)}</option>`).join("")}</optgroup>`;
+  }).join("");
+  const title = !sh ? "שאטל חדש" : dup ? "שכפול שאטל" : "עריכת שאטל";
+  openModal(`<h3>${title}</h3><form data-form="shuttle">
+    <input type="hidden" name="id" value="${sh && !dup ? esc(sh.id) : ""}">
+    ${me.role==="admin" ? `<label class="f"><span>מרחב</span><select class="in" name="region" required><option value="">בחר…</option>${REGIONS.map(r=>`<option ${region===r?"selected":""}>${r}</option>`).join("")}</select></label>` : `<input type="hidden" name="region" value="${esc(me.region)}">`}
+    <label class="f"><span>מסלול</span><input class="in" name="route" required placeholder="לדוגמה: חדרה ← בסיס" value="${esc(sh?.route||"")}"></label>
+    <div class="grid2">
+      <label class="f"><span>תאריך</span><input class="in" type="date" name="date" required value="${d.date}"></label>
+      <label class="f"><span>שעת יציאה</span><input class="in" type="time" name="time" required value="${d.time}"></label>
+    </div>
+    <div class="grid2">
+      <label class="f"><span>מקומות באוטובוס</span><input class="in" type="number" min="1" max="80" name="capacity" required value="${sh?.capacity||30}"></label>
+      <label class="f"><span>מפקד נסיעה</span><select class="in" name="commander"><option value="">טרם שובץ</option>${opts}</select></label>
+    </div>
+    <label class="f"><span>נקודת איסוף / הערות</span><input class="in" name="notes" placeholder="לדוגמה: רציף 7, תחנה מרכזית" value="${esc(sh?.notes||"")}"></label>
+    <div class="row end"><button type="button" class="btn ghost" data-act="mclose">ביטול</button><button class="btn primary" type="submit">שמירה</button></div>
+  </form>`);
+}
+function staffForm(st){
+  const me = data.me;
+  openModal(`<h3>${st ? "עריכת איש צוות" : (me.role==="admin" ? "איש צוות חדש" : "מפקד נסיעה חדש")}</h3><form data-form="staff">
+    <input type="hidden" name="id" value="${esc(st?.id||"")}">
+    <label class="f"><span>שם מלא</span><input class="in" name="name" required value="${esc(st?.full_name||"")}"></label>
+    <label class="f"><span>טלפון (משמש לכניסה)</span><input class="in" name="phone" inputmode="tel" required value="${esc(st?.phone||"")}"></label>
+    ${me.role==="admin" ? `<div class="grid2">
+      <label class="f"><span>תפקיד</span><select class="in" name="role" required>${Object.entries(ROLE_LABEL).map(([k,l])=>`<option value="${k}" ${(st?.role||"commander")===k?"selected":""}>${l}</option>`).join("")}</select></label>
+      <label class="f"><span>מרחב</span><select class="in" name="region"><option value="">— (למנהל)</option>${REGIONS.map(r=>`<option ${st?.region===r?"selected":""}>${r}</option>`).join("")}</select></label>
+    </div>` : `<input type="hidden" name="role" value="commander"><input type="hidden" name="region" value="${esc(me.region)}">`}
+    <label class="f"><span>${st ? "קוד כניסה חדש (השאר ריק כדי לא לשנות)" : "קוד כניסה (4 ספרות לפחות)"}</span><input class="in" name="pin" ${st?"":"required"} minlength="4" autocomplete="new-password"></label>
+    <div class="row end"><button type="button" class="btn ghost" data-act="mclose">ביטול</button><button class="btn primary" type="submit">שמירה</button></div>
+  </form>`);
+}
+
+/* ======================================================================
+   Events
+   ====================================================================== */
+const DEMO_LOGINS = {
+  admin:{type:"staff",phone:"0500000001",pin:"1234"},
+  region:{type:"staff",phone:"0500000012",pin:"1111"},
+  commander:{type:"staff",phone:"0500000021",pin:"2222"},
+  soldier:{type:"soldier",tz:"123456789",phone:"0521234567"},
+  blocked:{type:"soldier",tz:"987654321",phone:"0527654321"}
+};
+const findSh = id => data.shuttles.find(s=>s.id===id);
+
+document.addEventListener("click", async e => {
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const a = el.dataset.act, id = el.dataset.id;
+  if (a==="mbg") { if (e.target===el) closeModal(); return; }
+  try {
+    switch (a) {
+      case "mclose": closeModal(); break;
+      case "ltab": ui.loginTab = el.dataset.v; ui.signup = null; render(); break;
+      case "unsignup": ui.signup = null; render(); break;
+      case "demo": await startSession({...DEMO_LOGINS[el.dataset.v]}); break;
+      case "demoReset": Demo.reset(); toast("נתוני ההדגמה אופסו"); break;
+      case "logout": logout(); break;
+      case "refresh": await reload(); toast("עודכן"); break;
+      case "tab": ui.tab = el.dataset.v; render(); window.scrollTo(0,0); break;
+      case "past": ui.past = el.dataset.v==="1"; render(); break;
+      case "toggle": {
+        const cur = data.me.role==="commander" ? ui.open[id]!==false : !!ui.open[id];
+        ui.open[id] = !cur; render(); break;
+      }
+      case "openShuttle": {
+        const s = findSh(id); ui.tab = "shuttles"; ui.region = s.region; ui.past = false; ui.open[id] = true; render();
+        setTimeout(()=>{ const n = document.getElementById("sh-"+id); n && n.scrollIntoView({behavior:"smooth",block:"start"}); }, 30);
+        break;
+      }
+      case "register": {
+        const s = data.shuttles.find(x=>x.id===id);
+        const ok = await ask("הרשמה לשאטל", `<b>${esc(s.route)}</b><br>${dayLabel(s.depart_at)} · ${fmtTime(s.depart_at)}<br><br>בהרשמה אתה מתחייב להגיע. ביטול אפשרי עד 24 שעות לפני היציאה. <b>אי-הגעה תחסום הרשמה עתידית לשאטלים.</b>`, "אני נרשם");
+        if (!ok) return;
+        await call("soldier_register", {...cred(), p_shuttle_id:id}); await reload(); toast("נרשמת בהצלחה ✓"); break;
+      }
+      case "cancel": {
+        const ok = await ask("ביטול הגעה", "לבטל את ההרשמה לשאטל? המקום יתפנה לחייל אחר.", "ביטול הגעה", true); if (!ok) return;
+        await call("soldier_cancel", {...cred(), p_reg_id:id}); await reload(); toast("ההגעה בוטלה"); break;
+      }
+      case "editAppeal": {
+        openModal(`<h3>עריכת ההסבר</h3>${appealForm(data.soldier.appeal||"")}`); break;
+      }
+      case "mark": {
+        const st = el.dataset.cur===el.dataset.st ? "registered" : el.dataset.st;
+        await call("staff_mark", {...cred(), p_reg_id:el.dataset.reg, p_status:st}); await reload();
+        if (st==="no_show") toast("סומן כלא הגיע — החייל נחסם להרשמה");
+        break;
+      }
+      case "removeReg": {
+        const ok = await ask("הסרה מהשאטל", `להסיר את <b>${esc(el.dataset.name)}</b> מרשימת השאטל?`, "הסרה", true); if (!ok) return;
+        await call("staff_remove_reg", {...cred(), p_reg_id:el.dataset.reg}); await reload(); toast("הוסר מהשאטל"); break;
+      }
+      case "newShuttle": shuttleForm(null,false); break;
+      case "editShuttle": shuttleForm(findSh(id),false); break;
+      case "dupShuttle": shuttleForm(findSh(id),true); break;
+      case "delShuttle": {
+        const s = findSh(id);
+        const ok = await ask("מחיקת שאטל", `למחוק את <b>${esc(s.route)}</b> (${dayLabel(s.depart_at)} ${fmtTime(s.depart_at)})?${s.taken?`<br><b style="color:var(--red)">${s.taken} חיילים רשומים לשאטל הזה.</b>`:""}`, "מחיקה", true);
+        if (!ok) return;
+        await call("staff_delete_shuttle", {...cred(), p_id:id}); await reload(); toast("השאטל נמחק"); break;
+      }
+      case "copyList": {
+        const s = findSh(id);
+        const txt = `🚌 ${s.route} · ${dayLabel(s.depart_at)} · ${fmtTime(s.depart_at)}\nמפקד נסיעה: ${s.commander_name||"—"}\nרשומים: ${s.taken}/${s.capacity}\n\n` + s.passengers.map((p,i)=>`${i+1}. ${p.first_name} ${p.last_name} · ${p.phone}${p.status==="arrived"?" ✓":p.status==="no_show"?" ✗":""}`).join("\n");
+        try { await navigator.clipboard.writeText(txt); toast("הרשימה הועתקה — אפשר להדביק בוואטסאפ"); }
+        catch(err){ openModal(`<h3>רשימת נוסעים</h3><textarea class="in" style="min-height:260px" readonly>${esc(txt)}</textarea><div class="row end" style="margin-top:10px"><button class="btn ghost" data-act="mclose">סגירה</button></div>`); }
+        break;
+      }
+      case "release": {
+        const ok = await ask("שחרור חסימה", `לשחרר את <b>${esc(el.dataset.name)}</b>? החייל יוכל שוב להירשם לשאטלים.`, "שחרור"); if (!ok) return;
+        await call("staff_release", {...cred(), p_tz:el.dataset.tz}); await reload(); toast("החסימה שוחררה ✓"); break;
+      }
+      case "newStaff": staffForm(null); break;
+      case "editStaff": staffForm(data.staff.find(s=>s.id===id)); break;
+      case "delStaff": {
+        const s = data.staff.find(x=>x.id===id);
+        const ok = await ask("מחיקת איש צוות", `למחוק את <b>${esc(s.full_name)}</b> (${ROLE_LABEL[s.role]})?`, "מחיקה", true); if (!ok) return;
+        await call("staff_delete_staff", {...cred(), p_id:id}); await reload(); toast("נמחק"); break;
+      }
+    }
+  } catch(err) { toast(err.message || "שגיאה", "err"); }
+});
+
+document.addEventListener("change", e => {
+  const el = e.target.closest("[data-change]"); if (!el) return;
+  if (el.dataset.change==="region") { ui.region = el.value; render(); }
+});
+
+const FORMS = {
+  async soldierLogin(f){
+    const tz = digits(f.tz), phone = digits(f.phone);
+    if (tz.length<5) throw new Error('ת"ז לא תקינה');
+    if (phone.length!==10) throw new Error("מספר טלפון צריך להיות 10 ספרות");
+    const r = await call("soldier_login", {p_tz:tz, p_phone:phone});
+    if (!r.exists) { ui.signup = {tz, phone}; render(); return; }
+    await startSession({type:"soldier", tz, phone});
+  },
+  async signup(f){
+    await call("soldier_signup", {p_tz:ui.signup.tz, p_first_name:f.first, p_last_name:f.last, p_phone:ui.signup.phone, p_region:f.region});
+    const s = {type:"soldier", tz:ui.signup.tz, phone:ui.signup.phone}; ui.signup = null;
+    await startSession(s); toast("נרשמת למערכת ✓");
+  },
+  async staffLogin(f){
+    const phone = digits(f.phone);
+    await call("staff_login", {p_phone:phone, p_pin:f.pin});
+    await startSession({type:"staff", phone, pin:f.pin});
+  },
+  async appeal(f){
+    await call("soldier_appeal", {...cred(), p_text:f.text}); if (modalOpen()) closeModal(); await reload(); toast("ההסבר נשלח לאיש הקשר");
+  },
+  async shuttle(f){
+    const dt = new Date(`${f.date}T${f.time}`);
+    if (isNaN(dt)) throw new Error("תאריך או שעה לא תקינים");
+    await call("staff_save_shuttle", {...cred(), p_id:f.id||null, p_region:f.region, p_route:f.route, p_depart_at:dt.toISOString(), p_capacity:+f.capacity, p_commander_id:f.commander||null, p_notes:f.notes||""});
+    closeModal(); await reload(); toast("השאטל נשמר ✓");
+  },
+  async staff(f){
+    await call("staff_save_staff", {...cred(), p_id:f.id||null, p_full_name:f.name, p_new_phone:f.phone, p_new_pin:f.pin||null, p_role:f.role, p_region:f.region||null});
+    // if I changed my own phone/pin — update session
+    if (f.id && f.id===data.me.id) { session.phone = digits(f.phone); if (f.pin) session.pin = f.pin; store.set(SKEY, session); }
+    closeModal(); await reload(); toast("נשמר ✓");
+  }
+};
+document.addEventListener("submit", async e => {
+  const form = e.target.closest("form[data-form]"); if (!form) return;
+  e.preventDefault();
+  const f = Object.fromEntries(new FormData(form).entries());
+  const btn = form.querySelector('button[type=submit]'); if (btn) btn.disabled = true;
+  try { await FORMS[form.dataset.form](f); }
+  catch(err) { toast(err.message || "שגיאה", "err"); }
+  finally { if (btn && btn.isConnected) btn.disabled = false; }
+});
+
+/* auto refresh for staff every 30s */
+setInterval(async () => {
+  if (!session || !data || modalOpen() || document.visibilityState!=="visible") return;
+  const a = document.activeElement; if (a && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) return;
+  try { await load(); render(); } catch(e){}
+}, 30000);
+
+/* boot */
+(async () => {
+  if (session) { try { await load(); } catch(e){ session = null; store.del(SKEY); } }
+  render();
+})();
+</script>
+</body>
+</html>
