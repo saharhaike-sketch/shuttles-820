@@ -412,7 +412,7 @@ const Demo = (() => {
       if (sh.region!==s.region) fail("ניתן להירשם רק לשאטלים של המרחב שלך");
       if (new Date(sh.depart_at)<=new Date()) fail("השאטל כבר יצא");
       if (S.registrations.some(r=>r.shuttle_id===sh.id && r.tz===s.tz && active(r))) fail("כבר נרשמת לשאטל הזה");
-      const opts = stopOptions(sh); if (opts.length && !opts.includes(p_stop)) fail("יש לבחור תחנה");
+      const opts = (sh.stops&&sh.stops.length) ? stopOptions(sh) : []; if (opts.length && !opts.includes(p_stop)) fail("יש לבחור תחנה"); if (!opts.length) p_stop = sh.gather_place || null;
       if (takenOf(sh.id)>=sh.capacity) fail("השאטל מלא");
       S.registrations.push({id:uid(),shuttle_id:sh.id,tz:s.tz,status:"registered",resolved:false,stop:p_stop||null,created_at:nowISO()}); save(); return {ok:true};
     },
@@ -899,12 +899,12 @@ document.addEventListener("click", async e => {
       }
       case "register": {
         const s = data.shuttles.find(x=>x.id===id);
-        const opts = stopOptions(s);
+        const opts = (s.stops && s.stops.length) ? stopOptions(s) : [];
         const ok = await ask("הרשמה לשאטל", `<b>${esc(s.route)}</b><br>${dayLabel(s.depart_at)} · התייצבות ${fmtTime(s.depart_at)}${s.gather_place?" ב"+esc(s.gather_place):""}${releaseLine(s)?"<br>"+releaseLine(s):""}
           ${opts.length?`<label class="f" style="margin-top:14px"><span>מאיזו תחנה אתה עולה? (בנסיעה הביתה — איפה אתה יורד)</span><span class="tiny muted" style="font-weight:400">המקום שלך באוטובוס נשמר מהתחנה שבחרת</span><select class="in" id="stopSel"><option value="">בחר תחנה…</option>${opts.map(o=>`<option>${esc(o)}</option>`).join("")}</select></label>`:"<br><br>"}
           בהרשמה אתה מתחייב להגיע. ביטול אפשרי עד 24 שעות לפני היציאה. <b>אי-הגעה תחסום הרשמה עתידית לשאטלים.</b>`, "אני נרשם", false, () => { if (!opts.length) return null; const v = $("#stopSel").value; if (!v) { toast("יש לבחור תחנה","err"); return false; } return v; });
         if (ok===false) return;
-        await call("soldier_register", {...cred(), p_shuttle_id:id, p_stop: typeof ok==="string" ? ok : null}); await reload(); toast("נרשמת בהצלחה ✓"); break;
+        await call("soldier_register", {...cred(), p_shuttle_id:id, p_stop: typeof ok==="string" ? ok : (s.gather_place || null)}); await reload(); toast("נרשמת בהצלחה ✓"); break;
       }
       case "cancel": {
         const ok = await ask("ביטול הגעה", "לבטל את ההרשמה לשאטל? המקום יתפנה לחייל אחר.", "ביטול הגעה", true); if (!ok) return;
