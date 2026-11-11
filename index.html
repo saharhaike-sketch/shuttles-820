@@ -204,9 +204,28 @@ table.t th{font-size:12.5px;color:var(--muted);font-weight:700;background:var(--
 .hero2 .cta-hint{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:800;color:var(--olive);background:rgba(255,255,255,.75);border-radius:999px;padding:6px 14px;font-size:14.5px}
 .login-wrap{position:relative;z-index:3;margin:-14px auto 0;max-width:460px;padding:0}
 .login-card{position:relative;padding:20px}
+@media (max-width:879px){
+  .hero2-in{padding:14px 14px 8px}
+  .hero2 .s-mob{top:-14px;left:-14px;right:-14px}
+  .hero2-copy{padding-bottom:92px}
+  .hero-logo{font-size:13px;padding:3px 10px}
+  .hero2 .eyebrow{margin:8px 0 2px;font-size:13.5px}
+  .hero2 h1{font-size:25px}
+  .hero2 .lead{margin-top:4px;font-size:14.5px}
+  .hero2 .cta-hint{margin-top:8px;padding:4px 12px;font-size:13.5px}
+  .hero2 .hills{height:70px;bottom:30px}
+  .hero2 .road{height:30px;border-top-width:3px}.hero2 .road .dash{top:12px;height:3px}
+  .hero2 .sun{width:80px;height:80px;bottom:70px}
+  .hero2 .c2{display:none}.hero2 .c1{top:12px}
+  .hero2 .busrun{bottom:8px}.hero2 .busrun svg{width:170px;height:auto}
+  .login-card{padding:16px}
+  .login-card .rtiles{gap:8px;margin-top:10px}
+  .hero-pause{inset-inline-start:auto;inset-inline-end:8px;width:34px;height:34px;padding:0;display:grid;place-items:center}
+  .hero-pause .lbl{display:none}
+}
 @media (min-width:880px){
-  .hero2{min-height:560px}
-  .hero2-in{display:grid;grid-template-columns:1fr 440px;gap:48px;align-items:center;padding:56px 24px 120px;min-height:560px}
+  .hero2{min-height:100vh;min-height:100svh}
+  .hero2-in{display:grid;grid-template-columns:1fr 440px;gap:48px;align-items:center;padding:48px 24px 110px;min-height:100vh;min-height:100svh}
   .hero2-copy{text-align:start;padding-bottom:0;position:static}
   .hero2 .s-desk{display:block}.hero2 .s-mob{display:none}
   .hero2 h1{font-size:44px}
@@ -589,10 +608,10 @@ function heroCopy(){
   return `<div class="hero2-copy">${heroScene("s-mob")}<div class="hero-logo"><span aria-hidden="true">${busSvg("#2b3524",18)}</span> מערך שאטלים <b>820</b></div>
     <p class="eyebrow">ברוך הבא, נשמח לעמוד לשירותך</p>
     <h1>הדרך שלך לבסיס ולבית מתחילה כאן</h1>
-    <p class="lead">בוחרים מרחב, יום ושאטל — והמקום שלך שמור.</p>
+    <p class="lead">בוחרים נסיעה, מאשרים הרשמה ויוצאים לדרך.</p>
     <p class="cta-hint">${ui.loginTab==="staff"?"כניסת צוות ומפקדים":ui.pickRegion?"עוד צעד: כניסה עם ת\"ז וטלפון":"בחר מרחב ושמור מקום"} <span class="arr" aria-hidden="true"></span></p></div>`;
 }
-function motionBtn(){ const st = document.body.classList.contains("still"); return `<button class="hero-pause" data-act="toggleMotion" aria-pressed="${st}">${st?"▶ הפעלת אנימציה":"⏸ עצירת אנימציה"}</button>`; }
+function motionBtn(){ const st = document.body.classList.contains("still"); const t = st?"הפעלת אנימציה":"עצירת אנימציה"; return `<button class="hero-pause" data-act="toggleMotion" aria-pressed="${st}" aria-label="${t}" title="${t}"><span aria-hidden="true">${st?"▶":"⏸"}</span><span class="lbl" aria-hidden="true"> ${t}</span></button>`; }
 function loginProgress(done){
   const L = ["מרחב","יום ותאריך","שאטל ותחנה","אישור"];
   return `<div class="mprog"><p class="stepno" style="margin:0">${done?"שלב 1 מתוך 4 ✓ · עכשיו כניסה, ואז בוחרים יום":"שלב 1 מתוך 4"}</p>
@@ -640,7 +659,7 @@ function loginView(){
   }
   
   const demo = "";
-  return `<main id="main"><section class="hero2" aria-label="ברוך הבא">${heroScene("s-desk")}${motionBtn()}<div class="hero2-in">${heroCopy()}<div class="login-wrap"><div class="card login-card">${body}</div></div></div></section><div style="padding:16px 14px 50px">${demo}</div></main>`;
+  return `<main id="main"><section class="hero2" aria-label="ברוך הבא">${heroScene("s-desk")}${motionBtn()}<div class="hero2-in">${heroCopy()}<div class="login-wrap"><div class="card login-card">${body}</div></div></div></section>${demo?`<div style="padding:16px 14px 50px">${demo}</div>`:""}</main>`;
 }
 
 /* ---------- days ---------- */
@@ -1234,7 +1253,7 @@ document.addEventListener("click", async e => {
       case "goMine": closeModal(); ui.sview = "mine"; render(); window.scrollTo(0,0); break;
       case "sview": ui.sview = el.dataset.v; render(); window.scrollTo(0,0); break;
       case "focusDays": { const d = document.querySelector("#dayChips .dchip.on") || document.querySelector("#dayChips .dchip"); d && d.focus(); break; }
-      case "toggleMotion": { const on = !document.body.classList.contains("still"); document.body.classList.toggle("still", on); store.set("s820_still", on); el.setAttribute("aria-pressed", String(on)); el.textContent = on ? "▶ הפעלת אנימציה" : "⏸ עצירת אנימציה"; break; }
+      case "toggleMotion": { const on = !document.body.classList.contains("still"); document.body.classList.toggle("still", on); store.set("s820_still", on); el.outerHTML = motionBtn(); const nb = document.querySelector(".hero-pause"); nb && nb.focus(); break; }
       case "cancel": {
         const ok = await ask("ביטול שמירת מקום", "לבטל את שמירת המקום? המקום יתפנה לחייל אחר.", "כן, לבטל", true); if (!ok) return;
         await call("soldier_cancel", {...cred(), p_reg_id:id}); await reload(); toast("שמירת המקום בוטלה"); break;
