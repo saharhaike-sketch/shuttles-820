@@ -9,13 +9,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f2f3ee; --card:#fff; --ink:#1b211a; --muted:#697264; --line:#e1e4da; --soft:#f7f8f4;
+  --bg:#f2f3ee; --card:#fff; --ink:#1b211a; --muted:#5d6659; --line:#e1e4da; --soft:#f7f8f4;
   --olive:#2b3524; --olive2:#3e4c33; --amber:#e8a820; --amber-soft:#fdf3dc;
   --green:#2c8547; --green-soft:#e5f3e9; --red:#c43a2d; --red-soft:#fbe9e7; --blue:#2a5ea6; --blue-soft:#e6eefa;
   --r:14px; --shadow:0 1px 2px rgba(20,30,15,.06),0 4px 14px rgba(20,30,15,.05);
 }
 *{box-sizing:border-box}
 html,body{margin:0}
+body{overflow-wrap:break-word}
 body{font-family:Heebo,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
 a{color:var(--blue)}
@@ -216,7 +217,7 @@ table.t th{font-size:12.5px;color:var(--muted);font-weight:700;background:var(--
 .dchip .dw{font-weight:800;font-size:14px}.dchip .dd{font-size:12px;color:var(--muted)}
 .dchip .dn{font-size:11px;color:var(--muted);margin-top:2px}
 .dchip.on{background:var(--olive);border-color:var(--olive);color:#fff}.dchip.on .dd,.dchip.on .dn{color:rgba(255,255,255,.8)}
-.dchip .dot{position:absolute;top:6px;left:8px;width:8px;height:8px;border-radius:50%;background:var(--amber)}
+.dchip .dot{position:absolute;top:3px;left:7px;font-size:11px;line-height:1;color:var(--amber)}
 .bucket{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:var(--olive2);margin:16px 2px 8px}
 .bucket .ct{font-weight:600;color:var(--muted);font-size:12.5px}
 .mine-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:6px}
@@ -234,6 +235,99 @@ table.reg td{padding:7px 8px;border-bottom:1px solid #eef0ea;vertical-align:top}
 table.reg tr.grp td{background:#f4f6ef;font-weight:800;color:var(--olive2);font-size:12.5px}
 table.reg td.st-ok{color:var(--green);font-weight:800}table.reg td.st-bad{color:var(--red);font-weight:800}
 @media (max-width:1000px){.split{grid-template-columns:1fr}.side{position:static;max-height:none}}
+
+/* ===== v5: accessibility, steps, cards ===== */
+.skip:focus{position:fixed!important;top:8px;right:8px;width:auto!important;height:auto!important;clip:auto!important;margin:0!important;background:#fff;color:#1f4f8f;padding:8px 12px!important;z-index:100;border-radius:8px;font-weight:800}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+:focus-visible{outline:3px solid #1a5fb4!important;outline-offset:2px}
+.h2{font-size:23px;font-weight:800;margin:0}.h3{font-size:16px;font-weight:800;margin:0}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;padding:0;margin:4px 0 6px}
+.steps li{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:7px 8px;min-width:0;flex-wrap:wrap}
+.steps .sn{flex:0 0 24px;height:24px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12.5px;background:#e4e7de;color:var(--ink)}
+.steps li.done .sn{background:#2c6e3f;color:#fff}
+.steps li.cur{border-color:var(--olive);box-shadow:0 0 0 2px rgba(43,53,36,.18)}
+.steps li.cur .sn{background:var(--olive);color:#fff}
+.steps .st{display:flex;flex-direction:column;min-width:0;flex:1}
+.steps .sl{font-size:12px;color:#565f52}
+.steps .sv{font-size:12.5px;overflow-wrap:normal;word-break:keep-all}
+.sview{margin:6px 0 12px}
+.sc2{padding:14px;margin-bottom:10px}
+.sc2.mine{border-color:#2c6e3f;box-shadow:0 0 0 2px rgba(44,110,63,.2),var(--shadow)}
+.sc2-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;align-items:start}
+.sc2-main .route{font-size:17px;overflow-wrap:anywhere}
+.board{font-size:14px;margin-top:4px}
+.seats{font-size:13px;background:var(--green-soft);color:#1b5e30;border-radius:10px;padding:4px 9px;text-align:center;line-height:1.25}
+.seats b{font-size:17px;display:block}
+.seats.low{background:var(--amber-soft);color:#6b4a06}
+.seats.full{background:var(--red-soft);color:#8f251c;font-weight:700}
+.sc2-act{margin-top:12px}
+.sc2-act > .btn{width:100%;padding:12px;font-size:16px}
+.mine-box{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;background:var(--green-soft);border-radius:10px;padding:10px 12px}
+.mystat{font-weight:800}.mystat.ok{color:#1b5e30}.mystat.bad{color:#8f251c}
+details.more{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
+details.more summary{cursor:pointer;font-size:14px;font-weight:700;color:#1f4f8f;padding:4px 0}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:8px 0 0;font-size:14px}
+.dl dt{color:#565f52}.dl dd{margin:0;overflow-wrap:anywhere}
+.dl.sum{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:12px;margin:0 0 12px}
+.stopset{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 6px}
+.stopset legend{font-weight:800;padding:0 4px}
+.radio{display:flex;align-items:center;gap:10px;padding:9px 6px;border-radius:8px;cursor:pointer;font-size:15px}
+.radio:hover{background:var(--soft)}
+.radio input{width:20px;height:20px;accent-color:var(--olive);flex:0 0 auto}
+.ferr{color:#8f251c;font-size:13px;font-weight:700;margin-top:4px}
+.formerr{background:var(--red-soft);border:1px solid #e9b4ad;color:#7d2219;border-radius:10px;padding:10px 12px;font-weight:700;margin:8px 0}
+.in[aria-invalid=true]{border-color:var(--red);box-shadow:0 0 0 2px rgba(196,58,45,.15)}
+.okmsg{background:var(--green-soft);color:#1b5e30;border-radius:10px;padding:10px 12px;font-weight:700}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.btn[disabled]{opacity:.65}
+.trip{padding:14px;margin-bottom:10px}
+.trip-top{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.trip-date{font-size:13px;color:#565f52;font-weight:700}
+.kv{display:flex;gap:10px;align-items:baseline;font-size:14px;margin:4px 0;flex-wrap:wrap}
+.kv > span:first-child{color:#565f52;min-width:84px}
+.dayhead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:6px 2px 0}
+.stepno{font-size:12.5px;color:#565f52;margin:0 0 2px;font-weight:700}
+.hero .deco{position:absolute;inset:0}
+.hero-pause{position:absolute;top:8px;inset-inline-start:8px;z-index:3;background:rgba(0,0,0,.45);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:5px 11px;font-size:12.5px;cursor:pointer}
+body.still .hero *{animation-play-state:paused!important}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition:none!important}
+  .hero .busrun{left:auto;right:8%;animation:none}
+  .hero-pause{display:none}
+}
+.sync{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:12px}
+.sync .on{color:#1b5e30;font-weight:800}.sync .off{color:#8f251c;font-weight:800}
+.kpis{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0 14px 12px}
+.kpis div{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:4px 10px;text-align:center;min-width:70px}
+.kpis dt{font-size:11.5px;color:#565f52}.kpis dd{margin:0;font-weight:900;font-size:17px}
+.kpis .good dd{color:#1b5e30}.kpis .bad dd{color:#8f251c}
+.pst{font-size:12.5px;margin-top:2px}
+.mk{min-height:32px}
+.mk.p.on{background:#1f4f8f;border-color:#1f4f8f;color:#fff}
+.mk.y.on{background:#2c6e3f;border-color:#2c6e3f}
+.danger-t{color:#8f251c}
+.pr.st-boarded{background:#f1f8f3}.pr.st-no_show{background:#fff5f4}
+.side summary{list-style:none;cursor:pointer}
+.side summary::-webkit-details-marker{display:none}
+.side summary::after{content:"▾ הסתר";margin-inline-start:auto;color:#565f52;font-size:12px}
+.side:not([open]) summary::after{content:"◂ הצג"}
+.side-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line)}
+.side-tools select{max-width:100%}
+table.reg tr.grp th{background:#f4f6ef;font-weight:800;color:var(--olive2);font-size:12.5px;text-align:right;padding:7px 8px}
+.gsub{font-weight:600;color:#565f52}
+.muted{color:#5d6659}
+.tst{max-width:min(92vw,520px)}
+@media (max-width:480px){
+  .top-in{flex-wrap:wrap;gap:6px 10px}
+  .who{margin-inline-start:0;width:100%;justify-content:space-between}
+  .logo{font-size:15px}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sc2-top{grid-template-columns:auto minmax(0,1fr)}
+  .sc2-top .seats{grid-column:1/-1;justify-self:start;display:flex;gap:6px;align-items:baseline}
+  .seats b{display:inline}
+  .hello{flex-wrap:wrap}
+}
 @media (max-width:860px){
   .stats{grid-template-columns:repeat(2,1fr)}
   .regions{grid-template-columns:1fr}
@@ -249,9 +343,11 @@ table.reg td.st-ok{color:var(--green);font-weight:800}table.reg td.st-bad{color:
 </style>
 </head>
 <body>
+<a class="skip sr-only" href="#main">דילוג לתוכן</a>
 <div id="app"><div class="loading">טוען…</div></div>
 <div id="modalRoot"></div>
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="srAlert" class="sr-only" role="alert" aria-live="assertive"></div>
 
 <script>
 /* ======================================================================
@@ -314,13 +410,41 @@ function stopSort(sh){ const o = stopOptions(sh); return (a,b)=>((o.indexOf(a.st
 
 /* ---------------- toast / modal ---------------- */
 function toast(msg, kind=""){
-  const el = document.createElement("div"); el.className = "tst "+kind; el.textContent = msg;
-  $("#toast").appendChild(el); setTimeout(()=>el.remove(), kind==="err"?4200:2600);
+  const el = document.createElement("div"); el.className = "tst "+kind; el.textContent = (kind==="err" ? "⚠ " : "") + msg;
+  if (kind==="err") { const a = $("#srAlert"); a.textContent = ""; setTimeout(()=>{ a.textContent = msg; }, 50); el.setAttribute("aria-hidden","true"); }
+  $("#toast").appendChild(el); setTimeout(()=>el.remove(), kind==="err"?6000:3200);
 }
-let modalCancel = null;
-function openModal(html){ $("#modalRoot").innerHTML = `<div class="modal-bg" data-act="mbg"><div class="modal">${html}</div></div>`; const f = $("#modalRoot input:not([type=hidden]),#modalRoot select,#modalRoot textarea"); f && setTimeout(()=>f.focus(), 30); }
-function closeModal(){ $("#modalRoot").innerHTML = ""; if (modalCancel){ const c = modalCancel; modalCancel = null; c(); } }
+let modalCancel = null, modalReturn = null;
+const FOCUSABLE = 'button:not([disabled]),[href],input:not([type=hidden]):not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+function openModal(html){
+  if (!modalOpen()) modalReturn = document.activeElement;
+  html = html.replace("<h3>", '<h3 id="mTitle">');
+  $("#modalRoot").innerHTML = `<div class="modal-bg" data-act="mbg"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" tabindex="-1">${html}</div></div>`;
+  const m = $("#modalRoot .modal");
+  const f = m.querySelector('input:not([type=hidden]),select,textarea') || m.querySelector(FOCUSABLE) || m;
+  setTimeout(()=>f.focus(), 30);
+}
+function closeModal(){
+  $("#modalRoot").innerHTML = "";
+  if (modalCancel){ const c = modalCancel; modalCancel = null; c(); }
+  if (modalReturn && document.contains(modalReturn)) { try { modalReturn.focus(); } catch(e){} }
+  modalReturn = null;
+}
 const modalOpen = () => !!$("#modalRoot").innerHTML;
+document.addEventListener("keydown", e => {
+  if (modalOpen()) {
+    if (e.key === "Escape") { e.preventDefault(); if (!document.querySelector("#modalRoot [aria-busy=true]")) closeModal(); return; }
+    if (e.key === "Tab") {
+      const items = [...$("#modalRoot .modal").querySelectorAll(FOCUSABLE)].filter(x=>x.offsetParent!==null);
+      if (!items.length) return;
+      const first = items[0], last = items[items.length-1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  }
+  const t = e.target;
+  if ((e.key === "Enter" || e.key === " ") && t && t.getAttribute && t.getAttribute("role") === "button" && t.tagName !== "BUTTON") { e.preventDefault(); t.click(); }
+});
 function ask(title, text, ok="אישור", danger=false, pick=null){
   return new Promise(res=>{
     openModal(`<h3>${esc(title)}</h3><div class="muted" style="margin-bottom:18px">${text}</div>
@@ -336,11 +460,12 @@ function ask(title, text, ok="אישור", danger=false, pick=null){
 async function call(fn, args){
   if (!LIVE) { await new Promise(r=>setTimeout(r,120)); return Demo[fn](JSON.parse(JSON.stringify(args||{}))); }
   const base = CONFIG.SUPABASE_URL.replace(/\/$/,"");
-  const r = await fetch(`${base}/rest/v1/rpc/${fn}`, {
+  let r;
+  try { r = await fetch(`${base}/rest/v1/rpc/${fn}`, {
     method:"POST",
     headers: Object.assign({ "Content-Type":"application/json", apikey:CONFIG.SUPABASE_ANON_KEY }, CONFIG.SUPABASE_ANON_KEY.startsWith("sb_") ? {} : { Authorization:"Bearer "+CONFIG.SUPABASE_ANON_KEY }),
     body: JSON.stringify(args||{})
-  });
+  }); } catch(e) { const err = new Error("אין חיבור לשרת. בדוק את החיבור לאינטרנט ונסה שוב."); err.network = true; throw err; }
   const txt = await r.text(); let d = null; try{ d = txt ? JSON.parse(txt) : null; }catch(e){}
   if (!r.ok) throw new Error((d && (d.message || d.hint)) || "שגיאת שרת");
   return d;
@@ -348,7 +473,7 @@ async function call(fn, args){
 
 /* ---------------- Demo backend (mirrors schema.sql) ---------------- */
 const Demo = (() => {
-  const KEY = "s820_demo_v3"; let S = null;
+  const KEY = "s820_demo_v5"; let S = null;
   const uid = () => Math.random().toString(36).slice(2,9) + Math.random().toString(36).slice(2,6);
   const fail = m => { throw new Error(m); };
   const nowISO = () => new Date().toISOString();
@@ -411,7 +536,7 @@ const Demo = (() => {
     // demo soldier: registered to s3 (cancellable) and s8 (<24h)
     add("s3", [soldiers[0]]); add("s8", [soldiers[0]]);
     // yesterday: arrived + 2 no-shows
-    add("s7", mz.slice(4,24), "arrived");
+    add("s7", mz.slice(4,22), "boarded"); add("s7", mz.slice(22,24), "at_pickup");
     add("s7", [soldiers[1], mz[60]], "no_show");
     const S0 = {staff, soldiers, shuttles, registrations:regs};
     const note = `נרשמת לשאטל "ת"א מרכז ← בסיס" ב-${fmtDM(at(-1,6,15))} 06:15 ולא הגעת.`;
@@ -471,12 +596,14 @@ const Demo = (() => {
       const s = sAuth(p_tz,p_phone);
       if (s.blocked) fail("ההרשמה שלך חסומה עד להסדרת אי-הגעה קודמת");
       const sh = S.shuttles.find(x=>x.id===p_shuttle_id); if (!sh) fail("השאטל לא נמצא");
+      const ex = S.registrations.find(r=>r.shuttle_id===sh.id && r.tz===s.tz && active(r));
+      if (ex) return {ok:true, already:true, reg_id:ex.id, stop:ex.stop, depart_at:sh.depart_at, route:sh.route};
       if (sh.region!==s.region) fail("ניתן להירשם רק לשאטלים של המרחב שלך");
       if (new Date(sh.depart_at)<=new Date()) fail("השאטל כבר יצא");
-      if (S.registrations.some(r=>r.shuttle_id===sh.id && r.tz===s.tz && active(r))) fail("כבר נרשמת לשאטל הזה");
-      const opts = (sh.stops&&sh.stops.length) ? stopOptions(sh) : []; if (opts.length && !opts.includes(p_stop)) fail("יש לבחור תחנה"); if (!opts.length) p_stop = sh.gather_place || null;
-      if (takenOf(sh.id)>=sh.capacity) fail("השאטל מלא");
-      S.registrations.push({id:uid(),shuttle_id:sh.id,tz:s.tz,status:"registered",resolved:false,stop:p_stop||null,created_at:nowISO()}); save(); return {ok:true};
+      const opts = (sh.stops&&sh.stops.length) ? stopOptions(sh) : []; if (opts.length && !opts.includes(p_stop)) fail("יש לבחור תחנת עלייה"); if (!opts.length) p_stop = sh.gather_place || null;
+      if (takenOf(sh.id)>=sh.capacity) fail("השאטל מלא — אין מקומות פנויים");
+      const nr = {id:uid(),shuttle_id:sh.id,tz:s.tz,status:"registered",resolved:false,stop:p_stop||null,created_at:nowISO()};
+      S.registrations.push(nr); save(); return {ok:true, already:false, reg_id:nr.id, stop:nr.stop, depart_at:sh.depart_at, route:sh.route};
     },
     soldier_cancel({p_tz,p_phone,p_reg_id}){
       const s = sAuth(p_tz,p_phone); const r = S.registrations.find(x=>x.id===p_reg_id && x.tz===s.tz);
@@ -495,7 +622,8 @@ const Demo = (() => {
         staff: S.staff.filter(s=>me.role==="admin" || (me.role==="region" && s.region===me.region) || s.id===me.id).map(pub),
         shuttles: S.shuttles.filter(sh=>new Date(sh.depart_at).getTime()>lim && seesShuttle(me,sh)).sort(byDep).map(staffShuttle),
         blocked: me.role==="commander" ? [] : S.soldiers.filter(so=>so.blocked && (me.role==="admin" || so.region===me.region)).map(so=>({tz:so.tz,first_name:so.first_name,last_name:so.last_name,phone:so.phone,region:so.region,block_note:so.block_note,appeal:so.appeal})),
-        contacts: S.staff.filter(s=>s.role==="region").map(s=>({region:s.region,full_name:s.full_name,phone:s.phone}))
+        server_time: nowISO(),
+        contacts: me.role==="admin" ? S.staff.filter(s=>s.role==="region").map(s=>({region:s.region,full_name:s.full_name,phone:s.phone})) : []
       };
     },
     staff_save_shuttle({p_phone,p_pin,p_id,p_region,p_route,p_depart_at,p_capacity,p_commander_id,p_notes,p_gather_place,p_stops,p_release_place,p_release_time}){
@@ -517,7 +645,7 @@ const Demo = (() => {
     },
     staff_mark({p_phone,p_pin,p_reg_id,p_status}){
       const me = tAuth(p_phone,p_pin);
-      if (!["registered","arrived","no_show"].includes(p_status)) fail("סטטוס לא חוקי");
+      if (!["registered","at_pickup","boarded","no_show","arrived"].includes(p_status)) fail("סטטוס לא חוקי");
       const r = S.registrations.find(x=>x.id===p_reg_id); if (!r || r.status==="cancelled") fail("הרישום לא נמצא");
       const sh = S.shuttles.find(x=>x.id===r.shuttle_id); if (!seesShuttle(me, sh)) fail("אין הרשאה");
       r.status = p_status; r.resolved = false;
@@ -569,9 +697,14 @@ let data = null;
 const ui = { loginTab:"soldier", signup:null, tab:null, region:"all", past:false, open:{}, day:null, pickRegion: store.get("s820_region") };
 
 const cred = () => session.type==="soldier" ? {p_tz:session.tz, p_phone:session.phone} : {p_phone:session.phone, p_pin:session.pin};
+const net = { last:null, ok:true };
 async function load(){
-  data = session.type==="soldier" ? await call("soldier_home", cred()) : await call("staff_data", cred());
+  try {
+    data = session.type==="soldier" ? await call("soldier_home", cred()) : await call("staff_data", cred());
+    net.last = new Date(); net.ok = true;
+  } catch(e) { if (e.network) net.ok = false; throw e; }
 }
+const clock = d => d ? pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds()) : "—";
 async function reload(){ await load(); render(); }
 async function startSession(s){
   session = s; store.set(SKEY, s);
@@ -596,9 +729,9 @@ function topBar(){
   if (session.type==="soldier") { nm = data.soldier.first_name+" "+data.soldier.last_name; role = "חייל · מרחב "+data.soldier.region; }
   else { nm = data.me.full_name; role = ROLE_LABEL[data.me.role] + (data.me.region ? " · "+data.me.region : ""); }
   return `<div class="top"><div class="top-in">
-    <div class="logo">${busSvg("#e8a820",28)} מערך שאטלים <span class="n">820</span></div>
+    <div class="logo"><span aria-hidden="true">${busSvg("#e8a820",28)}</span> מערך שאטלים <span class="n">820</span></div>
     <div class="who"><div><b class="nmx">${esc(nm)}</b> <span class="role">${esc(role)}</span></div>
-      <button class="iconbtn" data-act="refresh" title="רענון">⟳</button>
+      <button class="iconbtn" data-act="refresh" aria-label="רענון נתונים">⟳ רענון</button>
       <button class="iconbtn" data-act="logout">יציאה</button></div>
   </div></div>`;
 }
@@ -621,10 +754,11 @@ function bigBus(){
 }
 function heroHTML(){
   return `<div class="hero">
-    <div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div>
-    <div class="hills"></div><div class="road"><div class="dash"></div></div>
-    <div class="busrun">${bigBus()}</div>
-    <div class="hero-txt"><div class="hero-logo">${busSvg("#e8a820",18)} מערך שאטלים <b>820</b></div>
+    <div class="deco" aria-hidden="true"><div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div>
+    <div class="hills"></div><div class="road"><div class="dash"></div></div></div>
+    <div class="busrun" aria-hidden="true">${bigBus()}</div>
+    <button class="hero-pause" data-act="toggleMotion" aria-pressed="${document.body.classList.contains("still")}">${document.body.classList.contains("still")?"▶ הפעלת אנימציה":"⏸ עצירת אנימציה"}</button>
+    <div class="hero-txt"><div class="hero-logo"><span aria-hidden="true">${busSvg("#e8a820",18)}</span> מערך שאטלים <b>820</b></div>
       <h1>ברוך הבא!</h1><p>נשמח לעמוד לשירותך ולהביא אותך בזמן 🚌</p></div>
   </div>`;
 }
@@ -635,7 +769,7 @@ function loginView(){
   const t = ui.loginTab;
   let body;
   if (t==="staff") {
-    body = `<div class="step-t">כניסת צוות ומפקדים</div><div class="small muted" style="margin-bottom:14px">אנשי קשר מרחב ומפקדי נסיעה — הקוד מתקבל ממנהל המערך</div>
+    body = `<h2 class="step-t">כניסת צוות ומפקדים</h2><div class="small muted" style="margin-bottom:14px">אנשי קשר מרחב ומפקדי נסיעה — הקוד מתקבל ממנהל המערך</div>
     <form data-form="staffLogin">
       <label class="f"><span>מספר טלפון</span><input class="in" name="phone" inputmode="tel" dir="ltr" required placeholder="05XXXXXXXX"></label>
       <label class="f"><span>קוד כניסה</span><input class="in" name="pin" type="password" dir="ltr" required></label>
@@ -643,13 +777,13 @@ function loginView(){
     </form>
     <div class="staff-link"><button class="lnk" data-act="ltab" data-v="soldier">← חזרה לכניסת חיילים</button></div>`;
   } else if (!ui.pickRegion) {
-    body = `<div class="step-t">מאיזה מרחב אתה?</div><div class="small muted">בחר את המרחב שממנו אתה נוסע לשאטלים</div>
+    body = `<p class="stepno">שלב 1 מתוך 4</p><h2 class="step-t">מאיזה מרחב אתה?</h2><div class="small muted">בחר את המרחב שממנו אתה נוסע לשאטלים</div>
       ${regionTiles("pickRegion", null)}
       <div class="staff-link"><button class="lnk small" data-act="ltab" data-v="staff">כניסת צוות ומפקדים</button></div>`;
   } else {
-    const picked = `<div class="picked"><span>${REGION_ICON[ui.pickRegion]||"📍"} מרחב <b>${esc(ui.pickRegion)}</b></span><button class="lnk small" data-act="unpickRegion">שינוי</button></div>`;
+    const picked = `<div class="picked"><span>${REGION_ICON[ui.pickRegion]||"📍"} מרחב <b>${esc(ui.pickRegion)}</b></span><button class="lnk small" data-act="unpickRegion" aria-label="שינוי מרחב">שינוי</button></div>`;
     if (ui.signup) {
-      body = picked + `<div class="step-t">נעים להכיר!</div><div class="small muted" style="margin-bottom:12px">ת"ז ${esc(ui.signup.tz)} נכנסת בפעם הראשונה. רק שם, ואתה בפנים:</div>
+      body = picked + `<h2 class="step-t">נעים להכיר!</h2><div class="small muted" style="margin-bottom:12px">ת"ז ${esc(ui.signup.tz)} נכנסת בפעם הראשונה. רק שם, ואתה בפנים:</div>
       <form data-form="signup">
         <div class="grid2">
           <label class="f"><span>שם פרטי</span><input class="in" name="first" required autocomplete="given-name"></label>
@@ -659,7 +793,7 @@ function loginView(){
         <div style="text-align:center;margin-top:10px"><button type="button" class="lnk" data-act="unsignup">חזרה</button></div>
       </form>`;
     } else {
-      body = picked + `<div class="step-t">כניסה</div>
+      body = picked + `<h2 class="step-t">כניסה</h2>
       <form data-form="soldierLogin" style="margin-top:10px">
         <label class="f"><span>תעודת זהות</span><input class="in" name="tz" inputmode="numeric" dir="ltr" required placeholder="9 ספרות"></label>
         <label class="f"><span>מספר טלפון</span><input class="in" name="phone" inputmode="tel" dir="ltr" required placeholder="05XXXXXXXX" autocomplete="tel"></label>
@@ -677,7 +811,7 @@ function loginView(){
       <button class="btn ghost sm" data-act="demo" data-v="blocked">⛔ חייל שלא הגיע</button>
       <button class="btn ghost sm" data-act="demoReset">↺ איפוס נתוני הדגמה</button>
     </div></div>`;
-  return heroHTML() + `<div style="padding:0 14px 50px"><div class="card login-card">${body}</div>${demo}</div>`;
+  return `<main id="main">` + heroHTML() + `<div style="padding:0 14px 50px"><div class="card login-card">${body}</div>${demo}</div></main>`;
 }
 
 /* ---------- days ---------- */
@@ -687,6 +821,15 @@ function shortDay(iso){
   const diff = Math.round((dd - t)/86400000);
   return diff===0 ? "היום" : diff===1 ? "מחר" : diff===-1 ? "אתמול" : WD[d.getDay()];
 }
+function fullDate(iso){ const d = new Date(iso); return pad(d.getDate())+"/"+pad(d.getMonth()+1)+"/"+d.getFullYear(); }
+function keyDate(k){ const [y,m,d] = k.split("-").map(Number); return new Date(y, m-1, d, 12); }
+function longDay(isoOrKey){
+  const d = isoOrKey.length===10 ? keyDate(isoOrKey) : new Date(isoOrKey);
+  const sd = shortDay(d.toISOString());
+  return (sd==="היום"||sd==="מחר"||sd==="אתמול" ? sd+", יום "+WD[d.getDay()] : "יום "+WD[d.getDay()]) + " " + fullDate(d.toISOString());
+}
+const ST_LABEL = {registered:"שמר מקום", at_pickup:"בנקודת האיסוף", boarded:"עלה לשאטל", no_show:"לא הגיע", arrived:"סומן 'הגיע' (סימון ישן)"};
+const freeSeats = sh => Math.max(0, sh.capacity - sh.taken);
 function dayKeys(list){ return [...new Set(list.map(s=>dayKey(s.depart_at)))]; }
 function pickDay(list){
   const keys = dayKeys(list);
@@ -698,9 +841,10 @@ function pickDay(list){
   return ui.day;
 }
 function dayChipsHTML(list, sel, markDays){
-  return `<div class="days">${dayKeys(list).map(k=>{
+  return `<div class="days" role="group" aria-label="בחירת יום" id="dayChips">${dayKeys(list).map(k=>{
     const day = list.filter(x=>dayKey(x.depart_at)===k);
-    return `<button class="dchip ${k===sel?"on":""}" data-act="day" data-v="${k}"><span class="dw">${shortDay(day[0].depart_at)}</span><span class="dd">${fmtDM(day[0].depart_at)}</span><span class="dn">${day.length} שאטלים</span>${markDays&&markDays.has(k)?`<i class="dot" title="אתה רשום ביום הזה"></i>`:""}</button>`;
+    const mine = markDays && markDays.has(k);
+    return `<button class="dchip ${k===sel?"on":""}" data-act="day" data-v="${k}" aria-pressed="${k===sel}" aria-label="${longDay(k)}, ${day.length} שאטלים${mine?", יש לך מקום שמור ביום הזה":""}"><span class="dw">${shortDay(day[0].depart_at)}</span><span class="dd">${fullDate(day[0].depart_at)}</span><span class="dn">${day.length} שאטלים</span>${mine?`<span class="dot" aria-hidden="true">●</span>`:""}</button>`;
   }).join("")}</div>`;
 }
 function bucketOf(iso){ const h = new Date(iso).getHours(); return h < 12 ? 0 : h < 17 ? 1 : 2; }
@@ -716,13 +860,33 @@ function bucketed(list, cardFn){
 }
 
 /* ---------- soldier ---------- */
+function stepsHTML(cur){
+  const s = data.soldier;
+  const items = [
+    ["מרחב", s.region, "changeRegion"],
+    ["יום ותאריך", ui.day ? WD[keyDate(ui.day).getDay()]+" "+fullDate(keyDate(ui.day).toISOString()) : "", "focusDays"],
+    ["שאטל ותחנת עלייה", cur>=4 && ui.pending ? fmtTime(ui.pending.depart_at)+" · "+ui.pending.route : "", null],
+    ["אישור", "", null]
+  ];
+  return `<nav aria-label="שלבי שמירת מקום"><ol class="steps">${items.map(([t,v,act],i)=>{
+    const n = i+1, st = n<cur ? "done" : n===cur ? "cur" : "todo";
+    return `<li class="${st}" ${n===cur?'aria-current="step"':""}><span class="sn" aria-hidden="true">${n<cur?"✓":n}</span><span class="st"><span class="sl">${t}</span>${v?`<b class="sv">${esc(v)}</b>`:""}</span>${act&&n<cur?`<button class="lnk tiny" data-act="${act}" aria-label="שינוי ${t}">שינוי</button>`:""}</li>`;
+  }).join("")}</ol></nav>`;
+}
 function soldierView(){
   const s = data.soldier, c = data.contact;
-  let h = `<main class="wrap narrow">
-    <div class="hello"><div><div class="muted small">שלום,</div><h2>${esc(s.first_name)} ${esc(s.last_name)}</h2></div><button class="chip region regchip" data-act="changeRegion" title="החלפת מרחב">${REGION_ICON[s.region]||"📍"} מרחב ${esc(s.region)} ⇄</button></div>`;
+  const now = Date.now();
+  const myTrips = data.shuttles.filter(x=>x.mine && x.mine.status!=="cancelled" && new Date(x.depart_at).getTime() > now - 6*3600e3);
+  if (!ui.sview) ui.sview = "book";
+  let h = `<main class="wrap narrow" id="main">
+    <div class="hello"><div><div class="muted small">שלום,</div><h1 class="h2">${esc(s.first_name)} ${esc(s.last_name)}</h1></div></div>
+    <div class="seg sview" role="group" aria-label="תצוגה">
+      <button data-act="sview" data-v="book" aria-pressed="${ui.sview==="book"}" class="${ui.sview==="book"?"on":""}">שמירת מקום</button>
+      <button data-act="sview" data-v="mine" aria-pressed="${ui.sview==="mine"}" class="${ui.sview==="mine"?"on":""}">הנסיעות שלי${myTrips.length?` (${myTrips.length})`:""}</button>
+    </div>`;
   if (s.blocked) {
-    h += `<div class="alert red">
-      <h3>⛔ ההרשמה שלך לשאטלים חסומה</h3>
+    h += `<div class="alert red" role="region" aria-label="הרשמה חסומה">
+      <h2 class="h3">⛔ ההרשמה שלך לשאטלים חסומה</h2>
       <p>${esc(s.block_note || "נרשמת לשאטל ולא הגעת.")}</p>
       <p>כדי להשתחרר מהחסימה יש להסדיר את הנושא מול איש הקשר במרחב${c ? `: <b>${esc(c.full_name)}</b> · ${telLink(c.phone)}` : "."}</p>
       ${s.appeal
@@ -730,21 +894,44 @@ function soldierView(){
         : appealForm("")}
     </div>`;
   }
-  const list = data.shuttles;
-  const now = Date.now();
-  const mine = list.filter(x=>x.mine && x.mine.status==="registered" && new Date(x.depart_at).getTime() > now);
-  if (mine.length) {
-    h += `<div class="section-title" style="margin-top:6px">ההרשמות שלי</div><div class="mine-strip">${mine.map(x=>`<div class="mine-it" data-act="day" data-v="${dayKey(x.depart_at)}"><b>${shortDay(x.depart_at)} ${fmtTime(x.depart_at)}</b> · ${esc(x.route)}${x.mine.stop?` · 📍${esc(x.mine.stop)}`:""}</div>`).join("")}</div>`;
-  }
-  if (!list.length) return h + `<div class="card empty">אין כרגע שאטלים פתוחים במרחב ${esc(s.region)}</div></main>`;
+  if (ui.sview === "mine") return h + myTripsHTML(myTrips) + `</main>`;
+  const list = data.shuttles.filter(x=>new Date(x.depart_at).getTime() > now);
+  if (!list.length) return h + stepsHTML(2) + `<div class="card empty">אין כרגע שאטלים פתוחים במרחב ${esc(s.region)}. <button class="lnk" data-act="changeRegion">החלפת מרחב</button></div></main>`;
   const sel = pickDay(list);
-  const markDays = new Set(list.filter(x=>x.mine).map(x=>dayKey(x.depart_at)));
-  h += `<div class="section-title" style="margin-top:10px">בחר יום</div>` + dayChipsHTML(list, sel, markDays);
+  h += stepsHTML(3);
+  const markDays = new Set(list.filter(x=>x.mine && x.mine.status!=="cancelled").map(x=>dayKey(x.depart_at)));
+  h += `<h2 class="section-title" id="daysTitle">בחר יום</h2>` + dayChipsHTML(list, sel, markDays);
   const dayList = list.filter(x=>dayKey(x.depart_at)===sel);
-  h += `<div class="day" style="margin-top:6px">${dayLabel(dayList[0].depart_at)}</div>`;
+  h += `<div class="dayhead"><h2 class="day" style="margin:0">${longDay(sel)}</h2><span class="tiny muted">מקומות פנויים נכון ל-${clock(net.last)}</span></div>`;
   h += bucketed(dayList, x=>soldierCard(x, s.blocked));
-  h += `<div class="rules" style="margin-top:16px">🕐 ביטול הגעה אפשרי עד <b>24 שעות</b> לפני היציאה &nbsp;·&nbsp; ⚠️ נרשמת ולא הגעת? ההרשמה לשאטלים נחסמת עד להסדרה</div>`;
+  h += `<p class="rules" style="margin-top:16px">🕐 ביטול אפשרי עד <b>24 שעות</b> לפני היציאה, דרך "הנסיעות שלי". ⚠️ שמרת מקום ולא הגעת? ההרשמה לשאטלים נחסמת עד להסדרה מול איש הקשר.</p>`;
   return h + `</main>`;
+}
+function myStatusHTML(m){
+  const map = {
+    registered:`<span class="mystat ok">✓ המקום שלך שמור</span>`,
+    at_pickup:`<span class="mystat ok">📍 סומנת: הגעת לנקודת האיסוף</span>`,
+    boarded:`<span class="mystat ok">✓ סומנת: עלית לשאטל</span>`,
+    arrived:`<span class="mystat ok">✓ סומנת: הגעת</span>`,
+    no_show:`<span class="mystat bad">✗ סומנת: לא הגעת</span>`
+  };
+  return map[m.status] || "";
+}
+function myTripsHTML(trips){
+  let h = `<h2 class="section-title">הנסיעות שלי</h2>`;
+  if (!trips.length) return h + `<div class="card empty">עוד לא שמרת מקום בשאטל.<br><button class="btn primary" style="margin-top:12px" data-act="sview" data-v="book">לשמירת מקום</button></div>`;
+  const now = Date.now();
+  for (const x of trips.sort((a,b)=>new Date(a.depart_at)-new Date(b.depart_at))) {
+    const dep = new Date(x.depart_at).getTime(), canCancel = x.mine.status==="registered" && dep - now > H24;
+    h += `<article class="card trip" aria-label="נסיעה ${longDay(x.depart_at)} ${fmtTime(x.depart_at)}">
+      <div class="trip-top"><div class="tbig">${fmtTime(x.depart_at)}</div><div><div class="trip-date">${longDay(x.depart_at)}</div><div class="route">${esc(x.gather_place||"")} ← ${esc(x.release_place||"")}</div></div></div>
+      <div class="kv"><span>תחנת עלייה</span><b>${esc(x.mine.stop || x.gather_place || "—")}</b></div>
+      <div class="kv"><span>מצב</span>${myStatusHTML(x.mine)}</div>
+      ${canCancel ? `<button class="btn ghost sm" data-act="cancel" data-id="${esc(x.mine.id)}">ביטול שמירת המקום</button><span class="tiny muted" style="margin-inline-start:8px">אפשר לבטל עד ${fullDate(new Date(dep-H24).toISOString())} ${fmtTime(new Date(dep-H24).toISOString())}</span>`
+        : x.mine.status==="registered" ? `<p class="tiny muted" style="margin:6px 0 0">פחות מ-24 שעות לפני היציאה — לביטול יש לפנות לאיש הקשר במרחב.</p>` : ""}
+    </article>`;
+  }
+  return h;
 }
 function appealForm(v){
   return `<form data-form="appeal" style="margin-top:10px">
@@ -753,27 +940,84 @@ function appealForm(v){
 }
 function soldierCard(sh, blocked){
   const now = Date.now(), dep = new Date(sh.depart_at).getTime();
-  const departed = dep <= now, canCancel = dep - now > H24, full = sh.taken >= sh.capacity, m = sh.mine;
-  let action = "";
-  if (m) {
-    if (m.status==="arrived") action = `<span class="chip ok">✓ הגעת</span>`;
-    else if (m.status==="no_show") action = `<span class="chip bad">לא הגעת</span>`;
-    else if (departed) action = `<span class="chip info">רשום</span>`;
-    else if (canCancel) action = `<span class="chip ok">✓ רשום</span><span class="tiny muted">ביטול עד ${fmtDM(new Date(dep-H24).toISOString())} ${fmtTime(new Date(dep-H24).toISOString())}</span><button class="btn ghost sm" data-act="cancel" data-id="${esc(m.id)}" style="margin-inline-start:auto">ביטול הגעה</button>`;
-    else action = `<span class="chip ok">✓ רשום</span><span class="tiny muted" style="margin-inline-start:auto">פחות מ-24 שעות — לא ניתן לבטל. לבירור: איש הקשר במרחב</span>`;
-  } else if (departed) action = `<span class="chip wait">השאטל יצא</span>`;
-  else if (blocked) action = `<button class="btn ghost sm" disabled style="margin-inline-start:auto">ההרשמה חסומה</button>`;
-  else if (full) action = `<span class="chip full">מלא</span>`;
-  else action = `<button class="btn primary sm" data-act="register" data-id="${esc(sh.id)}" style="margin-inline-start:auto">הרשמה לשאטל</button>`;
-  return `<div class="card sc ${m?"mine":""}">
-    <div class="tbig">${fmtTime(sh.depart_at)}</div>
-    <div><div class="route">${esc(sh.route)}</div>
-      <div class="meta">התייצבות ${fmtTime(sh.depart_at)}${sh.gather_place?" ב"+esc(sh.gather_place):""}${releaseLine(sh)?" · "+releaseLine(sh):""}</div>
-      <div class="meta">${sh.notes ? esc(sh.notes)+" · " : ""}מפקד נסיעה: ${esc(sh.commander_name || "טרם שובץ")}${m&&m.stop?` · התחנה שלך: <b>${esc(m.stop)}</b>`:""}</div>${stopsLine(sh)}</div>
-    <div class="foot"><div class="row" style="flex:1;min-width:150px;gap:8px">${seatBar(sh.taken, sh.capacity)}<span class="seatsn">${sh.taken}/${sh.capacity}</span></div></div>
-    <div class="foot" style="margin-top:6px">${action}</div>
-  </div>`;
+  const departed = dep <= now, free = freeSeats(sh), m = sh.mine && sh.mine.status!=="cancelled" ? sh.mine : null;
+  const orig = sh.gather_place || "", dest = sh.release_place || "";
+  const title = orig && dest ? `${esc(orig)} <span aria-hidden="true">←</span><span class="sr-only">אל</span> ${esc(dest)}` : esc(sh.route);
+  const nStops = (sh.stops||[]).length;
+  const seats = departed ? "" : free===0 ? `<span class="seats full">מלא · אין מקומות</span>` : `<span class="seats ${free<=5?"low":""}"><b>${free}</b> מקומות פנויים</span>`;
+  let action;
+  if (m) action = `<div class="mine-box">${myStatusHTML(m)}<span class="small">עלייה: <b>${esc(m.stop || orig)}</b></span><button class="lnk small" data-act="sview" data-v="mine">לנסיעות שלי</button></div>`;
+  else if (departed) action = `<span class="chip wait">השאטל יצא</span>`;
+  else if (blocked) action = `<button class="btn ghost" disabled>ההרשמה חסומה</button>`;
+  else if (free===0) action = `<button class="btn ghost" disabled>השאטל מלא</button>`;
+  else action = `<button class="btn primary" data-act="register" data-id="${esc(sh.id)}" aria-label="שמור לי מקום בשאטל של ${fmtTime(sh.depart_at)} מ${esc(orig)} אל ${esc(dest)}">שמור לי מקום</button>`;
+  return `<article class="card sc2 ${m?"mine":""}" aria-label="שאטל ${fmtTime(sh.depart_at)} ${esc(orig)} אל ${esc(dest)}">
+    <div class="sc2-top"><div class="tbig">${fmtTime(sh.depart_at)}</div><div class="sc2-main"><div class="route">${title}</div>
+      <div class="board">🚏 עלייה: <b>${esc(orig||"—")}</b>${nStops?` <span class="muted">${nStops===1?"או בתחנה אחת בדרך":`או באחת מ-${nStops} תחנות בדרך`}</span>`:""}</div></div>${seats}</div>
+    <div class="sc2-act">${action}</div>
+    <details class="more"><summary>פרטים נוספים</summary>
+      <dl class="dl">
+        ${nStops?`<dt>תחנות בדרך</dt><dd>${sh.stops.map(esc).join(" · ")}</dd>`:""}
+        ${releaseLine(sh)?`<dt>שחרור</dt><dd>${releaseLine(sh)}</dd>`:""}
+        <dt>מקומות</dt><dd>${sh.taken} שמורים מתוך ${sh.capacity}</dd>
+        <dt>מפקד נסיעה</dt><dd>${esc(sh.commander_name || "טרם שובץ")}</dd>
+        ${sh.notes?`<dt>הערות</dt><dd>${esc(sh.notes)}</dd>`:""}
+      </dl></details>
+  </article>`;
 }
+
+/* ---------- reserve dialog ---------- */
+function reserveDialog(sh, st){
+  const opts = (sh.stops && sh.stops.length) ? stopOptions(sh) : [];
+  const summary = `<dl class="dl sum"><dt>יום ותאריך</dt><dd>${longDay(sh.depart_at)}</dd><dt>שעת התייצבות</dt><dd>${fmtTime(sh.depart_at)}</dd><dt>מסלול</dt><dd>${esc(sh.gather_place||"")} ← ${esc(sh.release_place||"")}</dd>${st.step==="done"?`<dt>תחנת עלייה</dt><dd><b>${esc(st.stop)}</b></dd>`:""}</dl>`;
+  if (st.step === "done") return `<h3>✓ המקום שלך אושר</h3>
+    <p class="okmsg">${st.already ? "כבר היה לך מקום שמור בשאטל הזה — לא נוצרה הרשמה נוספת." : "השרת אישר את שמירת המקום."}</p>${summary}
+    <p class="tiny muted">ביטול אפשרי עד 24 שעות לפני היציאה דרך "הנסיעות שלי".</p>
+    <div class="row end"><button class="btn ghost" data-act="mclose">חזרה לשאטלים</button><button class="btn primary" data-act="goMine">לנסיעות שלי</button></div>`;
+  const busy = st.step === "saving";
+  let stopField;
+  if (opts.length) stopField = `<fieldset class="stopset" ${busy?"disabled":""} aria-describedby="${st.fieldErr?"stopErr":""}"><legend>איפה אתה עולה? <span class="tiny muted">(בנסיעה הביתה — איפה אתה יורד)</span></legend>
+      ${opts.map((o,i)=>`<label class="radio"><input type="radio" name="stop" value="${esc(o)}" ${st.stop===o?"checked":""} ${st.fieldErr&&i===0?'aria-invalid="true"':""}> ${esc(o)}</label>`).join("")}
+      ${st.fieldErr?`<div class="ferr" id="stopErr">⚠ ${esc(st.fieldErr)}</div>`:""}</fieldset>`;
+  else stopField = `<div class="kv"><span>תחנת עלייה</span><b>${esc(sh.gather_place||"—")}</b></div>`;
+  return `<h3>שמירת מקום · אישור</h3>${summary}
+    <form data-form="reserve" data-id="${esc(sh.id)}" ${busy?'aria-busy="true"':""}>
+      ${stopField}
+      ${st.err?`<div class="formerr" role="alert">⚠ ${esc(st.err)}</div>`:""}
+      <p class="tiny muted" style="margin:10px 0">בשמירת מקום אתה מתחייב להגיע. ביטול אפשרי עד 24 שעות לפני היציאה. אי-הגעה חוסמת הרשמה עתידית.</p>
+      <div class="row end">
+        <button type="button" class="btn ghost" data-act="mclose" ${busy?"disabled":""}>חזרה לבחירת שאטל</button>
+        ${st.final ? "" : `<button type="submit" class="btn primary" ${busy?"disabled":""}>${busy?`<span class="spin" aria-hidden="true"></span> שומר את המקום…`:(st.err?"נסה שוב":"שמור לי מקום")}</button>`}
+      </div>
+    </form>`;
+}
+function openReserve(id){
+  const sh = data.shuttles.find(x=>x.id===id); if (!sh) return;
+  ui.pending = sh;
+  ui.rstate = { step:"choose", stop: null };
+  openModal(reserveDialog(sh, ui.rstate));
+}
+async function submitReserve(form){
+  const sh = ui.pending; const st = ui.rstate; if (!sh || st.step==="saving") return;
+  const opts = (sh.stops && sh.stops.length) ? stopOptions(sh) : [];
+  const chosen = form.querySelector('input[name=stop]:checked');
+  st.stop = chosen ? chosen.value : (opts.length ? null : sh.gather_place);
+  if (opts.length && !st.stop) { st.fieldErr = "יש לבחור תחנת עלייה"; st.err = null; redrawReserve(); setTimeout(()=>{ const r = $("#modalRoot input[name=stop]"); r && r.focus(); }, 30); return; }
+  st.fieldErr = null; st.err = null; st.step = "saving"; redrawReserve();
+  try {
+    const res = await call("soldier_register", {...cred(), p_shuttle_id: sh.id, p_stop: st.stop});
+    if (!res || res.ok !== true) throw new Error("השרת לא אישר את שמירת המקום. נסה שוב.");
+    st.step = "done"; st.already = !!res.already; st.stop = res.stop || st.stop;
+    redrawReserve(); toast("המקום שלך אושר: " + longDay(sh.depart_at) + " " + fmtTime(sh.depart_at));
+    try { await load(); render(); } catch(e) {}
+  } catch(e) {
+    st.step = "choose"; st.err = e.message || "שגיאה בשמירת המקום";
+    st.final = /מלא|חסומה|יצא|המרחב/.test(st.err);
+    redrawReserve(); setTimeout(()=>{ const b = $("#modalRoot .formerr"); b && b.setAttribute("tabindex","-1"); b && b.focus(); }, 30);
+    if (st.final) { try { await load(); render(); } catch(_){} }
+  }
+}
+function redrawReserve(){ const m = $("#modalRoot .modal"); if (!m) return; m.innerHTML = reserveDialog(ui.pending, ui.rstate).replace("<h3>", '<h3 id="mTitle">'); if (ui.rstate.step==="done") { const b = m.querySelector('[data-act="goMine"]'); b && b.focus(); } }
 
 /* ---------- staff ---------- */
 function staffView(){
@@ -783,7 +1027,8 @@ function staffView(){
     : [["mine","הנסיעות שלי"]];
   if (!ui.tab || !tabs.some(t=>t[0]===ui.tab)) ui.tab = tabs[0][0];
   const nb = data.blocked.length;
-  let h = `<main class="wrap"><div class="tabs">${tabs.map(([k,l])=>`<button class="tab ${ui.tab===k?"on":""}" data-act="tab" data-v="${k}">${l}${k==="blocked"&&nb?` <span class="badge">${nb}</span>`:""}</button>`).join("")}</div>`;
+  const sync = `<div class="sync"><span class="${net.ok?"on":"off"}">${net.ok?"● מחובר":"⚠ אין חיבור לשרת — מוצגים הנתונים האחרונים שהתקבלו"}</span><span>עודכן לאחרונה: <b>${clock(net.last)}</b></span><span class="muted">רענון אוטומטי כל 30 שניות (לא זמן אמת)</span><button class="lnk small" data-act="refresh">רענון עכשיו</button></div>`;
+  let h = `<main class="wrap" id="main">${sync}<div class="tabs" role="group" aria-label="לשוניות">${tabs.map(([k,l])=>`<button class="tab ${ui.tab===k?"on":""}" data-act="tab" data-v="${k}" aria-pressed="${ui.tab===k}">${l}${k==="blocked"&&nb?` <span class="badge">${nb}</span>`:""}</button>`).join("")}</div>`;
   if (ui.tab==="overview") h += overviewView();
   else if (ui.tab==="shuttles") h += shuttlesView();
   else if (ui.tab==="blocked") h += blockedView();
@@ -817,11 +1062,11 @@ function overviewView(){
     if (!list.length) h += `<div class="small muted" style="padding:8px 2px">אין שאטלים מתוכננים</div>`;
     for (const s of list) {
       const full = s.taken >= s.capacity;
-      h += `<div class="mini ${full?"isfull":""}" data-act="openShuttle" data-id="${esc(s.id)}">
+      h += `<div class="mini ${full?"isfull":""}" data-act="openShuttle" data-id="${esc(s.id)}" role="button" tabindex="0" aria-label="שאטל ${fmtTime(s.depart_at)} ${esc(s.route)}, ${s.taken} מתוך ${s.capacity} שמורים">
         <div class="tm">${fmtTime(s.depart_at)}</div>
         <div><b>${esc(s.route)}</b></div>
         <div class="row" style="gap:6px">${full?`<span class="chip full">מלא</span>`:""}<span class="seatsn">${s.taken}/${s.capacity}</span></div>
-        <div class="sub">${dayLabel(s.depart_at)} · מפקד: ${esc(s.commander_name||"—")}</div>
+        <div class="sub">${longDay(s.depart_at)} · מפקד: ${esc(s.commander_name||"—")}</div>
       </div>`;
     }
     h += `</div>`;
@@ -830,23 +1075,36 @@ function overviewView(){
 }
 
 function sideTable(dayList, title){
-  const total = dayList.reduce((a,s)=>a+s.passengers.length,0);
+  const f = ui.sideShuttle && dayList.some(s=>s.id===ui.sideShuttle) ? ui.sideShuttle : "all";
+  const shown = f==="all" ? dayList : dayList.filter(s=>s.id===f);
+  lastSideList = shown;
+  const total = shown.reduce((a,s)=>a+s.passengers.length,0);
+  const open = ui.sideOpen === undefined ? window.innerWidth > 1000 : ui.sideOpen;
   let rows = "";
-  for (const s of dayList) {
+  for (const s of shown) {
     if (!s.passengers.length) continue;
-    rows += `<tr class="grp"><td colspan="4">${fmtTime(s.depart_at)} · ${esc(s.route)}${data.me.role==="admin"?` · ${esc(s.region)}`:""} <span style="font-weight:600;color:var(--muted)">(${s.taken}/${s.capacity})</span></td></tr>`;
+    const k = shuttleCounts(s);
+    rows += `<tr class="grp"><th scope="rowgroup" colspan="4">${fmtTime(s.depart_at)} · ${esc(s.gather_place||"")} ← ${esc(s.release_place||"")}${data.me.role==="admin"?` · ${esc(s.region)}`:""} <span class="gsub">(${k.reserved}/${k.cap} שמורים · ${k.boarded} עלו)</span></th></tr>`;
     for (const p of s.passengers.slice().sort(stopSort(s))) {
-      const st = p.status==="arrived" ? `<td class="st-ok">✓</td>` : p.status==="no_show" ? `<td class="st-bad">✗</td>` : `<td class="muted">—</td>`;
-      rows += `<tr><td><b>${esc(p.first_name)} ${esc(p.last_name)}</b></td><td>${esc(p.stop||"—")}</td><td dir="ltr" style="text-align:right">${telLink(p.phone)}</td>${st}</tr>`;
+      const cls = p.status==="boarded"||p.status==="arrived" ? "st-ok" : p.status==="no_show" ? "st-bad" : "";
+      rows += `<tr><td><b>${esc(p.first_name)} ${esc(p.last_name)}</b></td><td>${esc(p.stop||"—")}</td><td dir="ltr" style="text-align:right">${telLink(p.phone)}</td><td class="${cls}">${ST_LABEL[p.status]||p.status}</td></tr>`;
     }
   }
-  return `<aside class="card side">
-    <div class="side-h"><h3>📋 ${esc(title)}</h3><span class="chip info">${total} נרשמים</span><div class="grow"></div>${total?`<button class="btn ghost sm" data-act="copyDay">העתק לאקסל</button>`:""}</div>
-    ${total ? `<table class="reg"><thead><tr><th>שם</th><th>תחנה</th><th>טלפון</th><th>הגיע</th></tr></thead><tbody>${rows}</tbody></table>`
-            : `<div class="empty small">עוד אין נרשמים ביום הזה</div>`}
-  </aside>`;
+  return `<details class="card side" data-side ${open?"open":""}>
+    <summary class="side-h"><span class="h3">📋 ${esc(title)}</span><span class="chip info">${total} נרשמים</span></summary>
+    <div class="side-tools">
+      <label class="small">שאטל: <select class="in" data-change="sideShuttle" style="width:auto;padding:6px 8px">
+        <option value="all">כל השאטלים ביום (${dayList.length})</option>
+        ${dayList.map(s=>`<option value="${esc(s.id)}" ${f===s.id?"selected":""}>${fmtTime(s.depart_at)} · ${esc(s.gather_place||"")} ← ${esc(s.release_place||"")} (${s.passengers.length})</option>`).join("")}
+      </select></label>
+      ${total?`<button class="btn ghost sm" data-act="copyDay">העתק לאקסל</button>`:""}
+    </div>
+    ${total ? `<table class="reg"><caption class="sr-only">${esc(title)}</caption><thead><tr><th scope="col">שם</th><th scope="col">תחנה</th><th scope="col">טלפון</th><th scope="col">מצב</th></tr></thead><tbody>${rows}</tbody></table>`
+            : `<p class="empty small">עוד אין נרשמים ${f==="all"?"ביום הזה":"בשאטל הזה"}</p>`}
+  </details>`;
 }
 let lastSideList = [];
+document.addEventListener("toggle", e => { if (e.target.matches && e.target.matches("details[data-side]")) ui.sideOpen = e.target.open; }, true);
 function shuttlesView(){
   const me = data.me, t0 = startOfToday();
   let list = data.shuttles.filter(s => ui.past ? new Date(s.depart_at).getTime() < t0 : new Date(s.depart_at).getTime() >= t0);
@@ -869,7 +1127,7 @@ function shuttlesView(){
 function commanderView(){
   const now = Date.now();
   const list = data.shuttles.filter(s=>new Date(s.depart_at).getTime() > now - 3*86400e3).sort((a,b)=>new Date(a.depart_at)-new Date(b.depart_at));
-  let h = `<div class="rules" style="margin-bottom:14px">סמן לכל חייל <b>הגיע</b> או <b>לא הגיע</b> בזמן העלייה לאוטובוס. חייל שסומן "לא הגיע" נחסם להרשמה עד שאיש הקשר במרחב משחרר אותו.</div>`;
+  let h = `<p class="rules" style="margin-bottom:14px">לכל נוסע סמן: <b>📍 בנקודת האיסוף</b> כשהגיע לתחנה, <b>✓ עלה לשאטל</b> כשעלה בפועל, או <b>✗ לא הגיע</b>. נוסע שסומן "לא הגיע" נחסם להרשמה עד שאיש הקשר במרחב משחרר אותו.</p>`;
   if (!list.length) return h + `<div class="card empty">לא שובצת כמפקד נסיעה לשאטל קרוב</div>`;
   const sel = pickDay(list);
   h += dayChipsHTML(list, sel);
@@ -878,48 +1136,61 @@ function commanderView(){
   return h + `<div class="split"><div>${dayList.map(x=>staffShuttleCard(x, ui.open[x.id] !== false)).join("")}</div>${sideTable(dayList, "הנוסעים שלי · "+shortDay(dayList[0].depart_at)+" "+fmtDM(dayList[0].depart_at))}</div>`;
 }
 
+function shuttleCounts(s){
+  const c = (st) => s.passengers.filter(p=>p.status===st).length;
+  return { cap:s.capacity, reserved:s.passengers.length, free:Math.max(0,s.capacity-s.passengers.length), pickup:c("at_pickup"), boarded:c("boarded"), legacy:c("arrived"), noshow:c("no_show"), waiting:c("registered") };
+}
 function staffShuttleCard(s, open){
-  const full = s.taken >= s.capacity;
-  const a = countBy(s,"arrived"), n = countBy(s,"no_show"), w = countBy(s,"registered");
-  let h = `<div class="card shc" id="sh-${esc(s.id)}">
-    <div class="shc-h" data-act="toggle" data-id="${esc(s.id)}">
+  const k = shuttleCounts(s);
+  const panelId = "shb-"+s.id;
+  let h = `<article class="card shc" id="sh-${esc(s.id)}">
+    <div class="shc-h" data-act="toggle" data-id="${esc(s.id)}" role="button" tabindex="0" aria-expanded="${open}" aria-controls="${panelId}">
       <div class="tbig">${fmtTime(s.depart_at)}</div>
-      <div><div class="route">${esc(s.route)} ${data.me.role==="admin"?`<span class="chip region" style="font-size:11.5px">${esc(s.region)}</span>`:""}</div>
-        <div class="meta">התייצבות ${fmtTime(s.depart_at)}${s.gather_place?" ב"+esc(s.gather_place):""}${releaseLine(s)?" · "+releaseLine(s):""}</div>
-        <div class="meta">${s.notes?esc(s.notes)+" · ":""}מפקד נסיעה: ${esc(s.commander_name||"טרם שובץ")}${n?` · <b style="color:var(--red)">${n} לא הגיעו</b>`:""}</div>${stopsLine(s)}</div>
-      <div class="seatbox"><div class="row"><span class="seatsn">${s.taken}/${s.capacity} רשומים</span>${full?`<span class="chip full">מלא</span>`:""}</div>${seatBar(s.taken,s.capacity)}</div>
-    </div>`;
+      <div><div class="route">${esc(s.gather_place||"")} ← ${esc(s.release_place||s.route)} ${data.me.role==="admin"?`<span class="chip region" style="font-size:11.5px">${esc(s.region)}</span>`:""}</div>
+        <div class="meta">${releaseLine(s)||""}${s.notes?" · "+esc(s.notes):""} · מפקד נסיעה: ${esc(s.commander_name||"טרם שובץ")}</div>${stopsLine(s)}</div>
+      <div class="seatbox"><div class="row"><span class="seatsn">${k.reserved}/${k.cap} שמורים</span>${k.free===0?`<span class="chip full">מלא</span>`:""}</div>${seatBar(k.reserved,k.cap)}</div>
+    </div>
+    <dl class="kpis" aria-label="מצב השאטל">
+      <div><dt>קיבולת</dt><dd>${k.cap}</dd></div>
+      <div><dt>שמרו מקום</dt><dd>${k.reserved}</dd></div>
+      <div><dt>פנויים</dt><dd>${k.free}</dd></div>
+      <div><dt>בנקודת האיסוף</dt><dd>${k.pickup}</dd></div>
+      <div class="good"><dt>עלו לשאטל</dt><dd>${k.boarded}</dd></div>
+      <div class="${k.noshow?"bad":""}"><dt>לא הגיעו</dt><dd>${k.noshow}</dd></div>
+      ${k.legacy?`<div><dt>סימון ישן "הגיע"</dt><dd>${k.legacy}</dd></div>`:""}
+    </dl>`;
   if (open) {
-    h += `<div class="shc-b">
+    h += `<div class="shc-b" id="${panelId}">
       <div class="row between" style="margin-bottom:10px">
-        <div class="counts"><span class="chip wait">טרם סומנו ${w}</span><span class="chip ok">הגיעו ${a}</span><span class="chip bad">לא הגיעו ${n}</span></div>
+        <p class="tiny muted" style="margin:0">לכל נוסע: <b>בנקודת האיסוף</b> = הגיע לתחנה · <b>עלה לשאטל</b> = עלה בפועל · לחיצה שנייה מחזירה ל"שמר מקום"</p>
         ${canManage() ? `<div class="row" style="gap:6px">
           <button class="btn ghost sm" data-act="editShuttle" data-id="${esc(s.id)}">עריכה</button>
           <button class="btn ghost sm" data-act="dupShuttle" data-id="${esc(s.id)}">שכפול לשבוע הבא</button>
           <button class="btn ghost sm" data-act="copyList" data-id="${esc(s.id)}">העתק רשימה</button>
-          <button class="btn ghost sm" data-act="delShuttle" data-id="${esc(s.id)}" style="color:var(--red)">מחיקה</button></div>`
+          <button class="btn ghost sm danger-t" data-act="delShuttle" data-id="${esc(s.id)}">מחיקה</button></div>`
           : `<button class="btn ghost sm" data-act="copyList" data-id="${esc(s.id)}">העתק רשימה</button>`}
       </div>`;
-    if (!s.passengers.length) h += `<div class="small muted" style="padding:6px 2px">אין עדיין נרשמים</div>`;
+    if (!s.passengers.length) h += `<p class="small muted" style="padding:6px 2px">אין עדיין נרשמים</p>`;
     else {
       h += `<ul class="pl">`;
       let lastStop = null;
       s.passengers.slice().sort(stopSort(s)).forEach((p,i)=>{
         if (stopOptions(s).length && p.stop !== lastStop) { lastStop = p.stop; h += `<li class="stopgrp">📍 ${esc(p.stop||"ללא תחנה")} · ${s.passengers.filter(x=>x.stop===p.stop).length}</li>`; }
-        h += `<li class="pr ${p.status==="no_show"?"ns":""}">
+        const nm = esc(p.first_name+" "+p.last_name);
+        const b = (st, cls, label) => `<button class="mk ${cls} ${p.status===st?"on":""}" data-act="mark" data-reg="${esc(p.reg_id)}" data-st="${st}" data-cur="${p.status}" aria-pressed="${p.status===st}">${label}</button>`;
+        h += `<li class="pr st-${p.status}">
           <div class="idx">${i+1}</div>
-          <div><div class="nm">${esc(p.first_name)} ${esc(p.last_name)}</div><div class="ph">${telLink(p.phone)} · ת"ז ${esc(p.tz)}</div></div>
-          <div class="acts">
-            <button class="mk y ${p.status==="arrived"?"on":""}" data-act="mark" data-reg="${esc(p.reg_id)}" data-st="arrived" data-cur="${p.status}">✓ הגיע</button>
-            <button class="mk n ${p.status==="no_show"?"on":""}" data-act="mark" data-reg="${esc(p.reg_id)}" data-st="no_show" data-cur="${p.status}">✗ לא הגיע</button>
-            ${canManage()?`<button class="mk x" title="הסרה מהשאטל" data-act="removeReg" data-reg="${esc(p.reg_id)}" data-name="${esc(p.first_name+" "+p.last_name)}">הסר</button>`:""}
+          <div><div class="nm">${nm}</div><div class="ph">${telLink(p.phone)} · ת"ז ${esc(p.tz)}</div><div class="pst">מצב: <b>${ST_LABEL[p.status]||p.status}</b></div></div>
+          <div class="acts" role="group" aria-label="סימון מצב עבור ${nm}">
+            ${b("at_pickup","p","📍 בנקודת האיסוף")}${b("boarded","y","✓ עלה לשאטל")}${b("no_show","n","✗ לא הגיע")}
+            ${canManage()?`<button class="mk x" data-act="removeReg" data-reg="${esc(p.reg_id)}" data-name="${nm}" aria-label="הסרת ${nm} מהשאטל">הסר</button>`:""}
           </div></li>`;
       });
       h += `</ul>`;
     }
     h += `</div>`;
   }
-  return h + `</div>`;
+  return h + `</article>`;
 }
 
 function blockedView(){
@@ -1038,7 +1309,7 @@ document.addEventListener("click", async e => {
       case "copyDay": {
         const lines = ["שעה\tמסלול\tשם\tטלפון\tתחנה\tסטטוס"];
         for (const s of lastSideList) for (const p of s.passengers.slice().sort(stopSort(s)))
-          lines.push([fmtTime(s.depart_at), s.route, p.first_name+" "+p.last_name, p.phone, p.stop||"", p.status==="arrived"?"הגיע":p.status==="no_show"?"לא הגיע":"רשום"].join("\t"));
+          lines.push([fmtTime(s.depart_at), s.route, p.first_name+" "+p.last_name, p.phone, p.stop||"", ST_LABEL[p.status]||p.status].join("\t"));
         const txt = lines.join("\n");
         try { await navigator.clipboard.writeText(txt); toast("הטבלה הועתקה — אפשר להדביק באקסל"); }
         catch(err){ openModal(`<h3>טבלת נרשמים</h3><textarea class="in" style="min-height:260px" readonly>${esc(txt)}</textarea><div class="row end" style="margin-top:10px"><button class="btn ghost" data-act="mclose">סגירה</button></div>`); }
@@ -1060,18 +1331,14 @@ document.addEventListener("click", async e => {
         setTimeout(()=>{ const n = document.getElementById("sh-"+id); n && n.scrollIntoView({behavior:"smooth",block:"start"}); }, 30);
         break;
       }
-      case "register": {
-        const s = data.shuttles.find(x=>x.id===id);
-        const opts = (s.stops && s.stops.length) ? stopOptions(s) : [];
-        const ok = await ask("הרשמה לשאטל", `<b>${esc(s.route)}</b><br>${dayLabel(s.depart_at)} · התייצבות ${fmtTime(s.depart_at)}${s.gather_place?" ב"+esc(s.gather_place):""}${releaseLine(s)?"<br>"+releaseLine(s):""}
-          ${opts.length?`<label class="f" style="margin-top:14px"><span>מאיזו תחנה אתה עולה? (בנסיעה הביתה — איפה אתה יורד)</span><span class="tiny muted" style="font-weight:400">המקום שלך באוטובוס נשמר מהתחנה שבחרת</span><select class="in" id="stopSel"><option value="">בחר תחנה…</option>${opts.map(o=>`<option>${esc(o)}</option>`).join("")}</select></label>`:"<br><br>"}
-          בהרשמה אתה מתחייב להגיע. ביטול אפשרי עד 24 שעות לפני היציאה. <b>אי-הגעה תחסום הרשמה עתידית לשאטלים.</b>`, "אני נרשם", false, () => { if (!opts.length) return null; const v = $("#stopSel").value; if (!v) { toast("יש לבחור תחנה","err"); return false; } return v; });
-        if (ok===false) return;
-        await call("soldier_register", {...cred(), p_shuttle_id:id, p_stop: typeof ok==="string" ? ok : (s.gather_place || null)}); await reload(); toast("נרשמת בהצלחה ✓"); break;
-      }
+      case "register": openReserve(id); break;
+      case "goMine": closeModal(); ui.sview = "mine"; render(); window.scrollTo(0,0); break;
+      case "sview": ui.sview = el.dataset.v; render(); window.scrollTo(0,0); break;
+      case "focusDays": { const d = document.querySelector("#dayChips .dchip.on") || document.querySelector("#dayChips .dchip"); d && d.focus(); break; }
+      case "toggleMotion": { const on = !document.body.classList.contains("still"); document.body.classList.toggle("still", on); store.set("s820_still", on); el.setAttribute("aria-pressed", String(on)); el.textContent = on ? "▶ הפעלת אנימציה" : "⏸ עצירת אנימציה"; break; }
       case "cancel": {
-        const ok = await ask("ביטול הגעה", "לבטל את ההרשמה לשאטל? המקום יתפנה לחייל אחר.", "ביטול הגעה", true); if (!ok) return;
-        await call("soldier_cancel", {...cred(), p_reg_id:id}); await reload(); toast("ההגעה בוטלה"); break;
+        const ok = await ask("ביטול שמירת מקום", "לבטל את שמירת המקום? המקום יתפנה לחייל אחר.", "כן, לבטל", true); if (!ok) return;
+        await call("soldier_cancel", {...cred(), p_reg_id:id}); await reload(); toast("שמירת המקום בוטלה"); break;
       }
       case "editAppeal": {
         openModal(`<h3>עריכת ההסבר</h3>${appealForm(data.soldier.appeal||"")}`); break;
@@ -1079,7 +1346,7 @@ document.addEventListener("click", async e => {
       case "mark": {
         const st = el.dataset.cur===el.dataset.st ? "registered" : el.dataset.st;
         await call("staff_mark", {...cred(), p_reg_id:el.dataset.reg, p_status:st}); await reload();
-        if (st==="no_show") toast("סומן כלא הגיע — החייל נחסם להרשמה");
+        toast(st==="no_show" ? "סומן: לא הגיע — הנוסע נחסם להרשמה" : "סומן: " + (ST_LABEL[st]||st));
         break;
       }
       case "removeReg": {
@@ -1120,14 +1387,30 @@ document.addEventListener("click", async e => {
 
 document.addEventListener("change", e => {
   const el = e.target.closest("[data-change]"); if (!el) return;
-  if (el.dataset.change==="region") { ui.region = el.value; render(); }
+  if (el.dataset.change==="region") { ui.region = el.value; ui.day = null; render(); }
+  if (el.dataset.change==="sideShuttle") { ui.sideShuttle = el.value; render(); const n = document.querySelector('[data-change="sideShuttle"]'); n && n.focus(); }
 });
 
+function fieldErr(form, name, msg){
+  const f = form.querySelector(`[name="${name}"]`); if (!f) return;
+  const id = "err-"+form.dataset.form+"-"+name;
+  f.setAttribute("aria-invalid","true"); f.setAttribute("aria-describedby", id);
+  let d = document.getElementById(id); if (!d) { d = document.createElement("div"); d.id = id; d.className = "ferr"; f.insertAdjacentElement("afterend", d); }
+  d.textContent = "⚠ " + msg;
+}
+function clearErrs(form){
+  form.querySelectorAll(".ferr").forEach(x=>x.remove());
+  form.querySelectorAll("[aria-invalid]").forEach(x=>{ x.removeAttribute("aria-invalid"); x.removeAttribute("aria-describedby"); });
+  form.querySelectorAll(".formerr").forEach(x=>x.remove());
+}
+class FieldError extends Error { constructor(map){ super("יש לתקן את השדות המסומנים"); this.map = map; } }
 const FORMS = {
+  async reserve(f, form){ await submitReserve(form); },
   async soldierLogin(f){
-    const tz = digits(f.tz), phone = digits(f.phone);
-    if (tz.length<5) throw new Error('ת"ז לא תקינה');
-    if (phone.length!==10) throw new Error("מספר טלפון צריך להיות 10 ספרות");
+    const tz = digits(f.tz), phone = digits(f.phone); const errs = {};
+    if (tz.length<5 || tz.length>9) errs.tz = 'תעודת זהות צריכה להכיל 5 עד 9 ספרות';
+    if (phone.length!==10 || !phone.startsWith("05")) errs.phone = "מספר טלפון נייד: 10 ספרות שמתחילות ב-05";
+    if (Object.keys(errs).length) throw new FieldError(errs);
     const r = await call("soldier_login", {p_tz:tz, p_phone:phone});
     if (!r.exists) { ui.signup = {tz, phone}; render(); return; }
     await startSession({type:"soldier", tz, phone});
@@ -1136,12 +1419,16 @@ const FORMS = {
     }
   },
   async signup(f){
+    const errs = {}; if (!String(f.first||"").trim()) errs.first = "יש למלא שם פרטי"; if (!String(f.last||"").trim()) errs.last = "יש למלא שם משפחה";
+    if (Object.keys(errs).length) throw new FieldError(errs);
     await call("soldier_signup", {p_tz:ui.signup.tz, p_first_name:f.first, p_last_name:f.last, p_phone:ui.signup.phone, p_region:ui.pickRegion});
     const s = {type:"soldier", tz:ui.signup.tz, phone:ui.signup.phone}; ui.signup = null;
     await startSession(s); toast("נרשמת למערכת ✓");
   },
   async staffLogin(f){
     const phone = digits(f.phone);
+    if (phone.length!==10) throw new FieldError({phone:"מספר טלפון: 10 ספרות"});
+    if (!f.pin) throw new FieldError({pin:"יש להזין קוד כניסה"});
     await call("staff_login", {p_phone:phone, p_pin:f.pin});
     await startSession({type:"staff", phone, pin:f.pin});
   },
@@ -1167,8 +1454,13 @@ document.addEventListener("submit", async e => {
   e.preventDefault();
   const f = Object.fromEntries(new FormData(form).entries());
   const btn = form.querySelector('button[type=submit]'); if (btn) btn.disabled = true;
-  try { await FORMS[form.dataset.form](f); }
-  catch(err) { toast(err.message || "שגיאה", "err"); }
+  if (form.dataset.form !== "reserve") clearErrs(form);
+  try { await FORMS[form.dataset.form](f, form); }
+  catch(err) {
+    if (!form.isConnected) { toast(err.message || "שגיאה", "err"); }
+    else if (err.map) { for (const [k,v] of Object.entries(err.map)) fieldErr(form, k, v); const first = form.querySelector("[aria-invalid=true]"); first && first.focus(); const a = $("#srAlert"); a.textContent = ""; setTimeout(()=>{ a.textContent = Object.values(err.map).join(". "); }, 50); }
+    else { const box = document.createElement("div"); box.className = "formerr"; box.setAttribute("role","alert"); box.tabIndex = -1; box.textContent = "⚠ " + (err.message || "שגיאה"); form.prepend(box); box.focus(); }
+  }
   finally { if (btn && btn.isConnected) btn.disabled = false; }
 });
 
@@ -1176,10 +1468,11 @@ document.addEventListener("submit", async e => {
 setInterval(async () => {
   if (!session || !data || modalOpen() || document.visibilityState!=="visible") return;
   const a = document.activeElement; if (a && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) return;
-  try { await load(); render(); } catch(e){}
+  try { await load(); render(); } catch(e){ render(); }
 }, 30000);
 
 /* boot */
+try { if (store.get("s820_still")) document.body.classList.add("still"); } catch(e){}
 (async () => {
   if (session) { try { await load(); } catch(e){ session = null; store.del(SKEY); } }
   render();
