@@ -32,7 +32,6 @@ a{color:var(--blue)}
 .who .role{opacity:.75}
 .iconbtn{background:rgba(255,255,255,.1);border:0;color:#fff;border-radius:9px;padding:7px 10px;cursor:pointer;font-size:13px}
 .iconbtn:hover{background:rgba(255,255,255,.2)}
-.demo-ribbon{background:var(--amber);color:var(--olive);text-align:center;font-size:12.5px;font-weight:700;padding:5px 10px}
 
 /* layout */
 .wrap{max-width:1180px;margin:0 auto;padding:18px 16px 60px}
@@ -93,9 +92,6 @@ textarea.in{min-height:84px;resize:vertical}
 .seg{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:11px;padding:3px;margin-bottom:16px}
 .seg button{flex:1;border:0;background:none;padding:9px;border-radius:9px;cursor:pointer;font-weight:700;color:var(--muted)}
 .seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.demo-box{margin-top:16px;padding:14px;border:1px dashed #c9b27a;background:#fffaf0;border-radius:var(--r)}
-.demo-box h4{margin:0 0 8px;font-size:14px}
-.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 
 /* soldier */
 .hello{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:14px}
@@ -236,6 +232,12 @@ table.reg tr.grp td{background:#f4f6ef;font-weight:800;color:var(--olive2);font-
 table.reg td.st-ok{color:var(--green);font-weight:800}table.reg td.st-bad{color:var(--red);font-weight:800}
 @media (max-width:1000px){.split{grid-template-columns:1fr}.side{position:static;max-height:none}}
 
+/* ===== v6: waitlist ===== */
+.wait-box{background:var(--amber-soft);border:1px solid #f0d58f;color:#4f3604;border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:14px}
+.trip.wait{border-color:#f0d58f}
+.kpis .warn dd{color:#6b4a06}
+.notice{margin:0 14px 12px;background:var(--amber-soft);border:1px solid #f0d58f;color:#4f3604;border-radius:10px;padding:8px 12px;font-size:13.5px;font-weight:700}
+ol.wl{margin:0;padding-inline-start:22px;font-size:14px}ol.wl li{padding:4px 0}
 /* ===== v5: accessibility, steps, cards ===== */
 .skip:focus{position:fixed!important;top:8px;right:8px;width:auto!important;height:auto!important;clip:auto!important;margin:0!important;background:#fff;color:#1f4f8f;padding:8px 12px!important;z-index:100;border-radius:8px;font-weight:800}
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
@@ -458,7 +460,8 @@ function ask(title, text, ok="אישור", danger=false, pick=null){
    API — Supabase (אמיתי) או Demo (בדפדפן)
    ====================================================================== */
 async function call(fn, args){
-  if (!LIVE) { await new Promise(r=>setTimeout(r,120)); return Demo[fn](JSON.parse(JSON.stringify(args||{}))); }
+  
+  if (!LIVE) throw new Error("האתר לא מוגדר לשרת. פנה למנהל המערכת.");
   const base = CONFIG.SUPABASE_URL.replace(/\/$/,"");
   let r;
   try { r = await fetch(`${base}/rest/v1/rpc/${fn}`, {
@@ -471,222 +474,7 @@ async function call(fn, args){
   return d;
 }
 
-/* ---------------- Demo backend (mirrors schema.sql) ---------------- */
-const Demo = (() => {
-  const KEY = "s820_demo_v5"; let S = null;
-  const uid = () => Math.random().toString(36).slice(2,9) + Math.random().toString(36).slice(2,6);
-  const fail = m => { throw new Error(m); };
-  const nowISO = () => new Date().toISOString();
-  function at(day,h,m){ const d = new Date(); d.setDate(d.getDate()+day); d.setHours(h,m,0,0); return d.toISOString(); }
-  function rng(seed){ return () => { seed = (seed*1103515245+12345) & 0x7fffffff; return seed/0x7fffffff; }; }
-  function seed(){
-    const R = rng(820);
-    const pick = a => a[Math.floor(R()*a.length)];
-    const FN = ["אור","נועם","איתי","יונתן","עידו","דניאל","אורי","רועי","תומר","עומר","אביב","יהלי","שקד","נוי","מאיה","רוני","טל","הדר","ליה","עדי","גיל","אלעד","מתן","בר","ספיר","ליאור","אריאל","שחר","עמית","יובל"];
-    const LN = ["כהן","לוי","מזרחי","פרץ","ביטון","דהן","אברהם","פרידמן","אזולאי","מלכה","חדד","גבאי","שמעוני","בן דוד","עמר","יוסף","אוחיון","ששון","קליין","רוזן"];
-    const staff = [
-      {id:"a1",full_name:"סהר חייקה",phone:"0500000001",pin:"1234",role:"admin",region:null},
-      {id:"r1",full_name:"עומר לוי",phone:"0500000011",pin:"1111",role:"region",region:"צפון"},
-      {id:"r2",full_name:"מיכל אברהם",phone:"0500000012",pin:"1111",role:"region",region:"מרכז"},
-      {id:"r3",full_name:"דוד מזרחי",phone:"0500000013",pin:"1111",role:"region",region:"ירושלים"},
-      {id:"r4",full_name:"נועה פרץ",phone:"0500000014",pin:"1111",role:"region",region:"דרום"},
-      {id:"c1",full_name:"איתי שמעוני",phone:"0500000021",pin:"2222",role:"commander",region:"מרכז"},
-      {id:"c2",full_name:"רון ביטון",phone:"0500000022",pin:"2222",role:"commander",region:"מרכז"},
-      {id:"c3",full_name:"אלון גבאי",phone:"0500000023",pin:"2222",role:"commander",region:"צפון"},
-      {id:"c4",full_name:"יובל דהן",phone:"0500000024",pin:"2222",role:"commander",region:"ירושלים"},
-      {id:"c5",full_name:"שי אוחנה",phone:"0500000025",pin:"2222",role:"commander",region:"דרום"}
-    ];
-    const soon = new Date(Date.now()+10*3600e3); soon.setMinutes(soon.getMinutes()<30?0:30,0,0);
-    const nextDow = (dow,h,m,addWeeks=0) => { const d = new Date(); d.setHours(h,m,0,0); let diff = (dow - d.getDay() + 7) % 7; if (diff===0 && d < new Date()) diff = 7; d.setDate(d.getDate()+diff+addWeeks*7); return d.toISOString(); };
-    const N_STOPS_A = ["רכבת הרצליה","רכבת נתניה","מחלף אור עקיבא","מחלף גבעת אולגה","יוקנעם"];
-    const shuttles = [
-      {id:"s1",region:"מרכז",route:"ת\"א מרכז ← בסיס",gather_place:"ת\"א מרכז",stops:["רכבת השלום","מחלף גלילות"],release_place:"בסיס",release_time:"08:00",depart_at:at(1,6,15),capacity:55,commander_id:"c1",notes:"רציף 7"},
-      {id:"s2",region:"מרכז",route:"חדרה ← בסיס",gather_place:"רכבת חדרה מערב",stops:["רכבת נתניה"],release_place:"בסיס",release_time:"08:00",depart_at:at(1,6,30),capacity:55,commander_id:"c2",notes:""},
-      {id:"s3",region:"מרכז",route:"ת\"א מרכז ← בסיס",gather_place:"ת\"א מרכז",stops:["רכבת השלום","מחלף גלילות"],release_place:"בסיס",release_time:"08:00",depart_at:at(2,6,15),capacity:55,commander_id:"c1",notes:"רציף 7"},
-      {id:"s8",region:"מרכז",route:"ראשל\"צ ← בסיס",gather_place:"קניון הזהב ראשל\"צ",stops:[],release_place:"בסיס",release_time:"07:30",depart_at:soon.toISOString(),capacity:55,commander_id:"c2",notes:""},
-      {id:"n1",region:"צפון",route:"בית חיל האוויר הרצליה ← מישר",gather_place:"בית חיל האוויר הרצליה",stops:N_STOPS_A,release_place:"מישר",release_time:"15:00",depart_at:nextDow(0,10,0),capacity:55,commander_id:"c3",notes:""},
-      {id:"n2",region:"צפון",route:"בית חיל האוויר הרצליה ← מישר",gather_place:"בית חיל האוויר הרצליה",stops:["רכבת הרצליה","רכבת נתניה","מחלף גבעת אולגה","מחלף אור עקיבא","יוקנעם"],release_place:"מישר",release_time:"15:00",depart_at:nextDow(1,10,0),capacity:55,commander_id:"c3",notes:""},
-      {id:"n3",region:"צפון",route:"מישר ← רכבת הרצליה",gather_place:"מישר",stops:["רכבת ראש העין"],release_place:"רכבת הרצליה",release_time:"12:00",depart_at:nextDow(4,7,0),capacity:55,commander_id:"c3",notes:""},
-      {id:"n4",region:"צפון",route:"מישר ← ת\"א סבידור",gather_place:"מישר",stops:["יוקנעם","מחלף אור עקיבא","גבעת אולגה","נתניה","גלילות"],release_place:"ת\"א סבידור",release_time:"12:00",depart_at:nextDow(4,7,0),capacity:55,commander_id:null,notes:""},
-      {id:"s5",region:"ירושלים",route:"ירושלים ← בסיס",gather_place:"ירושלים תחנה מרכזית",stops:[],release_place:"בסיס",release_time:"08:30",depart_at:at(1,6,0),capacity:55,commander_id:"c4",notes:""},
-      {id:"s6",region:"דרום",route:"באר שבע ← בסיס",gather_place:"באר שבע מרכז",stops:[],release_place:"בסיס",release_time:"08:00",depart_at:at(1,5,30),capacity:55,commander_id:"c5",notes:""},
-      {id:"s7",region:"מרכז",route:"ת\"א מרכז ← בסיס",gather_place:"ת\"א מרכז",stops:["רכבת השלום"],release_place:"בסיס",release_time:"08:00",depart_at:at(-1,6,15),capacity:55,commander_id:"c1",notes:""}
-    ];
-    const soldiers = [
-      {tz:"123456789",first_name:"אביב",last_name:"כהן",phone:"0521234567",region:"מרכז",blocked:false,block_note:null,appeal:null,created_at:nowISO()},
-      {tz:"987654321",first_name:"שגיא",last_name:"לוי",phone:"0527654321",region:"מרכז",blocked:false,block_note:null,appeal:null,created_at:nowISO()}
-    ];
-    const plan = {"מרכז":70,"צפון":60,"ירושלים":22,"דרום":14};
-    let n = 0;
-    for (const reg of REGIONS) for (let i=0;i<plan[reg];i++){
-      n++; soldiers.push({tz:String(300000000+n*7919), first_name:pick(FN), last_name:pick(LN), phone:"05"+(2+Math.floor(R()*3))+String(1000000+Math.floor(R()*8999999)), region:reg, blocked:false, block_note:null, appeal:null, created_at:nowISO()});
-    }
-    const regs = [];
-    const byReg = r => soldiers.filter(s=>s.region===r && s.tz!=="123456789" && s.tz!=="987654321");
-    const add = (sh, list, status="registered") => { const shx = shuttles.find(x=>x.id===sh); const opts = stopOptions(shx); list.forEach((s,i)=>regs.push({id:uid(),shuttle_id:sh,tz:s.tz,status,resolved:false,stop:opts.length?opts[i%opts.length]:null,created_at:new Date(Date.now()-(list.length-i)*600e3).toISOString()})); };
-    const mz = byReg("מרכז");
-    add("s1", mz.slice(0,55));
-    add("s2", mz.slice(10,42));
-    add("s3", mz.slice(20,51));
-    add("s8", mz.slice(2,20));
-    const nz = byReg("צפון");
-    add("n1", nz.slice(0,41)); add("n2", nz.slice(5,33)); add("n3", nz.slice(0,17)); add("n4", nz.slice(20,55));
-    add("s5", byReg("ירושלים").slice(0,19));
-    add("s6", byReg("דרום").slice(0,11));
-    // demo soldier: registered to s3 (cancellable) and s8 (<24h)
-    add("s3", [soldiers[0]]); add("s8", [soldiers[0]]);
-    // yesterday: arrived + 2 no-shows
-    add("s7", mz.slice(4,22), "boarded"); add("s7", mz.slice(22,24), "at_pickup");
-    add("s7", [soldiers[1], mz[60]], "no_show");
-    const S0 = {staff, soldiers, shuttles, registrations:regs};
-    const note = `נרשמת לשאטל "ת"א מרכז ← בסיס" ב-${fmtDM(at(-1,6,15))} 06:15 ולא הגעת.`;
-    for (const s of [soldiers[1], mz[60]]) { s.blocked = true; s.block_note = note; }
-    mz[60].appeal = "היה לי גימלים מהרופא ושכחתי לבטל, מצטער. מצרף אישור.";
-    return S0;
-  }
-  function load(){ S = store.get(KEY); if (!S || !S.staff) { S = seed(); save(); } }
-  function save(){ store.set(KEY, S); }
-  load();
 
-  const active = r => r.status !== "cancelled";
-  const takenOf = id => S.registrations.filter(r=>r.shuttle_id===id && active(r)).length;
-  const staffById = id => S.staff.find(s=>s.id===id);
-  const byDep = (a,b) => new Date(a.depart_at) - new Date(b.depart_at);
-  const pub = s => ({id:s.id, full_name:s.full_name, phone:s.phone, role:s.role, region:s.region});
-  function sAuth(tz, phone){ const s = S.soldiers.find(x=>x.tz===digits(tz)); if (!s || s.phone!==digits(phone)) fail('ת"ז או מספר טלפון שגויים'); return s; }
-  function tAuth(phone, pin){ const s = S.staff.find(x=>x.phone===digits(phone)); if (!s || s.pin!==pin) fail("טלפון או קוד שגויים"); return s; }
-  const seesShuttle = (me, sh) => me.role==="admin" || (me.role==="region" && sh.region===me.region) || (me.role==="commander" && sh.commander_id===me.id);
-  const manages = (me, region) => me.role==="admin" || (me.role==="region" && me.region===region);
-  function refreshBlock(tz, note){
-    const so = S.soldiers.find(x=>x.tz===tz); if (!so) return;
-    const b = S.registrations.some(r=>r.tz===tz && r.status==="no_show" && !r.resolved);
-    so.blocked = b;
-    if (!b) { so.block_note = null; so.appeal = null; } else if (note) so.block_note = note;
-  }
-  function staffShuttle(sh){
-    const c = staffById(sh.commander_id);
-    const passengers = S.registrations.filter(r=>r.shuttle_id===sh.id && active(r))
-      .sort((a,b)=>a.created_at.localeCompare(b.created_at))
-      .map(r=>{ const so = S.soldiers.find(x=>x.tz===r.tz)||{}; return {reg_id:r.id,status:r.status,tz:r.tz,first_name:so.first_name,last_name:so.last_name,phone:so.phone,created_at:r.created_at,stop:r.stop||null}; });
-    return {...sh, stops:sh.stops||[], commander_name:c?.full_name||null, commander_phone:c?.phone||null, taken:passengers.length, passengers};
-  }
-  const out = {
-    reset(){ S = seed(); save(); },
-    soldier_login({p_tz,p_phone}){ const s = S.soldiers.find(x=>x.tz===digits(p_tz)); if (!s) return {exists:false}; if (s.phone!==digits(p_phone)) fail('מספר הטלפון לא תואם לת"ז הזו'); return {exists:true}; },
-    soldier_signup({p_tz,p_first_name,p_last_name,p_phone,p_region}){
-      if (digits(p_tz).length<5) fail('ת"ז לא תקינה');
-      if (digits(p_phone).length!==10) fail("מספר טלפון לא תקין");
-      if (!REGIONS.includes(p_region)) fail("יש לבחור מרחב");
-      if (!String(p_first_name||"").trim() || !String(p_last_name||"").trim()) fail("יש למלא שם פרטי ושם משפחה");
-      if (S.soldiers.some(x=>x.tz===digits(p_tz))) fail('ת"ז זו כבר רשומה במערכת');
-      S.soldiers.push({tz:digits(p_tz),first_name:p_first_name.trim(),last_name:p_last_name.trim(),phone:digits(p_phone),region:p_region,blocked:false,block_note:null,appeal:null,created_at:nowISO()});
-      save(); return {ok:true};
-    },
-    soldier_home({p_tz,p_phone}){
-      const s = sAuth(p_tz,p_phone); const lim = Date.now()-6*3600e3;
-      const shuttles = S.shuttles.filter(sh=>sh.region===s.region && new Date(sh.depart_at).getTime()>lim).sort(byDep).map(sh=>{
-        const c = staffById(sh.commander_id); const m = S.registrations.find(r=>r.shuttle_id===sh.id && r.tz===s.tz && active(r));
-        return {id:sh.id,region:sh.region,route:sh.route,depart_at:sh.depart_at,capacity:sh.capacity,notes:sh.notes,gather_place:sh.gather_place||null,stops:sh.stops||[],release_place:sh.release_place||null,release_time:sh.release_time||null,commander_name:c?.full_name||null,commander_phone:c?.phone||null,taken:takenOf(sh.id),mine:m?{id:m.id,status:m.status,stop:m.stop||null}:null};
-      });
-      const ct = S.staff.find(x=>x.role==="region" && x.region===s.region);
-      const {created_at, ...sol} = s;
-      return {soldier:sol, shuttles, contact: ct?{full_name:ct.full_name,phone:ct.phone}:null};
-    },
-    soldier_register({p_tz,p_phone,p_shuttle_id,p_stop}){
-      const s = sAuth(p_tz,p_phone);
-      if (s.blocked) fail("ההרשמה שלך חסומה עד להסדרת אי-הגעה קודמת");
-      const sh = S.shuttles.find(x=>x.id===p_shuttle_id); if (!sh) fail("השאטל לא נמצא");
-      const ex = S.registrations.find(r=>r.shuttle_id===sh.id && r.tz===s.tz && active(r));
-      if (ex) return {ok:true, already:true, reg_id:ex.id, stop:ex.stop, depart_at:sh.depart_at, route:sh.route};
-      if (sh.region!==s.region) fail("ניתן להירשם רק לשאטלים של המרחב שלך");
-      if (new Date(sh.depart_at)<=new Date()) fail("השאטל כבר יצא");
-      const opts = (sh.stops&&sh.stops.length) ? stopOptions(sh) : []; if (opts.length && !opts.includes(p_stop)) fail("יש לבחור תחנת עלייה"); if (!opts.length) p_stop = sh.gather_place || null;
-      if (takenOf(sh.id)>=sh.capacity) fail("השאטל מלא — אין מקומות פנויים");
-      const nr = {id:uid(),shuttle_id:sh.id,tz:s.tz,status:"registered",resolved:false,stop:p_stop||null,created_at:nowISO()};
-      S.registrations.push(nr); save(); return {ok:true, already:false, reg_id:nr.id, stop:nr.stop, depart_at:sh.depart_at, route:sh.route};
-    },
-    soldier_cancel({p_tz,p_phone,p_reg_id}){
-      const s = sAuth(p_tz,p_phone); const r = S.registrations.find(x=>x.id===p_reg_id && x.tz===s.tz);
-      if (!r) fail("הרישום לא נמצא"); if (r.status!=="registered") fail("לא ניתן לבטל רישום זה");
-      const sh = S.shuttles.find(x=>x.id===r.shuttle_id);
-      if (Date.now() > new Date(sh.depart_at).getTime()-H24) fail("לא ניתן לבטל פחות מ-24 שעות לפני היציאה. פנה לאיש הקשר במרחב.");
-      r.status = "cancelled"; save(); return {ok:true};
-    },
-    soldier_set_region({p_tz,p_phone,p_region}){ const s = sAuth(p_tz,p_phone); if (!REGIONS.includes(p_region)) fail("יש לבחור מרחב"); s.region = p_region; save(); return {ok:true}; },
-    soldier_appeal({p_tz,p_phone,p_text}){ const s = sAuth(p_tz,p_phone); if (!String(p_text||"").trim()) fail("יש לכתוב הסבר"); s.appeal = p_text.trim().slice(0,500); save(); return {ok:true}; },
-    staff_login({p_phone,p_pin}){ return pub(tAuth(p_phone,p_pin)); },
-    staff_data({p_phone,p_pin}){
-      const me = tAuth(p_phone,p_pin); const lim = Date.now()-14*86400e3;
-      return {
-        me: pub(me),
-        staff: S.staff.filter(s=>me.role==="admin" || (me.role==="region" && s.region===me.region) || s.id===me.id).map(pub),
-        shuttles: S.shuttles.filter(sh=>new Date(sh.depart_at).getTime()>lim && seesShuttle(me,sh)).sort(byDep).map(staffShuttle),
-        blocked: me.role==="commander" ? [] : S.soldiers.filter(so=>so.blocked && (me.role==="admin" || so.region===me.region)).map(so=>({tz:so.tz,first_name:so.first_name,last_name:so.last_name,phone:so.phone,region:so.region,block_note:so.block_note,appeal:so.appeal})),
-        server_time: nowISO(),
-        contacts: me.role==="admin" ? S.staff.filter(s=>s.role==="region").map(s=>({region:s.region,full_name:s.full_name,phone:s.phone})) : []
-      };
-    },
-    staff_save_shuttle({p_phone,p_pin,p_id,p_region,p_route,p_depart_at,p_capacity,p_commander_id,p_notes,p_gather_place,p_stops,p_release_place,p_release_time}){
-      const me = tAuth(p_phone,p_pin); if (me.role==="commander") fail("אין הרשאה");
-      const region = me.role==="region" ? me.region : p_region;
-      if (!REGIONS.includes(region)) fail("יש לבחור מרחב");
-      if (!String(p_route||"").trim()) fail("יש למלא מקום התייצבות ומקום שחרור");
-      if (!p_depart_at) fail("יש למלא תאריך ושעה");
-      const rec = {region, route:p_route.trim(), depart_at:p_depart_at, capacity:+p_capacity||55, commander_id:p_commander_id||null, notes:(p_notes||"").trim()||null, gather_place:(p_gather_place||"").trim()||null, stops:Array.isArray(p_stops)?p_stops:[], release_place:(p_release_place||"").trim()||null, release_time:(p_release_time||"").trim()||null};
-      if (!p_id) { const id = uid(); S.shuttles.push({id, ...rec}); save(); return {id}; }
-      const sh = S.shuttles.find(x=>x.id===p_id); if (!sh) fail("השאטל לא נמצא");
-      if (me.role==="region" && sh.region!==me.region) fail("אין הרשאה");
-      Object.assign(sh, rec); save(); return {id:p_id};
-    },
-    staff_delete_shuttle({p_phone,p_pin,p_id}){
-      const me = tAuth(p_phone,p_pin); const sh = S.shuttles.find(x=>x.id===p_id); if (!sh) fail("השאטל לא נמצא");
-      if (!manages(me, sh.region)) fail("אין הרשאה");
-      S.shuttles = S.shuttles.filter(x=>x.id!==p_id); S.registrations = S.registrations.filter(r=>r.shuttle_id!==p_id); save(); return {ok:true};
-    },
-    staff_mark({p_phone,p_pin,p_reg_id,p_status}){
-      const me = tAuth(p_phone,p_pin);
-      if (!["registered","at_pickup","boarded","no_show","arrived"].includes(p_status)) fail("סטטוס לא חוקי");
-      const r = S.registrations.find(x=>x.id===p_reg_id); if (!r || r.status==="cancelled") fail("הרישום לא נמצא");
-      const sh = S.shuttles.find(x=>x.id===r.shuttle_id); if (!seesShuttle(me, sh)) fail("אין הרשאה");
-      r.status = p_status; r.resolved = false;
-      refreshBlock(r.tz, p_status==="no_show" ? `נרשמת לשאטל "${sh.route}" ב-${fmtDM(sh.depart_at)} ${fmtTime(sh.depart_at)} ולא הגעת.` : null);
-      save(); return {ok:true};
-    },
-    staff_remove_reg({p_phone,p_pin,p_reg_id}){
-      const me = tAuth(p_phone,p_pin); const r = S.registrations.find(x=>x.id===p_reg_id); if (!r) fail("הרישום לא נמצא");
-      const sh = S.shuttles.find(x=>x.id===r.shuttle_id); if (!manages(me, sh.region)) fail("אין הרשאה");
-      r.status = "cancelled"; refreshBlock(r.tz, null); save(); return {ok:true};
-    },
-    staff_release({p_phone,p_pin,p_tz}){
-      const me = tAuth(p_phone,p_pin); const so = S.soldiers.find(x=>x.tz===p_tz); if (!so) fail("החייל לא נמצא");
-      if (!manages(me, so.region)) fail("אין הרשאה");
-      S.registrations.forEach(r=>{ if (r.tz===p_tz && r.status==="no_show") r.resolved = true; });
-      so.blocked = false; so.block_note = null; so.appeal = null; save(); return {ok:true};
-    },
-    staff_save_staff({p_phone,p_pin,p_id,p_full_name,p_new_phone,p_new_pin,p_role,p_region}){
-      const me = tAuth(p_phone,p_pin); if (me.role==="commander") fail("אין הרשאה");
-      const role = me.role==="region" ? "commander" : p_role;
-      const region = me.role==="region" ? me.region : role==="admin" ? null : p_region;
-      if (!ROLE_LABEL[role]) fail("תפקיד לא חוקי");
-      if (role!=="admin" && !REGIONS.includes(region)) fail("יש לבחור מרחב");
-      if (!String(p_full_name||"").trim()) fail("יש למלא שם");
-      const ph = digits(p_new_phone); if (ph.length!==10) fail("מספר טלפון לא תקין");
-      if (S.staff.some(s=>s.phone===ph && s.id!==p_id)) fail("מספר הטלפון כבר קיים במערכת");
-      if (!p_id) { if (String(p_new_pin||"").length<4) fail("קוד כניסה חייב להיות לפחות 4 תווים"); const id = uid(); S.staff.push({id,full_name:p_full_name.trim(),phone:ph,pin:p_new_pin,role,region}); save(); return {id}; }
-      const t = S.staff.find(s=>s.id===p_id); if (!t) fail("איש הצוות לא נמצא");
-      if (me.role==="region" && !(t.role==="commander" && t.region===me.region)) fail("אין הרשאה");
-      Object.assign(t, {full_name:p_full_name.trim(), phone:ph, role, region}); if (p_new_pin) t.pin = p_new_pin;
-      save(); return {id:p_id};
-    },
-    staff_delete_staff({p_phone,p_pin,p_id}){
-      const me = tAuth(p_phone,p_pin); if (me.id===p_id) fail("לא ניתן למחוק את עצמך");
-      const t = S.staff.find(s=>s.id===p_id); if (!t) fail("איש הצוות לא נמצא");
-      if (!(me.role==="admin" || (me.role==="region" && t.role==="commander" && t.region===me.region))) fail("אין הרשאה");
-      S.staff = S.staff.filter(s=>s.id!==p_id); S.shuttles.forEach(sh=>{ if (sh.commander_id===p_id) sh.commander_id = null; }); save(); return {ok:true};
-    }
-  };
-  return out;
-})();
 
 /* ======================================================================
    App state
@@ -719,7 +507,7 @@ function logout(){ session = null; data = null; store.del(SKEY); ui.signup = nul
    ====================================================================== */
 function render(){
   const app = $("#app");
-  const ribbon = LIVE ? "" : `<div class="demo-ribbon">מצב הדגמה — הנתונים נשמרים רק בדפדפן הזה. לחיבור אמיתי יש למלא פרטי Supabase.</div>`;
+  const ribbon = LIVE ? "" : ``;
   if (!session || !data) { app.innerHTML = ribbon + loginView(); return; }
   app.innerHTML = ribbon + topBar() + (session.type==="soldier" ? soldierView() : staffView());
 }
@@ -802,15 +590,8 @@ function loginView(){
       <div class="staff-link"><button class="lnk small" data-act="ltab" data-v="staff">כניסת צוות ומפקדים</button></div>`;
     }
   }
-  const demo = LIVE ? "" : `<div class="demo-box" style="max-width:460px;margin:16px auto"><h4>כניסה מהירה להדגמה</h4>
-    <div class="demo-grid">
-      <button class="btn ghost sm" data-act="demo" data-v="admin">👑 מנהל מערך (סהר)</button>
-      <button class="btn ghost sm" data-act="demo" data-v="region">📍 איש קשר מרחב מרכז</button>
-      <button class="btn ghost sm" data-act="demo" data-v="commander">🚌 מפקד נסיעה</button>
-      <button class="btn ghost sm" data-act="demo" data-v="soldier">🪖 חייל</button>
-      <button class="btn ghost sm" data-act="demo" data-v="blocked">⛔ חייל שלא הגיע</button>
-      <button class="btn ghost sm" data-act="demoReset">↺ איפוס נתוני הדגמה</button>
-    </div></div>`;
+  
+  const demo = "";
   return `<main id="main">` + heroHTML() + `<div style="padding:0 14px 50px"><div class="card login-card">${body}</div>${demo}</div></main>`;
 }
 
@@ -882,7 +663,7 @@ function soldierView(){
     <div class="hello"><div><div class="muted small">שלום,</div><h1 class="h2">${esc(s.first_name)} ${esc(s.last_name)}</h1></div></div>
     <div class="seg sview" role="group" aria-label="תצוגה">
       <button data-act="sview" data-v="book" aria-pressed="${ui.sview==="book"}" class="${ui.sview==="book"?"on":""}">שמירת מקום</button>
-      <button data-act="sview" data-v="mine" aria-pressed="${ui.sview==="mine"}" class="${ui.sview==="mine"?"on":""}">הנסיעות שלי${myTrips.length?` (${myTrips.length})`:""}</button>
+      <button data-act="sview" data-v="mine" aria-pressed="${ui.sview==="mine"}" class="${ui.sview==="mine"?"on":""}">הנסיעות שלי${(myTrips.length+data.shuttles.filter(x=>x.wait).length)?` (${myTrips.length+data.shuttles.filter(x=>x.wait).length})`:""}</button>
     </div>`;
   if (s.blocked) {
     h += `<div class="alert red" role="region" aria-label="הרשמה חסומה">
@@ -917,9 +698,24 @@ function myStatusHTML(m){
   };
   return map[m.status] || "";
 }
+function contactLine(){
+  const c = data.contact;
+  return c ? `לביטול מאוחר פנה לאיש הקשר במרחב: <b>${esc(c.full_name)}</b> · ${telLink(c.phone)}` : "לביטול מאוחר פנה לאיש הקשר במרחב.";
+}
 function myTripsHTML(trips){
+  const waits = data.shuttles.filter(x=>x.wait && new Date(x.depart_at).getTime() > Date.now());
+  let wh = "";
+  if (waits.length) {
+    wh = `<h2 class="section-title">בהמתנה — עדיין לא שמור לך מקום</h2>` + waits.map(x=>`<article class="card trip wait" aria-label="המתנה ${longDay(x.depart_at)} ${fmtTime(x.depart_at)}">
+      <div class="trip-top"><div class="tbig">${fmtTime(x.depart_at)}</div><div><div class="trip-date">${longDay(x.depart_at)}</div><div class="route">${esc(x.gather_place||"")} ← ${esc(x.release_place||"")}</div></div></div>
+      <div class="kv"><span>מצב</span><b>⏳ בהמתנה · מקום ${x.wait.position} בתור</b></div>
+      <div class="kv"><span>מקומות פנויים</span><b>${freeSeats(x)}</b></div>
+      ${freeSeats(x)>0 ? `<button class="btn primary sm" data-act="register" data-id="${esc(x.id)}">התפנה מקום — שמור אותו עכשיו</button>` : ""}
+      <button class="btn ghost sm" data-act="waitLeave" data-id="${esc(x.id)}">יציאה מההמתנה</button>
+    </article>`).join("");
+  }
   let h = `<h2 class="section-title">הנסיעות שלי</h2>`;
-  if (!trips.length) return h + `<div class="card empty">עוד לא שמרת מקום בשאטל.<br><button class="btn primary" style="margin-top:12px" data-act="sview" data-v="book">לשמירת מקום</button></div>`;
+  if (!trips.length) return h + `<div class="card empty">עוד לא שמרת מקום בשאטל.<br><button class="btn primary" style="margin-top:12px" data-act="sview" data-v="book">לשמירת מקום</button></div>` + wh;
   const now = Date.now();
   for (const x of trips.sort((a,b)=>new Date(a.depart_at)-new Date(b.depart_at))) {
     const dep = new Date(x.depart_at).getTime(), canCancel = x.mine.status==="registered" && dep - now > H24;
@@ -928,10 +724,10 @@ function myTripsHTML(trips){
       <div class="kv"><span>תחנת עלייה</span><b>${esc(x.mine.stop || x.gather_place || "—")}</b></div>
       <div class="kv"><span>מצב</span>${myStatusHTML(x.mine)}</div>
       ${canCancel ? `<button class="btn ghost sm" data-act="cancel" data-id="${esc(x.mine.id)}">ביטול שמירת המקום</button><span class="tiny muted" style="margin-inline-start:8px">אפשר לבטל עד ${fullDate(new Date(dep-H24).toISOString())} ${fmtTime(new Date(dep-H24).toISOString())}</span>`
-        : x.mine.status==="registered" ? `<p class="tiny muted" style="margin:6px 0 0">פחות מ-24 שעות לפני היציאה — לביטול יש לפנות לאיש הקשר במרחב.</p>` : ""}
+        : x.mine.status==="registered" ? `<p class="small" style="margin:8px 0 0">פחות מ-24 שעות לפני היציאה, אי אפשר לבטל כאן. ${contactLine()} — כדי שהמקום ישוחרר לחייל אחר.</p>` : ""}
     </article>`;
   }
-  return h;
+  return h + wh;
 }
 function appealForm(v){
   return `<form data-form="appeal" style="margin-top:10px">
@@ -949,7 +745,9 @@ function soldierCard(sh, blocked){
   if (m) action = `<div class="mine-box">${myStatusHTML(m)}<span class="small">עלייה: <b>${esc(m.stop || orig)}</b></span><button class="lnk small" data-act="sview" data-v="mine">לנסיעות שלי</button></div>`;
   else if (departed) action = `<span class="chip wait">השאטל יצא</span>`;
   else if (blocked) action = `<button class="btn ghost" disabled>ההרשמה חסומה</button>`;
-  else if (free===0) action = `<button class="btn ghost" disabled>השאטל מלא</button>`;
+  else if (sh.wait && free>0) action = `<div class="wait-box" role="status"><b>⏳ התפנה מקום!</b> אתה בהמתנה לשאטל הזה, ועכשיו יש מקום פנוי. המקום עדיין לא שמור לך.</div><button class="btn primary" data-act="register" data-id="${esc(sh.id)}">שמור לי את המקום עכשיו</button>`;
+  else if (sh.wait) action = `<div class="wait-box"><b>⏳ אתה בהמתנה — מקום ${sh.wait.position} בתור.</b> עדיין לא שמור לך מקום בשאטל הזה. אם יתפנה מקום, הוא יוצג כאן ותוכל לשמור אותו.</div><button class="btn ghost sm" data-act="waitLeave" data-id="${esc(sh.id)}">יציאה מרשימת ההמתנה</button>`;
+  else if (free===0) action = `<p class="tiny muted" style="margin:0 0 6px">השאטל מלא${sh.waiting_count?` · ${sh.waiting_count} ממתינים`:""}. אפשר להיכנס לרשימת המתנה — זה לא אישור נסיעה.</p><button class="btn ghost" data-act="waitJoin" data-id="${esc(sh.id)}" aria-label="הכנס אותי לרשימת ההמתנה לשאטל של ${fmtTime(sh.depart_at)}">הכנס אותי לרשימת המתנה</button>`;
   else action = `<button class="btn primary" data-act="register" data-id="${esc(sh.id)}" aria-label="שמור לי מקום בשאטל של ${fmtTime(sh.depart_at)} מ${esc(orig)} אל ${esc(dest)}">שמור לי מקום</button>`;
   return `<article class="card sc2 ${m?"mine":""}" aria-label="שאטל ${fmtTime(sh.depart_at)} ${esc(orig)} אל ${esc(dest)}">
     <div class="sc2-top"><div class="tbig">${fmtTime(sh.depart_at)}</div><div class="sc2-main"><div class="route">${title}</div>
@@ -991,6 +789,43 @@ function reserveDialog(sh, st){
       </div>
     </form>`;
 }
+function waitDialog(sh, st){
+  const opts = (sh.stops && sh.stops.length) ? stopOptions(sh) : [];
+  const summary = `<dl class="dl sum"><dt>יום ותאריך</dt><dd>${longDay(sh.depart_at)}</dd><dt>שעת התייצבות</dt><dd>${fmtTime(sh.depart_at)}</dd><dt>מסלול</dt><dd>${esc(sh.gather_place||"")} ← ${esc(sh.release_place||"")}</dd></dl>`;
+  if (st.step==="done") return `<h3>⏳ אתה בהמתנה</h3>
+    <div class="wait-box" role="status"><b>מקום ${st.position} בתור.</b> עדיין לא שמור לך מקום בשאטל הזה.</div>${summary}
+    <p class="small">אם יתפנה מקום, הוא יוצג באתר ותוכל לשמור אותו. לא תישלח הודעה אוטומטית — כדאי לבדוק שוב ב"הנסיעות שלי".</p>
+    <div class="row end"><button class="btn ghost" data-act="mclose">חזרה לשאטלים</button><button class="btn primary" data-act="goMine">לנסיעות שלי</button></div>`;
+  const busy = st.step==="saving";
+  const stopField = opts.length ? `<fieldset class="stopset" ${busy?"disabled":""}><legend>איפה אתה עולה?</legend>
+      ${opts.map(o=>`<label class="radio"><input type="radio" name="stop" value="${esc(o)}" ${st.stop===o?"checked":""}> ${esc(o)}</label>`).join("")}
+      ${st.fieldErr?`<div class="ferr" id="stopErr">⚠ ${esc(st.fieldErr)}</div>`:""}</fieldset>` : "";
+  return `<h3>רשימת המתנה</h3>${summary}
+    <div class="wait-box"><b>השאטל מלא.</b> כניסה לרשימת ההמתנה <b>אינה אישור נסיעה</b> ואינה שומרת לך מקום.</div>
+    <form data-form="waitJoin" ${busy?'aria-busy="true"':""}>${stopField}
+      ${st.err?`<div class="formerr" role="alert">⚠ ${esc(st.err)}</div>`:""}
+      <div class="row end" style="margin-top:12px"><button type="button" class="btn ghost" data-act="mclose" ${busy?"disabled":""}>חזרה</button>
+      ${st.final?"":`<button type="submit" class="btn primary" ${busy?"disabled":""}>${busy?`<span class="spin" aria-hidden="true"></span> מכניס לרשימה…`:(st.err?"נסה שוב":"הכנס אותי לרשימת המתנה")}</button>`}</div>
+    </form>`;
+}
+async function submitWait(form){
+  const sh = ui.pending, st = ui.wstate; if (!sh || st.step==="saving") return;
+  const opts = (sh.stops && sh.stops.length) ? stopOptions(sh) : [];
+  const chosen = form.querySelector('input[name=stop]:checked');
+  st.stop = chosen ? chosen.value : (opts.length ? null : sh.gather_place);
+  if (opts.length && !st.stop) { st.fieldErr = "יש לבחור תחנת עלייה"; redrawWait(); return; }
+  st.fieldErr = null; st.err = null; st.step = "saving"; redrawWait();
+  try {
+    const res = await call("soldier_wait_join", {...cred(), p_shuttle_id: sh.id, p_stop: st.stop});
+    if (!res || res.ok !== true) throw new Error("השרת לא אישר. נסה שוב.");
+    st.step = "done"; st.position = res.position; redrawWait(); toast("נכנסת לרשימת ההמתנה — מקום "+res.position+". עדיין לא שמור לך מקום.");
+    try { await load(); render(); } catch(e){}
+  } catch(e) {
+    st.step = "choose"; st.err = e.message; st.final = /חסומה|יצא|המרחב|כבר שמור|מקום פנוי/.test(st.err); redrawWait();
+    if (st.final) { try { await load(); render(); } catch(_){} }
+  }
+}
+function redrawWait(){ const m = $("#modalRoot .modal"); if (!m) return; m.innerHTML = waitDialog(ui.pending, ui.wstate).replace("<h3>", '<h3 id="mTitle">'); const f = ui.wstate.step==="done" ? m.querySelector('[data-act="goMine"]') : (m.querySelector(".formerr")||null); f && (f.tabIndex = f.tabIndex||-1, f.focus()); }
 function openReserve(id){
   const sh = data.shuttles.find(x=>x.id===id); if (!sh) return;
   ui.pending = sh;
@@ -1158,7 +993,9 @@ function staffShuttleCard(s, open){
       <div class="good"><dt>עלו לשאטל</dt><dd>${k.boarded}</dd></div>
       <div class="${k.noshow?"bad":""}"><dt>לא הגיעו</dt><dd>${k.noshow}</dd></div>
       ${k.legacy?`<div><dt>סימון ישן "הגיע"</dt><dd>${k.legacy}</dd></div>`:""}
-    </dl>`;
+      <div class="${(s.waitlist||[]).length?"warn":""}"><dt>בהמתנה</dt><dd>${(s.waitlist||[]).length}</dd></div>
+    </dl>
+    ${k.free>0 && (s.waitlist||[]).length ? `<p class="notice" role="note">⚠ יש ${k.free} מקומות פנויים ו-${s.waitlist.length} ממתינים. אין קידום אוטומטי מהתור — אפשר ליצור קשר עם הממתינים לפי הסדר.</p>` : ""}`;
   if (open) {
     h += `<div class="shc-b" id="${panelId}">
       <div class="row between" style="margin-bottom:10px">
@@ -1187,6 +1024,9 @@ function staffShuttleCard(s, open){
           </div></li>`;
       });
       h += `</ul>`;
+    }
+    if ((s.waitlist||[]).length) {
+      h += `<h3 class="h3" style="margin:14px 2px 6px">רשימת המתנה (${s.waitlist.length}) · לא אישור נסיעה</h3><ol class="wl">${s.waitlist.map(w=>`<li><b>${esc(w.first_name)} ${esc(w.last_name)}</b> · ${telLink(w.phone)} · 📍 ${esc(w.stop||"—")}</li>`).join("")}</ol>`;
     }
     h += `</div>`;
   }
@@ -1280,13 +1120,7 @@ function staffForm(st){
 /* ======================================================================
    Events
    ====================================================================== */
-const DEMO_LOGINS = {
-  admin:{type:"staff",phone:"0500000001",pin:"1234"},
-  region:{type:"staff",phone:"0500000012",pin:"1111"},
-  commander:{type:"staff",phone:"0500000021",pin:"2222"},
-  soldier:{type:"soldier",tz:"123456789",phone:"0521234567"},
-  blocked:{type:"soldier",tz:"987654321",phone:"0527654321"}
-};
+
 const findSh = id => data.shuttles.find(s=>s.id===id);
 
 document.addEventListener("click", async e => {
@@ -1316,8 +1150,7 @@ document.addEventListener("click", async e => {
         break;
       }
       case "unsignup": ui.signup = null; render(); break;
-      case "demo": await startSession({...DEMO_LOGINS[el.dataset.v]}); break;
-      case "demoReset": Demo.reset(); toast("נתוני ההדגמה אופסו"); break;
+      
       case "logout": logout(); break;
       case "refresh": await reload(); toast("עודכן"); break;
       case "tab": ui.tab = el.dataset.v; render(); window.scrollTo(0,0); break;
@@ -1332,6 +1165,11 @@ document.addEventListener("click", async e => {
         break;
       }
       case "register": openReserve(id); break;
+      case "waitJoin": { const sh = data.shuttles.find(x=>x.id===id); ui.pending = sh; ui.wstate = {step:"choose"}; openModal(waitDialog(sh, ui.wstate)); break; }
+      case "waitLeave": {
+        const ok = await ask("יציאה מרשימת ההמתנה", "לצאת מרשימת ההמתנה לשאטל הזה? המקום שלך בתור יאבד.", "כן, לצאת", true); if (!ok) return;
+        await call("soldier_wait_leave", {...cred(), p_shuttle_id:id}); await reload(); toast("יצאת מרשימת ההמתנה"); break;
+      }
       case "goMine": closeModal(); ui.sview = "mine"; render(); window.scrollTo(0,0); break;
       case "sview": ui.sview = el.dataset.v; render(); window.scrollTo(0,0); break;
       case "focusDays": { const d = document.querySelector("#dayChips .dchip.on") || document.querySelector("#dayChips .dchip"); d && d.focus(); break; }
@@ -1406,6 +1244,7 @@ function clearErrs(form){
 class FieldError extends Error { constructor(map){ super("יש לתקן את השדות המסומנים"); this.map = map; } }
 const FORMS = {
   async reserve(f, form){ await submitReserve(form); },
+  async waitJoin(f, form){ await submitWait(form); },
   async soldierLogin(f){
     const tz = digits(f.tz), phone = digits(f.phone); const errs = {};
     if (tz.length<5 || tz.length>9) errs.tz = 'תעודת זהות צריכה להכיל 5 עד 9 ספרות';
@@ -1454,7 +1293,7 @@ document.addEventListener("submit", async e => {
   e.preventDefault();
   const f = Object.fromEntries(new FormData(form).entries());
   const btn = form.querySelector('button[type=submit]'); if (btn) btn.disabled = true;
-  if (form.dataset.form !== "reserve") clearErrs(form);
+  if (form.dataset.form !== "reserve" && form.dataset.form !== "waitJoin") clearErrs(form);
   try { await FORMS[form.dataset.form](f, form); }
   catch(err) {
     if (!form.isConnected) { toast(err.message || "שגיאה", "err"); }
