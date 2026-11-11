@@ -173,6 +173,67 @@ table.t th{font-size:12.5px;color:var(--muted);font-weight:700;background:var(--
 @keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .loading{display:grid;place-items:center;min-height:60vh;color:var(--muted)}
 
+
+/* hero */
+.hero{position:relative;height:300px;overflow:hidden;background:linear-gradient(180deg,#2b3524 0%,#3e4c33 55%,#56683f 100%);color:#fff}
+.hero .sun{position:absolute;top:34px;left:12%;width:64px;height:64px;border-radius:50%;background:radial-gradient(circle,#ffd66b 0%,#e8a820 60%,rgba(232,168,32,0) 72%);opacity:.9}
+.hero .cloud{position:absolute;height:22px;border-radius:20px;background:rgba(255,255,255,.14);animation:cloud 38s linear infinite}
+.hero .cloud::before,.hero .cloud::after{content:"";position:absolute;bottom:6px;border-radius:50%;background:inherit}
+.hero .cloud::before{width:34px;height:34px;left:14px}.hero .cloud::after{width:26px;height:26px;left:40px}
+.hero .c1{top:60px;width:110px;animation-duration:42s}.hero .c2{top:110px;width:80px;animation-duration:30s;animation-delay:-14s}
+@keyframes cloud{from{left:110%}to{left:-160px}}
+.hero .hills{position:absolute;left:0;right:0;bottom:46px;height:90px;background:
+  radial-gradient(120px 70px at 15% 100%,#4a5b38 98%,transparent 100%),
+  radial-gradient(180px 90px at 45% 100%,#435335 98%,transparent 100%),
+  radial-gradient(150px 80px at 80% 100%,#4a5b38 98%,transparent 100%)}
+.hero .road{position:absolute;left:0;right:0;bottom:0;height:48px;background:#262b24;border-top:4px solid #3a4136}
+.hero .road .dash{position:absolute;top:21px;left:0;width:200%;height:4px;background:repeating-linear-gradient(90deg,#e8a820 0 34px,transparent 34px 70px);animation:dash 1.1s linear infinite}
+@keyframes dash{from{transform:translateX(0)}to{transform:translateX(-70px)}}
+.hero .busrun{position:absolute;bottom:22px;left:110%;animation:drive 11s linear infinite}
+.hero .busrun svg{display:block;animation:bob .45s ease-in-out infinite alternate}
+.hero .wheel{transform-box:fill-box;transform-origin:center;animation:spin .6s linear infinite}
+@keyframes drive{from{left:105%}to{left:-300px}}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-2px)}}
+@keyframes spin{to{transform:rotate(-360deg)}}
+.hero-txt{position:absolute;top:0;right:0;left:0;text-align:center;padding:28px 16px 0}
+.hero-logo{display:inline-flex;gap:8px;align-items:center;font-weight:800;font-size:14px;background:rgba(255,255,255,.12);border-radius:999px;padding:4px 12px}
+.hero-logo b{background:var(--amber);color:var(--olive);border-radius:6px;padding:0 6px}
+.hero h1{font-size:34px;font-weight:900;margin-top:14px;text-shadow:0 2px 12px rgba(0,0,0,.25)}
+.hero p{margin:6px 0 0;font-size:17px;opacity:.92}
+.login-card{max-width:460px;margin:-26px auto 0;position:relative;z-index:2;padding:20px}
+.step-t{font-size:19px;font-weight:800;margin-bottom:4px}
+.rtiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.rtile{border:1.5px solid var(--line);background:var(--soft);border-radius:14px;padding:16px 10px;cursor:pointer;font-weight:800;font-size:17px;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .15s}
+.rtile:hover{border-color:var(--olive2);background:#fff;transform:translateY(-1px);box-shadow:var(--shadow)}
+.rtile .ri{font-size:24px}
+.rtile.on{border-color:var(--olive);background:var(--olive);color:#fff}
+.rtiles .rtile:last-child:nth-child(odd){grid-column:1/-1}
+.picked{display:flex;align-items:center;justify-content:space-between;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:14px}
+.staff-link{text-align:center;margin-top:16px}
+/* day chips */
+.days{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;margin:4px -2px 6px;scrollbar-width:thin}
+.dchip{flex:0 0 auto;min-width:74px;border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:8px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;position:relative}
+.dchip .dw{font-weight:800;font-size:14px}.dchip .dd{font-size:12px;color:var(--muted)}
+.dchip .dn{font-size:11px;color:var(--muted);margin-top:2px}
+.dchip.on{background:var(--olive);border-color:var(--olive);color:#fff}.dchip.on .dd,.dchip.on .dn{color:rgba(255,255,255,.8)}
+.dchip .dot{position:absolute;top:6px;left:8px;width:8px;height:8px;border-radius:50%;background:var(--amber)}
+.bucket{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:var(--olive2);margin:16px 2px 8px}
+.bucket .ct{font-weight:600;color:var(--muted);font-size:12.5px}
+.mine-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:6px}
+.mine-it{flex:0 0 auto;background:var(--amber-soft);border:1px solid #f0d58f;border-radius:12px;padding:7px 11px;cursor:pointer;font-size:13px}
+.mine-it b{font-size:14px}
+.regchip{cursor:pointer;border:0}
+/* split layout + side table */
+.split{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:16px;align-items:start}
+.side{position:sticky;top:66px;max-height:calc(100vh - 84px);overflow:auto;padding:0}
+.side-h{position:sticky;top:0;background:var(--card);padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;z-index:1}
+.side-h h3{font-size:15px;font-weight:800}
+table.reg{width:100%;border-collapse:collapse;font-size:13px}
+table.reg th{position:sticky;top:51px;background:var(--soft);text-align:right;padding:7px 8px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line)}
+table.reg td{padding:7px 8px;border-bottom:1px solid #eef0ea;vertical-align:top}
+table.reg tr.grp td{background:#f4f6ef;font-weight:800;color:var(--olive2);font-size:12.5px}
+table.reg td.st-ok{color:var(--green);font-weight:800}table.reg td.st-bad{color:var(--red);font-weight:800}
+@media (max-width:1000px){.split{grid-template-columns:1fr}.side{position:static;max-height:none}}
 @media (max-width:860px){
   .stats{grid-template-columns:repeat(2,1fr)}
   .regions{grid-template-columns:1fr}
@@ -424,6 +485,7 @@ const Demo = (() => {
       if (Date.now() > new Date(sh.depart_at).getTime()-H24) fail("לא ניתן לבטל פחות מ-24 שעות לפני היציאה. פנה לאיש הקשר במרחב.");
       r.status = "cancelled"; save(); return {ok:true};
     },
+    soldier_set_region({p_tz,p_phone,p_region}){ const s = sAuth(p_tz,p_phone); if (!REGIONS.includes(p_region)) fail("יש לבחור מרחב"); s.region = p_region; save(); return {ok:true}; },
     soldier_appeal({p_tz,p_phone,p_text}){ const s = sAuth(p_tz,p_phone); if (!String(p_text||"").trim()) fail("יש לכתוב הסבר"); s.appeal = p_text.trim().slice(0,500); save(); return {ok:true}; },
     staff_login({p_phone,p_pin}){ return pub(tAuth(p_phone,p_pin)); },
     staff_data({p_phone,p_pin}){
@@ -504,7 +566,7 @@ const Demo = (() => {
 const SKEY = "s820_session";
 let session = store.get(SKEY);
 let data = null;
-const ui = { loginTab:"soldier", signup:null, tab:null, region:"all", past:false, open:{} };
+const ui = { loginTab:"soldier", signup:null, tab:null, region:"all", past:false, open:{}, day:null, pickRegion: store.get("s820_region") };
 
 const cred = () => session.type==="soldier" ? {p_tz:session.tz, p_phone:session.phone} : {p_phone:session.phone, p_pin:session.pin};
 async function load(){
@@ -513,7 +575,7 @@ async function load(){
 async function reload(){ await load(); render(); }
 async function startSession(s){
   session = s; store.set(SKEY, s);
-  ui.tab = null; ui.open = {}; ui.region = "all"; ui.past = false;
+  ui.tab = null; ui.open = {}; ui.region = "all"; ui.past = false; ui.day = null;
   try { await load(); } catch(e){ session = null; store.del(SKEY); data = null; throw e; }
   render();
 }
@@ -542,36 +604,71 @@ function topBar(){
 }
 
 /* ---------- login ---------- */
+const REGION_ICON = {"צפון":"⛰️","מרכז":"🏙️","ירושלים":"🕍","דרום":"🏜️","שבעתה":"⭐"};
+function bigBus(){
+  return `<svg width="230" height="96" viewBox="0 0 230 96" fill="none">
+    <rect x="8" y="10" width="214" height="66" rx="14" fill="#e8a820"/>
+    <rect x="8" y="58" width="214" height="10" fill="#c98d12"/>
+    <path d="M8 24c0-8 6-14 14-14h18v40H8z" fill="#f3c24f"/>
+    <rect x="14" y="18" width="24" height="26" rx="5" fill="#1f2a1c"/>
+    ${[48,80,112,144,176].map(x=>`<rect x="${x}" y="18" width="26" height="22" rx="4" fill="#1f2a1c"/><rect x="${x+3}" y="21" width="9" height="16" rx="2" fill="#3c4a35" opacity=".8"/>`).join("")}
+    <rect x="206" y="18" width="10" height="40" rx="3" fill="#1f2a1c"/>
+    <text x="128" y="55" text-anchor="middle" font-family="Heebo,Arial" font-weight="900" font-size="13" fill="#2b3524">820 · שאטלים</text>
+    <rect x="4" y="50" width="8" height="8" rx="2" fill="#fff5cc"/>
+    <g class="wheel"><circle cx="50" cy="78" r="13" fill="#1d1d1b"/><circle cx="50" cy="78" r="5" fill="#9aa08f"/><rect x="48.5" y="66" width="3" height="24" fill="#3a3a36"/></g>
+    <g class="wheel"><circle cx="180" cy="78" r="13" fill="#1d1d1b"/><circle cx="180" cy="78" r="5" fill="#9aa08f"/><rect x="178.5" y="66" width="3" height="24" fill="#3a3a36"/></g>
+  </svg>`;
+}
+function heroHTML(){
+  return `<div class="hero">
+    <div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div>
+    <div class="hills"></div><div class="road"><div class="dash"></div></div>
+    <div class="busrun">${bigBus()}</div>
+    <div class="hero-txt"><div class="hero-logo">${busSvg("#e8a820",18)} מערך שאטלים <b>820</b></div>
+      <h1>ברוך הבא!</h1><p>נשמח לעמוד לשירותך ולהביא אותך בזמן 🚌</p></div>
+  </div>`;
+}
+function regionTiles(act, sel){
+  return `<div class="rtiles">${REGIONS.map(r=>`<button class="rtile ${sel===r?"on":""}" data-act="${act}" data-v="${r}"><span class="ri">${REGION_ICON[r]||"📍"}</span>${r}</button>`).join("")}</div>`;
+}
 function loginView(){
   const t = ui.loginTab;
-  let form;
-  if (t==="soldier" && ui.signup) {
-    form = `<form data-form="signup">
-      <div class="small muted" style="margin-bottom:12px">ת"ז ${esc(ui.signup.tz)} עדיין לא רשומה. השלם פרטים פעם אחת:</div>
-      <div class="grid2">
-        <label class="f"><span>שם פרטי</span><input class="in" name="first" required autocomplete="given-name"></label>
-        <label class="f"><span>שם משפחה</span><input class="in" name="last" required autocomplete="family-name"></label>
-      </div>
-      <label class="f"><span>מרחב מגורים</span><select class="in" name="region" required><option value="">בחר מרחב…</option>${REGIONS.map(r=>`<option>${r}</option>`).join("")}</select></label>
-      <button class="btn primary block" type="submit">הרשמה למערכת</button>
-      <div style="text-align:center;margin-top:10px"><button type="button" class="lnk" data-act="unsignup">חזרה</button></div>
-    </form>`;
-  } else if (t==="soldier") {
-    form = `<form data-form="soldierLogin">
-      <label class="f"><span>תעודת זהות</span><input class="in" name="tz" inputmode="numeric" dir="ltr" required placeholder="9 ספרות"></label>
-      <label class="f"><span>מספר טלפון</span><input class="in" name="phone" inputmode="tel" dir="ltr" required placeholder="05XXXXXXXX" autocomplete="tel"></label>
-      <button class="btn primary block" type="submit">כניסה</button>
-      <div class="tiny muted" style="margin-top:10px;text-align:center">בכניסה ראשונה תתבקש להשלים שם ומרחב</div>
-    </form>`;
-  } else {
-    form = `<form data-form="staffLogin">
+  let body;
+  if (t==="staff") {
+    body = `<div class="step-t">כניסת צוות ומפקדים</div><div class="small muted" style="margin-bottom:14px">אנשי קשר מרחב ומפקדי נסיעה — הקוד מתקבל ממנהל המערך</div>
+    <form data-form="staffLogin">
       <label class="f"><span>מספר טלפון</span><input class="in" name="phone" inputmode="tel" dir="ltr" required placeholder="05XXXXXXXX"></label>
-      <label class="f"><span>קוד כניסה</span><input class="in" name="pin" dir="ltr" type="password" dir="ltr" required></label>
-      <button class="btn primary block" type="submit">כניסת צוות</button>
-      <div class="tiny muted" style="margin-top:10px;text-align:center">אנשי קשר מרחב ומפקדי נסיעה — הקוד מתקבל מהמנהל</div>
-    </form>`;
+      <label class="f"><span>קוד כניסה</span><input class="in" name="pin" type="password" dir="ltr" required></label>
+      <button class="btn primary block" type="submit">כניסה</button>
+    </form>
+    <div class="staff-link"><button class="lnk" data-act="ltab" data-v="soldier">← חזרה לכניסת חיילים</button></div>`;
+  } else if (!ui.pickRegion) {
+    body = `<div class="step-t">מאיזה מרחב אתה?</div><div class="small muted">בחר את המרחב שממנו אתה נוסע לשאטלים</div>
+      ${regionTiles("pickRegion", null)}
+      <div class="staff-link"><button class="lnk small" data-act="ltab" data-v="staff">כניסת צוות ומפקדים</button></div>`;
+  } else {
+    const picked = `<div class="picked"><span>${REGION_ICON[ui.pickRegion]||"📍"} מרחב <b>${esc(ui.pickRegion)}</b></span><button class="lnk small" data-act="unpickRegion">שינוי</button></div>`;
+    if (ui.signup) {
+      body = picked + `<div class="step-t">נעים להכיר!</div><div class="small muted" style="margin-bottom:12px">ת"ז ${esc(ui.signup.tz)} נכנסת בפעם הראשונה. רק שם, ואתה בפנים:</div>
+      <form data-form="signup">
+        <div class="grid2">
+          <label class="f"><span>שם פרטי</span><input class="in" name="first" required autocomplete="given-name"></label>
+          <label class="f"><span>שם משפחה</span><input class="in" name="last" required autocomplete="family-name"></label>
+        </div>
+        <button class="btn primary block" type="submit">כניסה לשאטלים</button>
+        <div style="text-align:center;margin-top:10px"><button type="button" class="lnk" data-act="unsignup">חזרה</button></div>
+      </form>`;
+    } else {
+      body = picked + `<div class="step-t">כניסה</div>
+      <form data-form="soldierLogin" style="margin-top:10px">
+        <label class="f"><span>תעודת זהות</span><input class="in" name="tz" inputmode="numeric" dir="ltr" required placeholder="9 ספרות"></label>
+        <label class="f"><span>מספר טלפון</span><input class="in" name="phone" inputmode="tel" dir="ltr" required placeholder="05XXXXXXXX" autocomplete="tel"></label>
+        <button class="btn primary block" type="submit">יאללה, לשאטלים ←</button>
+      </form>
+      <div class="staff-link"><button class="lnk small" data-act="ltab" data-v="staff">כניסת צוות ומפקדים</button></div>`;
+    }
   }
-  const demo = LIVE ? "" : `<div class="demo-box"><h4>כניסה מהירה להדגמה</h4>
+  const demo = LIVE ? "" : `<div class="demo-box" style="max-width:460px;margin:16px auto"><h4>כניסה מהירה להדגמה</h4>
     <div class="demo-grid">
       <button class="btn ghost sm" data-act="demo" data-v="admin">👑 מנהל מערך (סהר)</button>
       <button class="btn ghost sm" data-act="demo" data-v="region">📍 איש קשר מרחב מרכז</button>
@@ -580,19 +677,49 @@ function loginView(){
       <button class="btn ghost sm" data-act="demo" data-v="blocked">⛔ חייל שלא הגיע</button>
       <button class="btn ghost sm" data-act="demoReset">↺ איפוס נתוני הדגמה</button>
     </div></div>`;
-  return `<div class="login-wrap">
-    <div class="brand"><div class="busic">${busSvg("#e8a820",46)}</div><h1>מערך שאטלים <b>820</b></h1><p>הרשמה לשאטלים · מעקב הגעה · שליטה במרחבים</p></div>
-    <div class="card login">
-      <div class="seg"><button data-act="ltab" data-v="soldier" class="${t==="soldier"?"on":""}">אני חייל</button><button data-act="ltab" data-v="staff" class="${t==="staff"?"on":""}">צוות ומפקדים</button></div>
-      ${form}
-    </div>${demo}</div>`;
+  return heroHTML() + `<div style="padding:0 14px 50px"><div class="card login-card">${body}</div>${demo}</div>`;
+}
+
+/* ---------- days ---------- */
+function shortDay(iso){
+  const d = new Date(iso), t = new Date(); t.setHours(0,0,0,0);
+  const dd = new Date(d); dd.setHours(0,0,0,0);
+  const diff = Math.round((dd - t)/86400000);
+  return diff===0 ? "היום" : diff===1 ? "מחר" : diff===-1 ? "אתמול" : WD[d.getDay()];
+}
+function dayKeys(list){ return [...new Set(list.map(s=>dayKey(s.depart_at)))]; }
+function pickDay(list){
+  const keys = dayKeys(list);
+  if (!keys.includes(ui.day)) {
+    const now = Date.now();
+    const nxt = list.find(s=>new Date(s.depart_at).getTime() > now - 3600e3);
+    ui.day = nxt ? dayKey(nxt.depart_at) : keys[0];
+  }
+  return ui.day;
+}
+function dayChipsHTML(list, sel, markDays){
+  return `<div class="days">${dayKeys(list).map(k=>{
+    const day = list.filter(x=>dayKey(x.depart_at)===k);
+    return `<button class="dchip ${k===sel?"on":""}" data-act="day" data-v="${k}"><span class="dw">${shortDay(day[0].depart_at)}</span><span class="dd">${fmtDM(day[0].depart_at)}</span><span class="dn">${day.length} שאטלים</span>${markDays&&markDays.has(k)?`<i class="dot" title="אתה רשום ביום הזה"></i>`:""}</button>`;
+  }).join("")}</div>`;
+}
+function bucketOf(iso){ const h = new Date(iso).getHours(); return h < 12 ? 0 : h < 17 ? 1 : 2; }
+const BUCKETS = ["☀️ בוקר","🌤️ צהריים","🌙 ערב"];
+function bucketed(list, cardFn){
+  let h = "";
+  for (let b=0;b<3;b++){
+    const part = list.filter(s=>bucketOf(s.depart_at)===b);
+    if (!part.length) continue;
+    h += `<div class="bucket">${BUCKETS[b]} <span class="ct">· ${part.length} שאטלים</span></div>` + part.map(cardFn).join("");
+  }
+  return h;
 }
 
 /* ---------- soldier ---------- */
 function soldierView(){
   const s = data.soldier, c = data.contact;
   let h = `<main class="wrap narrow">
-    <div class="hello"><div><div class="muted small">שלום,</div><h2>${esc(s.first_name)} ${esc(s.last_name)}</h2></div><span class="chip region">מרחב ${esc(s.region)}</span></div>`;
+    <div class="hello"><div><div class="muted small">שלום,</div><h2>${esc(s.first_name)} ${esc(s.last_name)}</h2></div><button class="chip region regchip" data-act="changeRegion" title="החלפת מרחב">${REGION_ICON[s.region]||"📍"} מרחב ${esc(s.region)} ⇄</button></div>`;
   if (s.blocked) {
     h += `<div class="alert red">
       <h3>⛔ ההרשמה שלך לשאטלים חסומה</h3>
@@ -603,15 +730,20 @@ function soldierView(){
         : appealForm("")}
     </div>`;
   }
-  h += `<div class="rules">🕐 ביטול הגעה אפשרי עד <b>24 שעות</b> לפני היציאה &nbsp;·&nbsp; ⚠️ נרשמת ולא הגעת? ההרשמה לשאטלים נחסמת עד להסדרה</div>`;
   const list = data.shuttles;
-  if (!list.length) h += `<div class="card empty">אין כרגע שאטלים פתוחים במרחב ${esc(s.region)}</div>`;
-  let last = "";
-  for (const sh of list) {
-    const k = dayKey(sh.depart_at);
-    if (k !== last) { h += `<div class="day">${dayLabel(sh.depart_at)}</div>`; last = k; }
-    h += soldierCard(sh, s.blocked);
+  const now = Date.now();
+  const mine = list.filter(x=>x.mine && x.mine.status==="registered" && new Date(x.depart_at).getTime() > now);
+  if (mine.length) {
+    h += `<div class="section-title" style="margin-top:6px">ההרשמות שלי</div><div class="mine-strip">${mine.map(x=>`<div class="mine-it" data-act="day" data-v="${dayKey(x.depart_at)}"><b>${shortDay(x.depart_at)} ${fmtTime(x.depart_at)}</b> · ${esc(x.route)}${x.mine.stop?` · 📍${esc(x.mine.stop)}`:""}</div>`).join("")}</div>`;
   }
+  if (!list.length) return h + `<div class="card empty">אין כרגע שאטלים פתוחים במרחב ${esc(s.region)}</div></main>`;
+  const sel = pickDay(list);
+  const markDays = new Set(list.filter(x=>x.mine).map(x=>dayKey(x.depart_at)));
+  h += `<div class="section-title" style="margin-top:10px">בחר יום</div>` + dayChipsHTML(list, sel, markDays);
+  const dayList = list.filter(x=>dayKey(x.depart_at)===sel);
+  h += `<div class="day" style="margin-top:6px">${dayLabel(dayList[0].depart_at)}</div>`;
+  h += bucketed(dayList, x=>soldierCard(x, s.blocked));
+  h += `<div class="rules" style="margin-top:16px">🕐 ביטול הגעה אפשרי עד <b>24 שעות</b> לפני היציאה &nbsp;·&nbsp; ⚠️ נרשמת ולא הגעת? ההרשמה לשאטלים נחסמת עד להסדרה</div>`;
   return h + `</main>`;
 }
 function appealForm(v){
@@ -697,6 +829,24 @@ function overviewView(){
   return h + `</div>`;
 }
 
+function sideTable(dayList, title){
+  const total = dayList.reduce((a,s)=>a+s.passengers.length,0);
+  let rows = "";
+  for (const s of dayList) {
+    if (!s.passengers.length) continue;
+    rows += `<tr class="grp"><td colspan="4">${fmtTime(s.depart_at)} · ${esc(s.route)}${data.me.role==="admin"?` · ${esc(s.region)}`:""} <span style="font-weight:600;color:var(--muted)">(${s.taken}/${s.capacity})</span></td></tr>`;
+    for (const p of s.passengers.slice().sort(stopSort(s))) {
+      const st = p.status==="arrived" ? `<td class="st-ok">✓</td>` : p.status==="no_show" ? `<td class="st-bad">✗</td>` : `<td class="muted">—</td>`;
+      rows += `<tr><td><b>${esc(p.first_name)} ${esc(p.last_name)}</b></td><td>${esc(p.stop||"—")}</td><td dir="ltr" style="text-align:right">${telLink(p.phone)}</td>${st}</tr>`;
+    }
+  }
+  return `<aside class="card side">
+    <div class="side-h"><h3>📋 ${esc(title)}</h3><span class="chip info">${total} נרשמים</span><div class="grow"></div>${total?`<button class="btn ghost sm" data-act="copyDay">העתק לאקסל</button>`:""}</div>
+    ${total ? `<table class="reg"><thead><tr><th>שם</th><th>תחנה</th><th>טלפון</th><th>הגיע</th></tr></thead><tbody>${rows}</tbody></table>`
+            : `<div class="empty small">עוד אין נרשמים ביום הזה</div>`}
+  </aside>`;
+}
+let lastSideList = [];
 function shuttlesView(){
   const me = data.me, t0 = startOfToday();
   let list = data.shuttles.filter(s => ui.past ? new Date(s.depart_at).getTime() < t0 : new Date(s.depart_at).getTime() >= t0);
@@ -709,29 +859,23 @@ function shuttlesView(){
     <button class="btn amber" data-act="newShuttle">＋ שאטל חדש</button>
   </div>`;
   if (!list.length) return h + `<div class="card empty">${ui.past ? "אין שאטלים קודמים (14 יום אחרונים)" : "אין שאטלים מתוכננים. לחץ \"שאטל חדש\" כדי ליצור."}</div>`;
-  let last = "";
-  for (const s of list) {
-    const k = dayKey(s.depart_at);
-    if (k!==last) { h += `<div class="day">${dayLabel(s.depart_at)}</div>`; last = k; }
-    h += staffShuttleCard(s, !!ui.open[s.id]);
-  }
-  return h;
+  const sel = pickDay(list);
+  h += dayChipsHTML(list, sel);
+  const dayList = list.filter(s=>dayKey(s.depart_at)===sel).sort((a,b)=>new Date(a.depart_at)-new Date(b.depart_at));
+  lastSideList = dayList;
+  return h + `<div class="split"><div><div class="day" style="margin-top:0">${dayLabel(dayList[0].depart_at)}</div>${bucketed(dayList, x=>staffShuttleCard(x, !!ui.open[x.id]))}</div>${sideTable(dayList, "נרשמים · "+shortDay(dayList[0].depart_at)+" "+fmtDM(dayList[0].depart_at))}</div>`;
 }
 
 function commanderView(){
   const now = Date.now();
-  const t0 = startOfToday();
-  const all = data.shuttles.filter(s=>new Date(s.depart_at).getTime() > now - 3*86400e3);
-  const list = [...all.filter(s=>new Date(s.depart_at).getTime() >= t0), ...all.filter(s=>new Date(s.depart_at).getTime() < t0).reverse()];
+  const list = data.shuttles.filter(s=>new Date(s.depart_at).getTime() > now - 3*86400e3).sort((a,b)=>new Date(a.depart_at)-new Date(b.depart_at));
   let h = `<div class="rules" style="margin-bottom:14px">סמן לכל חייל <b>הגיע</b> או <b>לא הגיע</b> בזמן העלייה לאוטובוס. חייל שסומן "לא הגיע" נחסם להרשמה עד שאיש הקשר במרחב משחרר אותו.</div>`;
   if (!list.length) return h + `<div class="card empty">לא שובצת כמפקד נסיעה לשאטל קרוב</div>`;
-  let last = "";
-  for (const s of list) {
-    const k = dayKey(s.depart_at);
-    if (k!==last) { h += `<div class="day">${dayLabel(s.depart_at)}</div>`; last = k; }
-    h += staffShuttleCard(s, ui.open[s.id] !== false);
-  }
-  return h;
+  const sel = pickDay(list);
+  h += dayChipsHTML(list, sel);
+  const dayList = list.filter(s=>dayKey(s.depart_at)===sel);
+  lastSideList = dayList;
+  return h + `<div class="split"><div>${dayList.map(x=>staffShuttleCard(x, ui.open[x.id] !== false)).join("")}</div>${sideTable(dayList, "הנוסעים שלי · "+shortDay(dayList[0].depart_at)+" "+fmtDM(dayList[0].depart_at))}</div>`;
 }
 
 function staffShuttleCard(s, open){
@@ -882,6 +1026,24 @@ document.addEventListener("click", async e => {
     switch (a) {
       case "mclose": closeModal(); break;
       case "ltab": ui.loginTab = el.dataset.v; ui.signup = null; render(); break;
+      case "pickRegion": ui.pickRegion = el.dataset.v; store.set("s820_region", ui.pickRegion); render(); break;
+      case "unpickRegion": ui.pickRegion = null; ui.signup = null; render(); break;
+      case "day": ui.day = el.dataset.v; render(); break;
+      case "changeRegion": openModal(`<h3>החלפת מרחב</h3><div class="small muted">תראה את השאטלים של המרחב שתבחר</div>${regionTiles("setRegion", data.soldier.region)}<div class="row end" style="margin-top:14px"><button class="btn ghost" data-act="mclose">ביטול</button></div>`); break;
+      case "setRegion": {
+        const r = el.dataset.v; closeModal();
+        if (r !== data.soldier.region) { await call("soldier_set_region", {...cred(), p_region:r}); ui.pickRegion = r; store.set("s820_region", r); ui.day = null; await reload(); toast("עברת למרחב "+r); }
+        break;
+      }
+      case "copyDay": {
+        const lines = ["שעה\tמסלול\tשם\tטלפון\tתחנה\tסטטוס"];
+        for (const s of lastSideList) for (const p of s.passengers.slice().sort(stopSort(s)))
+          lines.push([fmtTime(s.depart_at), s.route, p.first_name+" "+p.last_name, p.phone, p.stop||"", p.status==="arrived"?"הגיע":p.status==="no_show"?"לא הגיע":"רשום"].join("\t"));
+        const txt = lines.join("\n");
+        try { await navigator.clipboard.writeText(txt); toast("הטבלה הועתקה — אפשר להדביק באקסל"); }
+        catch(err){ openModal(`<h3>טבלת נרשמים</h3><textarea class="in" style="min-height:260px" readonly>${esc(txt)}</textarea><div class="row end" style="margin-top:10px"><button class="btn ghost" data-act="mclose">סגירה</button></div>`); }
+        break;
+      }
       case "unsignup": ui.signup = null; render(); break;
       case "demo": await startSession({...DEMO_LOGINS[el.dataset.v]}); break;
       case "demoReset": Demo.reset(); toast("נתוני ההדגמה אופסו"); break;
@@ -894,7 +1056,7 @@ document.addEventListener("click", async e => {
         ui.open[id] = !cur; render(); break;
       }
       case "openShuttle": {
-        const s = findSh(id); ui.tab = "shuttles"; ui.region = s.region; ui.past = false; ui.open[id] = true; render();
+        const s = findSh(id); ui.tab = "shuttles"; ui.region = s.region; ui.past = false; ui.day = dayKey(s.depart_at); ui.open[id] = true; render();
         setTimeout(()=>{ const n = document.getElementById("sh-"+id); n && n.scrollIntoView({behavior:"smooth",block:"start"}); }, 30);
         break;
       }
@@ -969,9 +1131,12 @@ const FORMS = {
     const r = await call("soldier_login", {p_tz:tz, p_phone:phone});
     if (!r.exists) { ui.signup = {tz, phone}; render(); return; }
     await startSession({type:"soldier", tz, phone});
+    if (ui.pickRegion && data.soldier.region !== ui.pickRegion) {
+      await call("soldier_set_region", {...cred(), p_region: ui.pickRegion}); await reload(); toast("המרחב שלך עודכן ל"+ui.pickRegion);
+    }
   },
   async signup(f){
-    await call("soldier_signup", {p_tz:ui.signup.tz, p_first_name:f.first, p_last_name:f.last, p_phone:ui.signup.phone, p_region:f.region});
+    await call("soldier_signup", {p_tz:ui.signup.tz, p_first_name:f.first, p_last_name:f.last, p_phone:ui.signup.phone, p_region:ui.pickRegion});
     const s = {type:"soldier", tz:ui.signup.tz, phone:ui.signup.phone}; ui.signup = null;
     await startSession(s); toast("נרשמת למערכת ✓");
   },
