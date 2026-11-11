@@ -235,6 +235,11 @@ table.reg td.st-ok{color:var(--green);font-weight:800}table.reg td.st-bad{color:
 /* ===== v6: waitlist ===== */
 .wait-box{background:var(--amber-soft);border:1px solid #f0d58f;color:#4f3604;border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:14px}
 .trip.wait{border-color:#f0d58f}
+.wait-box.offer{background:#e6f4ea;border-color:#9fd3ae;color:#0f4d24}
+.chip.offer{background:#e6f4ea;color:#0f4d24}
+ul.rules{margin:8px 0 10px;padding-inline-start:20px;line-height:1.55}
+ul.rules li{margin:3px 0}
+.rulesbox{padding:10px 14px;margin-bottom:10px}.rulesbox summary{cursor:pointer;font-weight:700}
 .kpis .warn dd{color:#6b4a06}
 .notice{margin:0 14px 12px;background:var(--amber-soft);border:1px solid #f0d58f;color:#4f3604;border-radius:10px;padding:8px 12px;font-size:13.5px;font-weight:700}
 ol.wl{margin:0;padding-inline-start:22px;font-size:14px}ol.wl li{padding:4px 0}
@@ -470,7 +475,11 @@ async function call(fn, args){
     body: JSON.stringify(args||{})
   }); } catch(e) { const err = new Error("אין חיבור לשרת. בדוק את החיבור לאינטרנט ונסה שוב."); err.network = true; throw err; }
   const txt = await r.text(); let d = null; try{ d = txt ? JSON.parse(txt) : null; }catch(e){}
-  if (!r.ok) throw new Error((d && (d.message || d.hint)) || "שגיאת שרת");
+  if (!r.ok) {
+    const msg = (d && (d.message || d.hint)) || "שגיאת שרת";
+    if (/יש להתחבר מחדש/.test(msg) && session) { session = null; data = null; store.del(SKEY); setTimeout(()=>{ render(); toast(msg, "err"); }, 0); }
+    throw new Error(msg);
+  }
   return d;
 }
 
@@ -481,10 +490,11 @@ async function call(fn, args){
    ====================================================================== */
 const SKEY = "s820_session";
 let session = store.get(SKEY);
+if (session && !session.token) { session = null; store.del(SKEY); }   // חיבור ישן (לפני מפתח כניסה) — יש להתחבר מחדש
 let data = null;
 const ui = { loginTab:"soldier", signup:null, tab:null, region:"all", past:false, open:{}, day:null, pickRegion: store.get("s820_region") };
 
-const cred = () => session.type==="soldier" ? {p_tz:session.tz, p_phone:session.phone} : {p_phone:session.phone, p_pin:session.pin};
+const cred = () => ({p_token: session.token});
 const net = { last:null, ok:true };
 async function load(){
   try {
@@ -500,7 +510,8 @@ async function startSession(s){
   try { await load(); } catch(e){ session = null; store.del(SKEY); data = null; throw e; }
   render();
 }
-function logout(){ session = null; data = null; store.del(SKEY); ui.signup = null; render(); }
+function logout(){ const t = session && session.token; session = null; data = null; store.del(SKEY); ui.signup = null; render(); if (t) call("sign_out", {p_token:t}).catch(()=>{}); }
+function signinResult(r){ if (!r || !r.ok) { const e = new Error((r && r.message) || "הכניסה נכשלה"); e.code = r && r.code; throw e; } return r.token; }
 
 /* ======================================================================
    Views
@@ -571,7 +582,7 @@ function loginView(){
   } else {
     const picked = `<div class="picked"><span>${REGION_ICON[ui.pickRegion]||"📍"} מרחב <b>${esc(ui.pickRegion)}</b></span><button class="lnk small" data-act="unpickRegion" aria-label="שינוי מרחב">שינוי</button></div>`;
     if (ui.signup) {
-      body = picked + `<h2 class="step-t">נעים להכיר!</h2><div class="small muted" style="margin-bottom:12px">ת"ז ${esc(ui.signup.tz)} נכנסת בפעם הראשונה. רק שם, ואתה בפנים:</div>
+      body = picked + `<h2 class="step-t">כניסה ראשונה?</h2><div class="small muted" style="margin-bottom:12px" role="status">${esc(ui.signup.note||"")}<br>כניסה ראשונה? השלם שם, ואתה בפנים. כבר נרשמת בעבר? <button type="button" class="lnk small" data-act="unsignup">חזור ובדוק את מספר הטלפון</button>.</div>
       <form data-form="signup">
         <div class="grid2">
           <label class="f"><span>שם פרטי</span><input class="in" name="first" required autocomplete="given-name"></label>
@@ -610,7 +621,14 @@ function longDay(isoOrKey){
   return (sd==="היום"||sd==="מחר"||sd==="אתמול" ? sd+", יום "+WD[d.getDay()] : "יום "+WD[d.getDay()]) + " " + fullDate(d.toISOString());
 }
 const ST_LABEL = {registered:"שמר מקום", at_pickup:"בנקודת האיסוף", boarded:"עלה לשאטל", no_show:"לא הגיע", arrived:"סומן 'הגיע' (סימון ישן)"};
-const freeSeats = sh => Math.max(0, sh.capacity - sh.taken);
+const freeSeats = sh => Math.max(0, sh.capacity - sh.taken - (sh.reserved||0));
+const HOLD_H = () => (data && data.hold_hours) || 3;
+const untilText = iso => `${dayLabel(iso)} ${fmtTime(iso)}`;
+const queueRulesHTML = () => `<ul class="rules small">
+  <li>מקום שמתפנה מוצע לממתינים <b>לפי הסדר</b> — קודם למי שנכנס ראשון. אי אפשר לעקוף את התור.</li>
+  <li>כשמגיע תורך, המקום <b>שמור לך ${HOLD_H()} שעות</b> (ולא אחרי שעת היציאה). כדי לקבל אותו צריך להיכנס לאתר וללחוץ "שמור לי את המקום".</li>
+  <li><b>אין הודעה או התראה אוטומטית.</b> כדי לדעת אם הגיע תורך — היכנס לאתר ובדוק ב"הנסיעות שלי".</li>
+  <li>לא שמרת בזמן? המקום עובר לבא בתור. אפשר להצטרף שוב לסוף התור.</li></ul>`;
 function dayKeys(list){ return [...new Set(list.map(s=>dayKey(s.depart_at)))]; }
 function pickDay(list){
   const keys = dayKeys(list);
@@ -706,12 +724,15 @@ function myTripsHTML(trips){
   const waits = data.shuttles.filter(x=>x.wait && new Date(x.depart_at).getTime() > Date.now());
   let wh = "";
   if (waits.length) {
-    wh = `<h2 class="section-title">בהמתנה — עדיין לא שמור לך מקום</h2>` + waits.map(x=>`<article class="card trip wait" aria-label="המתנה ${longDay(x.depart_at)} ${fmtTime(x.depart_at)}">
+    wh = `<h2 class="section-title">בהמתנה — עדיין לא שמור לך מקום</h2><details class="card rulesbox"><summary>איך עובד התור?</summary>${queueRulesHTML()}</details>` + waits.map(x=>`<article class="card trip wait" aria-label="המתנה ${longDay(x.depart_at)} ${fmtTime(x.depart_at)}">
       <div class="trip-top"><div class="tbig">${fmtTime(x.depart_at)}</div><div><div class="trip-date">${longDay(x.depart_at)}</div><div class="route">${esc(x.gather_place||"")} ← ${esc(x.release_place||"")}</div></div></div>
-      <div class="kv"><span>מצב</span><b>⏳ בהמתנה · מקום ${x.wait.position} בתור</b></div>
-      <div class="kv"><span>מקומות פנויים</span><b>${freeSeats(x)}</b></div>
-      ${freeSeats(x)>0 ? `<button class="btn primary sm" data-act="register" data-id="${esc(x.id)}">התפנה מקום — שמור אותו עכשיו</button>` : ""}
-      <button class="btn ghost sm" data-act="waitLeave" data-id="${esc(x.id)}">יציאה מההמתנה</button>
+      ${x.wait.status==="offered"
+        ? `<div class="wait-box offer" role="status"><b>🎉 הגיע תורך: המקום שמור לך עד ${untilText(x.wait.offer_until)}.</b> לחץ "שמור לי את המקום" לפני השעה הזו, אחרת הוא עובר לבא בתור.</div>
+           <button class="btn primary sm" data-act="register" data-id="${esc(x.id)}">שמור לי את המקום</button>
+           <button class="btn ghost sm" data-act="waitLeave" data-id="${esc(x.id)}">ויתור על המקום</button>`
+        : `<div class="kv"><span>מצב</span><b>⏳ בהמתנה · מקום ${x.wait.position} בתור</b></div>
+           <p class="small" style="margin:6px 0">אין התראה כשמתפנה מקום. כשיגיע תורך, המקום יישמר לך ${HOLD_H()} שעות ויופיע כאן — היכנס לבדוק מדי פעם.</p>
+           <button class="btn ghost sm" data-act="waitLeave" data-id="${esc(x.id)}">יציאה מההמתנה</button>`}
     </article>`).join("");
   }
   let h = `<h2 class="section-title">הנסיעות שלי</h2>`;
@@ -745,9 +766,9 @@ function soldierCard(sh, blocked){
   if (m) action = `<div class="mine-box">${myStatusHTML(m)}<span class="small">עלייה: <b>${esc(m.stop || orig)}</b></span><button class="lnk small" data-act="sview" data-v="mine">לנסיעות שלי</button></div>`;
   else if (departed) action = `<span class="chip wait">השאטל יצא</span>`;
   else if (blocked) action = `<button class="btn ghost" disabled>ההרשמה חסומה</button>`;
-  else if (sh.wait && free>0) action = `<div class="wait-box" role="status"><b>⏳ התפנה מקום!</b> אתה בהמתנה לשאטל הזה, ועכשיו יש מקום פנוי. המקום עדיין לא שמור לך.</div><button class="btn primary" data-act="register" data-id="${esc(sh.id)}">שמור לי את המקום עכשיו</button>`;
-  else if (sh.wait) action = `<div class="wait-box"><b>⏳ אתה בהמתנה — מקום ${sh.wait.position} בתור.</b> עדיין לא שמור לך מקום בשאטל הזה. אם יתפנה מקום, הוא יוצג כאן ותוכל לשמור אותו.</div><button class="btn ghost sm" data-act="waitLeave" data-id="${esc(sh.id)}">יציאה מרשימת ההמתנה</button>`;
-  else if (free===0) action = `<p class="tiny muted" style="margin:0 0 6px">השאטל מלא${sh.waiting_count?` · ${sh.waiting_count} ממתינים`:""}. אפשר להיכנס לרשימת המתנה — זה לא אישור נסיעה.</p><button class="btn ghost" data-act="waitJoin" data-id="${esc(sh.id)}" aria-label="הכנס אותי לרשימת ההמתנה לשאטל של ${fmtTime(sh.depart_at)}">הכנס אותי לרשימת המתנה</button>`;
+  else if (sh.wait && sh.wait.status==="offered") action = `<div class="wait-box offer" role="status"><b>🎉 הגיע תורך: המקום שמור לך עד ${untilText(sh.wait.offer_until)}.</b> הוא עדיין לא סגור — צריך ללחוץ "שמור לי את המקום" לפני השעה הזו. אחרי זה הוא עובר לבא בתור.</div><button class="btn primary" data-act="register" data-id="${esc(sh.id)}">שמור לי את המקום</button> <button class="btn ghost sm" data-act="waitLeave" data-id="${esc(sh.id)}">ויתור על המקום</button>`;
+  else if (sh.wait) action = `<div class="wait-box"><b>⏳ אתה בהמתנה — מקום ${sh.wait.position} בתור.</b> עדיין לא שמור לך מקום. כשיגיע תורך המקום יישמר לך ${HOLD_H()} שעות ויופיע כאן. <b>אין התראה</b> — כדאי להיכנס ולבדוק.</div><button class="btn ghost sm" data-act="waitLeave" data-id="${esc(sh.id)}">יציאה מרשימת ההמתנה</button>`;
+  else if (free===0) action = `${sh.wait_expired?`<div class="wait-box" role="status"><b>ההצעה שלך פגה.</b> הגיע תורך אבל המקום לא נשמר תוך ${HOLD_H()} שעות, אז הוא עבר לבא בתור. אפשר להצטרף שוב לסוף התור.</div>`:""}<p class="tiny muted" style="margin:0 0 6px">השאטל מלא${sh.waiting_count?` · ${sh.waiting_count} ממתינים`:""}. רשימת ההמתנה אינה אישור נסיעה; מקום שמתפנה מוצע לפי סדר התור.</p><button class="btn ghost" data-act="waitJoin" data-id="${esc(sh.id)}" aria-label="הכנס אותי לרשימת ההמתנה לשאטל של ${fmtTime(sh.depart_at)}">הכנס אותי לרשימת המתנה</button>`;
   else action = `<button class="btn primary" data-act="register" data-id="${esc(sh.id)}" aria-label="שמור לי מקום בשאטל של ${fmtTime(sh.depart_at)} מ${esc(orig)} אל ${esc(dest)}">שמור לי מקום</button>`;
   return `<article class="card sc2 ${m?"mine":""}" aria-label="שאטל ${fmtTime(sh.depart_at)} ${esc(orig)} אל ${esc(dest)}">
     <div class="sc2-top"><div class="tbig">${fmtTime(sh.depart_at)}</div><div class="sc2-main"><div class="route">${title}</div>
@@ -794,7 +815,7 @@ function waitDialog(sh, st){
   const summary = `<dl class="dl sum"><dt>יום ותאריך</dt><dd>${longDay(sh.depart_at)}</dd><dt>שעת התייצבות</dt><dd>${fmtTime(sh.depart_at)}</dd><dt>מסלול</dt><dd>${esc(sh.gather_place||"")} ← ${esc(sh.release_place||"")}</dd></dl>`;
   if (st.step==="done") return `<h3>⏳ אתה בהמתנה</h3>
     <div class="wait-box" role="status"><b>מקום ${st.position} בתור.</b> עדיין לא שמור לך מקום בשאטל הזה.</div>${summary}
-    <p class="small">אם יתפנה מקום, הוא יוצג באתר ותוכל לשמור אותו. לא תישלח הודעה אוטומטית — כדאי לבדוק שוב ב"הנסיעות שלי".</p>
+    ${queueRulesHTML()}
     <div class="row end"><button class="btn ghost" data-act="mclose">חזרה לשאטלים</button><button class="btn primary" data-act="goMine">לנסיעות שלי</button></div>`;
   const busy = st.step==="saving";
   const stopField = opts.length ? `<fieldset class="stopset" ${busy?"disabled":""}><legend>איפה אתה עולה?</legend>
@@ -802,6 +823,7 @@ function waitDialog(sh, st){
       ${st.fieldErr?`<div class="ferr" id="stopErr">⚠ ${esc(st.fieldErr)}</div>`:""}</fieldset>` : "";
   return `<h3>רשימת המתנה</h3>${summary}
     <div class="wait-box"><b>השאטל מלא.</b> כניסה לרשימת ההמתנה <b>אינה אישור נסיעה</b> ואינה שומרת לך מקום.</div>
+    ${queueRulesHTML()}
     <form data-form="waitJoin" ${busy?'aria-busy="true"':""}>${stopField}
       ${st.err?`<div class="formerr" role="alert">⚠ ${esc(st.err)}</div>`:""}
       <div class="row end" style="margin-top:12px"><button type="button" class="btn ghost" data-act="mclose" ${busy?"disabled":""}>חזרה</button>
@@ -973,7 +995,7 @@ function commanderView(){
 
 function shuttleCounts(s){
   const c = (st) => s.passengers.filter(p=>p.status===st).length;
-  return { cap:s.capacity, reserved:s.passengers.length, free:Math.max(0,s.capacity-s.passengers.length), pickup:c("at_pickup"), boarded:c("boarded"), legacy:c("arrived"), noshow:c("no_show"), waiting:c("registered") };
+  return { cap:s.capacity, reserved:s.passengers.length, held:s.reserved||0, free:Math.max(0,s.capacity-s.passengers.length-(s.reserved||0)), pickup:c("at_pickup"), boarded:c("boarded"), legacy:c("arrived"), noshow:c("no_show"), waiting:c("registered") };
 }
 function staffShuttleCard(s, open){
   const k = shuttleCounts(s);
@@ -989,13 +1011,15 @@ function staffShuttleCard(s, open){
       <div><dt>קיבולת</dt><dd>${k.cap}</dd></div>
       <div><dt>שמרו מקום</dt><dd>${k.reserved}</dd></div>
       <div><dt>פנויים</dt><dd>${k.free}</dd></div>
+      ${k.held?`<div class="warn"><dt>שמורים לממתין</dt><dd>${k.held}</dd></div>`:""}
       <div><dt>בנקודת האיסוף</dt><dd>${k.pickup}</dd></div>
       <div class="good"><dt>עלו לשאטל</dt><dd>${k.boarded}</dd></div>
       <div class="${k.noshow?"bad":""}"><dt>לא הגיעו</dt><dd>${k.noshow}</dd></div>
       ${k.legacy?`<div><dt>סימון ישן "הגיע"</dt><dd>${k.legacy}</dd></div>`:""}
       <div class="${(s.waitlist||[]).length?"warn":""}"><dt>בהמתנה</dt><dd>${(s.waitlist||[]).length}</dd></div>
     </dl>
-    ${k.free>0 && (s.waitlist||[]).length ? `<p class="notice" role="note">⚠ יש ${k.free} מקומות פנויים ו-${s.waitlist.length} ממתינים. אין קידום אוטומטי מהתור — אפשר ליצור קשר עם הממתינים לפי הסדר.</p>` : ""}`;
+    ${k.held ? `<p class="notice" role="note">⏳ ${k.held===1?"מקום אחד שמור":`${k.held} מקומות שמורים`} לממתין הראשון בתור עד שיאשר (עד ${HOLD_H()} שעות). לא נשלחת לו הודעה אוטומטית — אפשר להתקשר אליו.</p>` : ""}
+    ${k.free>0 && (s.waitlist||[]).length ? `<p class="notice" role="note">⚠ יש ${k.free} מקומות פנויים ו-${s.waitlist.length} ממתינים שלא קיבלו הצעה (למשל חסומים).</p>` : ""}`;
   if (open) {
     h += `<div class="shc-b" id="${panelId}">
       <div class="row between" style="margin-bottom:10px">
@@ -1026,7 +1050,7 @@ function staffShuttleCard(s, open){
       h += `</ul>`;
     }
     if ((s.waitlist||[]).length) {
-      h += `<h3 class="h3" style="margin:14px 2px 6px">רשימת המתנה (${s.waitlist.length}) · לא אישור נסיעה</h3><ol class="wl">${s.waitlist.map(w=>`<li><b>${esc(w.first_name)} ${esc(w.last_name)}</b> · ${telLink(w.phone)} · 📍 ${esc(w.stop||"—")}</li>`).join("")}</ol>`;
+      h += `<h3 class="h3" style="margin:14px 2px 6px">רשימת המתנה (${s.waitlist.length}) · לא אישור נסיעה</h3><ol class="wl">${s.waitlist.map(w=>`<li><b>${esc(w.first_name)} ${esc(w.last_name)}</b> · ${telLink(w.phone)} · 📍 ${esc(w.stop||"—")}${w.status==="offered"?` · <span class="chip offer">הוצע לו מקום עד ${untilText(w.offer_until)}</span>`:""}</li>`).join("")}</ol>`;
     }
     h += `</div>`;
   }
@@ -1250,9 +1274,9 @@ const FORMS = {
     if (tz.length<5 || tz.length>9) errs.tz = 'תעודת זהות צריכה להכיל 5 עד 9 ספרות';
     if (phone.length!==10 || !phone.startsWith("05")) errs.phone = "מספר טלפון נייד: 10 ספרות שמתחילות ב-05";
     if (Object.keys(errs).length) throw new FieldError(errs);
-    const r = await call("soldier_login", {p_tz:tz, p_phone:phone});
-    if (!r.exists) { ui.signup = {tz, phone}; render(); return; }
-    await startSession({type:"soldier", tz, phone});
+    const r = await call("soldier_signin", {p_tz:tz, p_phone:phone});
+    if (!r.ok && r.code==="no_match") { ui.signup = {tz, phone, note:r.message}; render(); return; }
+    await startSession({type:"soldier", token:signinResult(r)});
     if (ui.pickRegion && data.soldier.region !== ui.pickRegion) {
       await call("soldier_set_region", {...cred(), p_region: ui.pickRegion}); await reload(); toast("המרחב שלך עודכן ל"+ui.pickRegion);
     }
@@ -1260,16 +1284,16 @@ const FORMS = {
   async signup(f){
     const errs = {}; if (!String(f.first||"").trim()) errs.first = "יש למלא שם פרטי"; if (!String(f.last||"").trim()) errs.last = "יש למלא שם משפחה";
     if (Object.keys(errs).length) throw new FieldError(errs);
-    await call("soldier_signup", {p_tz:ui.signup.tz, p_first_name:f.first, p_last_name:f.last, p_phone:ui.signup.phone, p_region:ui.pickRegion});
-    const s = {type:"soldier", tz:ui.signup.tz, phone:ui.signup.phone}; ui.signup = null;
+    const r = await call("soldier_create", {p_tz:ui.signup.tz, p_first_name:f.first, p_last_name:f.last, p_phone:ui.signup.phone, p_region:ui.pickRegion});
+    const s = {type:"soldier", token:signinResult(r)}; ui.signup = null;
     await startSession(s); toast("נרשמת למערכת ✓");
   },
   async staffLogin(f){
     const phone = digits(f.phone);
     if (phone.length!==10) throw new FieldError({phone:"מספר טלפון: 10 ספרות"});
     if (!f.pin) throw new FieldError({pin:"יש להזין קוד כניסה"});
-    await call("staff_login", {p_phone:phone, p_pin:f.pin});
-    await startSession({type:"staff", phone, pin:f.pin});
+    const r = await call("staff_signin", {p_phone:phone, p_pin:f.pin});
+    await startSession({type:"staff", token:signinResult(r)});
   },
   async appeal(f){
     await call("soldier_appeal", {...cred(), p_text:f.text}); if (modalOpen()) closeModal(); await reload(); toast("ההסבר נשלח לאיש הקשר");
@@ -1284,7 +1308,8 @@ const FORMS = {
   async staff(f){
     await call("staff_save_staff", {...cred(), p_id:f.id||null, p_full_name:f.name, p_new_phone:f.phone, p_new_pin:f.pin||null, p_role:f.role, p_region:f.region||null});
     // if I changed my own phone/pin — update session
-    if (f.id && f.id===data.me.id) { session.phone = digits(f.phone); if (f.pin) session.pin = f.pin; store.set(SKEY, session); }
+    // קוד חדש לעצמי: השרת מנתק את החיבורים הקיימים, אז מתחברים מחדש עם הקוד החדש
+    if (f.id && f.id===data.me.id && f.pin) { session.token = signinResult(await call("staff_signin", {p_phone:digits(f.phone), p_pin:f.pin})); store.set(SKEY, session); }
     closeModal(); await reload(); toast("נשמר ✓");
   }
 };
