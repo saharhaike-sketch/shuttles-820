@@ -37,6 +37,7 @@ a{color:var(--blue)}
 .wrap{max-width:1180px;margin:0 auto;padding:18px 16px 60px}
 .narrow{max-width:640px}
 .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:16px}
+@media (max-width:640px){.tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible}.tabs .tab{justify-content:center;text-align:center}}
 .tab{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 15px;cursor:pointer;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:7px}
 .tab.on{background:var(--olive);color:#fff;border-color:var(--olive)}
 .badge{background:var(--red);color:#fff;border-radius:999px;font-size:11.5px;padding:0 7px;line-height:19px;font-weight:700}
@@ -132,6 +133,29 @@ textarea.in{min-height:84px;resize:vertical}
 .stat.red .v{color:var(--red)}
 .regions{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 .regbox{padding:14px}
+.regbox > summary{cursor:pointer;list-style:none;margin-bottom:0}.regbox > summary::-webkit-details-marker{display:none}
+.regbox[open] > summary{margin-bottom:10px}
+.regbox > summary h3::before{content:"◂ ";color:var(--muted);font-size:13px}.regbox[open] > summary h3::before{content:"▾ "}
+.ovsum{display:flex;flex-wrap:wrap;gap:6px 18px;padding:12px 14px;margin-bottom:12px;font-size:14px}
+.ovsum b{font-size:17px;font-variant-numeric:tabular-nums}
+.attn{margin-bottom:8px}
+.attn-list{list-style:none;padding:0;margin:0 0 8px;display:grid;gap:8px}
+.attn-i{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-inline-start:5px solid var(--line)}
+.attn-i .lv{font-size:12px;font-weight:800;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.attn-i.lv-red{border-inline-start-color:var(--red)}.attn-i.lv-red .lv{background:var(--red-soft);color:#8f251c}
+.attn-i.lv-amber{border-inline-start-color:#d09412}.attn-i.lv-amber .lv{background:var(--amber-soft);color:#6b4a05}
+.attn-i.lv-blue{border-inline-start-color:var(--blue)}.attn-i.lv-blue .lv{background:var(--blue-soft);color:var(--blue)}
+.attn-ok{padding:12px 14px;color:#1f4d2c;font-weight:700}
+@media (max-width:640px){
+  .attn-i{grid-template-columns:1fr;gap:6px}.attn-i .lv{justify-self:start}
+  table.t.cards thead{display:none}
+  table.t.cards,table.t.cards tbody,table.t.cards tr,table.t.cards td{display:block;width:100%}
+  table.t.cards tr{border-bottom:1px solid var(--line);padding:10px 12px}
+  table.t.cards td{border:0;padding:2px 0;text-align:right!important;white-space:normal!important}
+  table.t.cards td[data-label]::before{content:attr(data-label) ": ";color:var(--muted);font-size:12.5px}
+  table.t.cards td.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  table.t.cards td.acts .btn{flex:1 1 auto}
+}
 .reghead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
 .reghead h3{font-size:17px;font-weight:800}
 .mini{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer;background:var(--soft);display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;align-items:center}
@@ -961,26 +985,54 @@ function staffView(){
 const canManage = () => data.me.role==="admin" || data.me.role==="region";
 const countBy = (sh, st) => sh.passengers.filter(p=>p.status===st).length;
 
+function attentionItems(up){
+  const now = Date.now(), H = 3600e3, items = [];
+  const link = (id, label) => `<button class="btn ghost sm" data-act="openShuttle" data-id="${esc(id)}">${label}</button>`;
+  const when = s => `${dayLabel(s.depart_at)} ${fmtTime(s.depart_at)} · ${esc(s.gather_place||s.route)} · ${esc(s.region)}`;
+  for (const r of REGIONS) if (!data.contacts.some(c=>c.region===r))
+    items.push({lv:"urgent", t:`למרחב ${r} אין איש קשר`, d:"חיילים מהמרחב לא יידעו למי לפנות לביטול מאוחר או לשחרור חסימה.", a:`<button class="btn ghost sm" data-act="tab" data-v="staff">להגדרה בצוות</button>`});
+  for (const s of up) {
+    const dt = new Date(s.depart_at).getTime() - now;
+    if (!s.commander_id && dt < 48*H) items.push({lv:"urgent", t:`שאטל בלי מפקד נסיעה`, d:`${when(s)}. אין מי שיסמן עלייה ואי-הגעה.`, a:link(s.id,"לשאטל")});
+    const held = (s.waitlist||[]).filter(w=>w.status==="offered");
+    for (const w of held) items.push({lv:"check", t:`מקום שמור לממתין: ${esc(w.first_name)} ${esc(w.last_name)}`, d:`${when(s)}. שמור עד ${untilText(w.offer_until)}. לא נשלחה לו הודעה — אפשר להתקשר: ${telLink(w.phone)}.`, a:link(s.id,"לשאטל")});
+    const waiting = (s.waitlist||[]).filter(w=>w.status==="waiting").length;
+    if (waiting && s.taken >= s.capacity) items.push({lv:"info", t:`שאטל מלא עם ${waiting} ממתינים`, d:`${when(s)}. אולי צריך אוטובוס נוסף.`, a:link(s.id,"לשאטל")});
+  }
+  const bl = data.blocked.length, ap = data.blocked.filter(b=>b.appeal).length;
+  if (bl) items.push({lv: ap?"check":"info", t:`${bl} חיילים חסומים${ap?` · ${ap} שלחו הסבר`:""}`, d: ap ? "הסברים ממתינים לבירור ולהחלטה על שחרור." : "עדיין לא נשלח הסבר.", a:`<button class="btn ghost sm" data-act="tab" data-v="blocked">לרשימת החסומים</button>`});
+  const order = {urgent:0, check:1, info:2};
+  return items.sort((x,y)=>order[x.lv]-order[y.lv]);
+}
+const LV = {urgent:["דחוף","red"], check:["לבדיקה","amber"], info:["לידיעה","blue"]};
 function overviewView(){
   const t0 = startOfToday();
   const up = data.shuttles.filter(s=>new Date(s.depart_at).getTime() >= t0);
   const seats = up.reduce((a,s)=>a+s.capacity,0), taken = up.reduce((a,s)=>a+s.taken,0);
   const fulls = up.filter(s=>s.taken>=s.capacity).length;
   const ns = data.shuttles.reduce((a,s)=>a+countBy(s,"no_show"),0);
-  let h = `<div class="stats">
-    <div class="card stat"><div class="v">${up.length}</div><div class="l">שאטלים קרובים</div></div>
-    <div class="card stat"><div class="v">${taken}<span class="muted" style="font-size:16px">/${seats}</span></div><div class="l">מקומות תפוסים</div></div>
-    <div class="card stat ${fulls?"red":""}"><div class="v">${fulls}</div><div class="l">אוטובוסים מלאים</div></div>
-    <div class="card stat ${ns?"red":""}"><div class="v">${ns}</div><div class="l">לא הגיעו (14 יום)</div></div>
-    <div class="card stat ${data.blocked.length?"red":""}"><div class="v">${data.blocked.length}</div><div class="l">חיילים חסומים</div></div>
-  </div><div class="section-title">לפי מרחב — מהיום והלאה</div><div class="regions">`;
+  const items = attentionItems(up);
+  const showAll = ui.attnAll, shown = showAll ? items : items.slice(0,6);
+  let h = `<section class="card ovsum" aria-label="תקציר">
+    <div><b>${up.length}</b> שאטלים קרובים</div>
+    <div><b>${taken}/${seats}</b> מקומות תפוסים${seats?` <span class="muted">(${Math.round(taken*100/seats)}%)</span>`:""}</div>
+    <div><b>${fulls}</b> מלאים</div>
+    <div><b>${ns}</b> לא הגיעו <span class="muted">(14 יום)</span></div>
+    <div><b>${data.blocked.length}</b> חסומים</div>
+  </section>
+  <section class="attn" aria-labelledby="attnT"><h2 class="section-title" id="attnT">דורש בדיקה${items.length?` <span class="badge">${items.length}</span>`:""}</h2>`;
+  if (!items.length) h += `<div class="card attn-ok">✓ אין כרגע פריטים שדורשים בדיקה.</div>`;
+  else h += `<ul class="attn-list">${shown.map(i=>`<li class="card attn-i lv-${LV[i.lv][1]}"><span class="lv">${LV[i.lv][0]}</span><div class="attn-b"><b>${i.t}</b><div class="small">${i.d}</div></div><div class="attn-a">${i.a}</div></li>`).join("")}</ul>
+    ${items.length>6?`<button class="lnk small" data-act="attnAll">${showAll?"להציג פחות":`להציג את כל ${items.length} הפריטים`}</button>`:""}`;
+  h += `</section><h2 class="section-title">לפי מרחב — מהיום והלאה</h2><div class="regions">`;
   for (const r of REGIONS) {
     const list = up.filter(s=>s.region===r);
     const ct = data.contacts.find(c=>c.region===r);
-    const rt = list.reduce((a,s)=>a+s.taken,0), rc = list.reduce((a,s)=>a+s.capacity,0);
-    h += `<div class="card regbox"><div class="reghead"><div><h3>מרחב ${r}</h3>
-        <div class="small muted">איש קשר: ${ct ? esc(ct.full_name)+" · "+telLink(ct.phone) : "<b style='color:var(--red)'>לא הוגדר</b>"}</div></div>
-        <div style="text-align:left"><div class="seatsn">${rt}/${rc}</div><div class="tiny muted">${list.length} שאטלים</div></div></div>`;
+    const rt = list.reduce((a,s)=>a+s.taken,0), rc = list.reduce((a,s)=>a+s.capacity,0), rf = list.filter(s=>s.taken>=s.capacity).length;
+    h += `<details class="card regbox" ${ui.regOpen&&ui.regOpen[r]?"open":""} data-reg="${r}"><summary class="reghead"><div><h3>מרחב ${r}</h3>
+        <div class="small muted">איש קשר: ${ct ? esc(ct.full_name) : "<b style='color:var(--red)'>לא הוגדר</b>"}</div></div>
+        <div style="text-align:left"><div class="seatsn">${rt}/${rc}</div><div class="tiny muted">${list.length} שאטלים${rf?` · ${rf} מלאים`:""}</div></div></summary>
+        ${ct?`<div class="small" style="margin:-4px 0 8px">טלפון איש הקשר: ${telLink(ct.phone)}</div>`:""}`;
     if (!list.length) h += `<div class="small muted" style="padding:8px 2px">אין שאטלים מתוכננים</div>`;
     for (const s of list) {
       const full = s.taken >= s.capacity;
@@ -991,7 +1043,7 @@ function overviewView(){
         <div class="sub">${longDay(s.depart_at)} · מפקד: ${esc(s.commander_name||"—")}</div>
       </div>`;
     }
-    h += `</div>`;
+    h += `</details>`;
   }
   return h + `</div>`;
 }
@@ -1124,7 +1176,7 @@ function staffShuttleCard(s, open){
 
 function blockedView(){
   const list = data.blocked;
-  let h = `<div class="rules" style="margin-bottom:14px">חיילים שנרשמו ולא הגיעו. כל עוד הם ברשימה — לא יכולים להירשם לשאטל. אחרי בירור לחץ <b>שחרור חסימה</b>.</div>`;
+  let h = `<div class="rules" style="margin-bottom:14px"><b>איך זה עובד:</b> כשמפקד הנסיעה מסמן חייל כ"לא הגיע", החייל נחסם מיד להרשמות <b>חדשות</b> (מקומות שכבר שמר לא נמחקים). אין בירור לפני החסימה — הבירור נעשה כאן: קוראים את ההסבר, מבררים, ואם הכול בסדר לוחצים <b>שחרור חסימה</b>. סימון שגוי של המפקד אפשר גם לתקן ישירות ברשימת הנוסעים.</div>`;
   if (!list.length) return h + `<div class="card empty">אין חיילים חסומים 👌</div>`;
   for (const b of list) {
     const msg = `היי ${b.first_name}, כאן מערך שאטלים 820. ${b.block_note || "נרשמת לשאטל ולא הגעת."} ההרשמה שלך לשאטלים חסומה עד להסדרה — נא לחזור אליי.`;
@@ -1148,11 +1200,11 @@ function staffMgmtView(){
   const list = data.staff.slice().sort((a,b)=>order[a.role]-order[b.role] || String(a.region).localeCompare(String(b.region)) || a.full_name.localeCompare(b.full_name));
   let h = `<div class="toolbar"><div class="small muted">${me.role==="admin" ? "מנהלים, אנשי קשר מרחב ומפקדי נסיעה. כל אחד נכנס עם הטלפון שלו וקוד כניסה." : "מפקדי הנסיעה של המרחב שלך."}</div><div class="grow"></div>
     <button class="btn amber" data-act="newStaff">＋ ${me.role==="admin"?"איש צוות חדש":"מפקד נסיעה חדש"}</button></div>
-    <div class="card" style="overflow-x:auto"><table class="t"><thead><tr><th>שם</th><th>תפקיד</th><th>מרחב</th><th>טלפון</th><th></th></tr></thead><tbody>`;
+    <div class="card"><table class="t cards"><thead><tr><th>שם</th><th>תפקיד</th><th>מרחב</th><th>טלפון</th><th></th></tr></thead><tbody>`;
   for (const s of list) {
     const editable = me.role==="admin" || (s.role==="commander" && s.region===me.region);
-    h += `<tr><td><b>${esc(s.full_name)}</b>${s.id===me.id?` <span class="chip info">את/ה</span>`:""}</td><td>${ROLE_LABEL[s.role]}</td><td>${esc(s.region||"—")}</td><td>${telLink(s.phone)}</td>
-      <td style="text-align:left;white-space:nowrap">${editable?`<button class="btn ghost sm" data-act="editStaff" data-id="${esc(s.id)}">עריכה</button>${s.id!==me.id?` <button class="btn ghost sm" style="color:var(--red)" data-act="delStaff" data-id="${esc(s.id)}">מחיקה</button>`:""}`:""}</td></tr>`;
+    h += `<tr><td><b>${esc(s.full_name)}</b>${s.id===me.id?` <span class="chip info">את/ה</span>`:""}</td><td data-label="תפקיד">${ROLE_LABEL[s.role]}</td><td data-label="מרחב">${esc(s.region||"—")}</td><td data-label="טלפון">${telLink(s.phone)}</td>
+      <td class="acts" style="text-align:left;white-space:nowrap">${editable?`<button class="btn ghost sm" data-act="editStaff" data-id="${esc(s.id)}">עריכה</button>${s.id!==me.id?` <button class="btn ghost sm" style="color:var(--red)" data-act="delStaff" data-id="${esc(s.id)}">מחיקה</button>`:""}`:""}</td></tr>`;
   }
   return h + `</tbody></table></div>`;
 }
@@ -1243,6 +1295,7 @@ document.addEventListener("click", async e => {
       case "logout": logout(); break;
       case "refresh": await reload(); toast("עודכן"); break;
       case "tab": ui.tab = el.dataset.v; render(); window.scrollTo(0,0); break;
+      case "attnAll": ui.attnAll = !ui.attnAll; render(); break;
       case "past": ui.past = el.dataset.v==="1"; render(); break;
       case "toggle": {
         const cur = data.me.role==="commander" ? ui.open[id]!==false : !!ui.open[id];
