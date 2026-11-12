@@ -207,81 +207,51 @@ table.t th{font-size:12.5px;color:var(--muted);font-weight:700;background:var(--
 .loading{display:grid;place-items:center;min-height:60vh;color:var(--muted)}
 
 
-/* hero — illustrated morning scene, one visual language */
-.hero2{position:relative;overflow:hidden;color:var(--ink)}
-.hero2 .scene{position:absolute;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,#cfe5f0 0%,#e9eee6 46%,#fde6c6 78%,#fbd9ae 100%)}
-.hero2 .s-desk{display:none;inset:0}
-.hero2 .s-mob{left:-16px;right:-16px;top:-44px;bottom:0}
-.hero2-copy{position:relative}
-.hero2-copy > :not(.scene){position:relative;z-index:1}
-.hero2 .sun{position:absolute;bottom:150px;left:18%;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#fff6dc 0%,#ffe0a3 38%,rgba(255,214,140,.35) 58%,rgba(255,214,140,0) 72%)}
-.hero2 .cloud{position:absolute;height:20px;border-radius:20px;background:rgba(255,255,255,.75);animation:cloud 60s linear infinite}
-.hero2 .cloud::before,.hero2 .cloud::after{content:"";position:absolute;bottom:6px;border-radius:50%;background:inherit}
-.hero2 .cloud::before{width:32px;height:32px;left:14px}.hero2 .cloud::after{width:24px;height:24px;left:38px}
-.hero2 .c1{top:34px;width:110px;animation-duration:70s}.hero2 .c2{top:92px;width:80px;animation-duration:52s;animation-delay:-26s}
-@keyframes cloud{from{left:110%}to{left:-160px}}
-.hero2 .hills{position:absolute;left:0;right:0;bottom:44px;width:100%;height:150px;display:block}
-.hero2 .road{position:absolute;left:0;right:0;bottom:0;height:46px;background:#5b605a;border-top:5px solid #c7c2b1}
-.hero2 .road .dash{position:absolute;top:19px;left:0;width:200%;height:4px;background:repeating-linear-gradient(90deg,#f6f3ea 0 34px,transparent 34px 72px);animation:dash 1.4s linear infinite}
-@keyframes dash{from{transform:translateX(0)}to{transform:translateX(-72px)}}
-.hero2 .busrun{position:absolute;bottom:16px;left:110%;animation:drive 14s linear infinite;z-index:1}
-.hero2 .busrun svg{display:block;animation:bob .5s ease-in-out infinite alternate}
-.hero2 .wheel{transform-box:fill-box;transform-origin:center;animation:spin .7s linear infinite}
-@keyframes drive{from{left:105%}to{left:-320px}}
-@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-1.5px)}}
-@keyframes spin{to{transform:rotate(-360deg)}}
-.hero2-in{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:44px 16px 8px}
-.hero2-copy{text-align:center;padding-bottom:160px}
-.hero-logo{display:inline-flex;gap:8px;align-items:center;font-weight:800;font-size:14px;background:rgba(255,255,255,.7);border:1px solid rgba(43,53,36,.12);border-radius:999px;padding:4px 12px;color:var(--olive)}
-.hero-logo b{background:var(--olive);color:#fff;border-radius:6px;padding:0 6px}
-.hero2 .eyebrow{margin:16px 0 4px;font-weight:700;color:#4d5a43;font-size:15px}
-.hero2 h1{font-size:30px;line-height:1.2;font-weight:900;margin:0;color:#1f2a1c;text-wrap:balance}
-.hero2 .lead{margin:10px auto 0;font-size:16px;color:#3c4636;max-width:440px}
-.hero2 .cta-hint{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:800;color:var(--olive);background:rgba(255,255,255,.75);border-radius:999px;padding:6px 14px;font-size:14.5px}
-.login-wrap{position:relative;z-index:3;margin:-14px auto 0;max-width:460px;padding:0}
-.login-card{position:relative;padding:20px}
-@media (max-width:879px){
-  .hero2-in{padding:14px 14px 8px}
-  .hero2 .s-mob{top:-14px;left:-14px;right:-14px}
-  .hero2-copy{padding-bottom:92px}
-  .hero-logo{font-size:13px;padding:3px 10px}
-  .hero2 .eyebrow{margin:8px 0 2px;font-size:13.5px}
-  .hero2 h1{font-size:25px}
-  .hero2 .lead{margin-top:4px;font-size:14.5px}
-  .hero2 .cta-hint{margin-top:8px;padding:4px 12px;font-size:13.5px}
-  .hero2 .hills{height:70px;bottom:30px}
-  .hero2 .road{height:30px;border-top-width:3px}.hero2 .road .dash{top:12px;height:3px}
-  .hero2 .sun{width:80px;height:80px;bottom:70px}
-  .hero2 .c2{display:none}.hero2 .c1{top:12px}
-  .hero2 .busrun{bottom:8px}.hero2 .busrun svg{width:170px;height:auto}
-  .login-card{padding:16px}
-  .login-card .rtiles{gap:8px;margin-top:10px}
-  .hero-pause{inset-inline-start:auto;inset-inline-end:8px;width:34px;height:34px;padding:0;display:grid;place-items:center}
-  .hero-pause .lbl{display:none}
+/* opening screen — photographic hero (visual reference 12/11) */
+.hx{position:relative;overflow:hidden;color:#fff;background:linear-gradient(180deg,#22301d 0%,#2c3a26 100%)}
+.hx-in{position:relative;z-index:1;width:100%;max-width:1080px;margin:0 auto;display:flex;flex-direction:column}
+.hx-head{padding:16px 16px 18px;text-align:center}
+.hx-logo{display:inline-flex;gap:8px;align-items:center;font-weight:800;font-size:13.5px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:999px;padding:5px 13px;color:#fff}
+.hx-logo b{background:var(--amber);color:#24301f;border-radius:6px;padding:0 7px;font-weight:900}
+.hx .eyebrow{margin:14px 0 5px;font-weight:600;font-size:14px;color:rgba(255,255,255,.88)}
+.hx h1{margin:0;font-size:28px;line-height:1.22;font-weight:900;text-wrap:balance;color:#fff}
+.hx .lead{margin:8px auto 0;font-size:15px;color:rgba(255,255,255,.92);max-width:430px}
+.hx-photo{background:#2c3a26 url("hero-900.webp") center 42%/cover no-repeat;aspect-ratio:16/10;width:100%}
+.hx-cta-row{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;margin:-27px 16px 0;padding-bottom:20px}
+.hx-cta{display:inline-flex;align-items:center;gap:9px;min-height:48px;background:linear-gradient(180deg,var(--amber),#e09a12);color:#24301f;font:inherit;font-weight:800;font-size:16.5px;border:0;border-radius:14px;padding:12px 26px;cursor:pointer;box-shadow:0 6px 20px rgba(201,135,10,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+.hx-cta:hover{filter:brightness(1.04)}
+.hx-cta .arr::before{content:"↓";font-weight:900}
+.hx .sub-hint{margin:9px 0 0;font-size:12.5px;color:rgba(255,255,255,.8)}
+.hx-entry{position:relative;z-index:2;max-width:640px;margin:14px auto 0;padding:0 16px 40px}
+.hx-entry .login-card{border-radius:18px;padding:20px 18px 18px;box-shadow:0 1px 2px rgba(20,30,15,.07),0 10px 30px rgba(20,30,15,.10)}
+@media (min-width:900px){
+  .hx{background:#2c3a26 url("hero-1600.webp") left 30%/cover no-repeat;min-height:720px;min-height:88svh;display:flex}
+  .hx::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,24,13,.62) 0%,rgba(16,24,13,.34) 30%,rgba(16,24,13,.08) 52%,rgba(16,24,13,.10) 72%,rgba(24,32,19,.42) 100%)}
+  .hx-in{padding:20px 24px 130px;max-width:1180px;flex:1}
+  .hx-head{text-align:start;max-width:560px;margin-top:auto;padding:64px 0 0}
+  .hx h1{font-size:46px;text-shadow:0 2px 14px rgba(0,0,0,.35)}
+  .hx .lead{margin-inline:0;font-size:18px;text-shadow:0 1px 8px rgba(0,0,0,.35)}
+  .hx .eyebrow{font-size:16px}
+  .hx-photo{display:none}
+  .hx-cta-row{align-items:flex-start;margin:18px 0 0;padding:0}
+  .hx-cta{font-size:17.5px;padding:14px 32px}
+  .hx-entry{margin-top:-96px;max-width:1180px;padding:0 24px 48px}
+  .hx-entry .login-card{max-width:640px;margin-inline-start:0;padding:26px 26px 22px}
 }
-@media (min-width:880px){
-  .hero2{min-height:100vh;min-height:100svh}
-  .hero2-in{display:grid;grid-template-columns:1fr 440px;gap:48px;align-items:center;padding:48px 24px 110px;min-height:100vh;min-height:100svh}
-  .hero2-copy{text-align:start;padding-bottom:0;position:static}
-  .hero2 .s-desk{display:block}.hero2 .s-mob{display:none}
-  .hero2 h1{font-size:44px}
-  .hero2 .lead{margin-inline:0;font-size:18px}
-  .hero2 .sun{left:46%;bottom:150px;width:170px;height:170px}
-  .login-wrap{margin:0;max-width:none;padding:0}
-  .login-card{box-shadow:0 10px 30px rgba(31,42,28,.14),0 2px 6px rgba(31,42,28,.06)}
-}
-.hero2 .cta-hint .arr::before{content:"↓"}
-@media (min-width:880px){.hero2 .cta-hint .arr::before{content:"←"}}
-.mprog{margin:0 0 12px}
-.mprog ol{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:0;margin:6px 0 0}
-.mprog li{font-size:11.5px;color:#5d6659;border-top:4px solid #e1e4da;padding-top:4px;text-align:center}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+.mprog{margin:0 0 14px}
+.mprog .stepno{margin:0 0 8px;font-size:13px;font-weight:700;color:var(--muted)}
+.mprog .stepno b{color:var(--olive2)}
+.mprog ol{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:0;margin:0}
+.mprog li{font-size:11.5px;color:#5d6659;border-top:4px solid #e6e9df;padding-top:5px;text-align:center}
 .mprog li.done{border-color:#2c6e3f;color:#1f4d2c;font-weight:700}
-.mprog li.cur{border-color:var(--olive);color:var(--ink);font-weight:800}
+.mprog li.cur{border-color:var(--olive2);color:var(--ink);font-weight:800}
 .step-t{font-size:19px;font-weight:800;margin-bottom:4px}
 .rtiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 .rtile{border:1.5px solid var(--line);background:var(--soft);border-radius:14px;padding:16px 10px;cursor:pointer;font-weight:800;font-size:17px;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .15s}
 .rtile:hover{border-color:var(--olive2);background:#fff;transform:translateY(-1px);box-shadow:var(--shadow)}
-.rtile .ri{font-size:24px}
+.rtile .ri{display:grid;place-items:center;color:var(--olive2)}.rtile.on .ri{color:#fff}
+.picked .ri{display:inline-grid;vertical-align:-5px;color:var(--olive2)}
 .rtile.on{border-color:var(--olive);background:var(--olive);color:#fff}
 .rtiles .rtile:last-child:nth-child(odd){grid-column:1/-1}
 .picked{display:flex;align-items:center;justify-content:space-between;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:14px}
@@ -375,12 +345,8 @@ details.more summary{cursor:pointer;font-size:14px;font-weight:700;color:#1f4f8f
 .kv > span:first-child{color:#565f52;min-width:84px}
 .dayhead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:6px 2px 0}
 .stepno{font-size:12.5px;color:#565f52;margin:0 0 2px;font-weight:700}
-.hero-pause{position:absolute;top:8px;inset-inline-start:8px;z-index:3;background:rgba(0,0,0,.45);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:5px 11px;font-size:12.5px;cursor:pointer}
-body.still .hero2 *{animation-play-state:paused!important}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition:none!important}
-  .hero2 .busrun{left:auto;right:6%;animation:none}
-  .hero-pause{display:none}
 }
 .sync{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:12px}
 .sync .on{color:#1b5e30;font-weight:800}.sync .off{color:#8f251c;font-weight:800}
@@ -845,47 +811,37 @@ function topBar(){
 }
 
 /* ---------- login ---------- */
-const REGION_ICON = {"צפון":"⛰️","מרכז":"🏙️","ירושלים":"🕍","דרום":"🏜️","שבעתה":"⭐"};
-function bigBus(){   // modern white intercity coach (front on the left — it drives leftward)
-  const win = [62,98,134,170,206].map(x=>`<rect x="${x}" y="22" width="32" height="26" rx="3" fill="#2f3d48"/><path d="M${x+4} 25h10l-8 20h-4z" fill="#fff" opacity=".12"/>`).join("");
-  return `<svg width="270" height="96" viewBox="0 0 270 96" fill="none">
-    <path d="M30 12h220a10 10 0 0 1 10 10v50a6 6 0 0 1-6 6H14a6 6 0 0 1-6-6V44c0-18 8-32 22-32z" fill="#fbfbf8"/>
-    <path d="M8 60h252v12a6 6 0 0 1-6 6H14a6 6 0 0 1-6-6z" fill="#dfe3dc"/>
-    <path d="M10 56h250v5H10z" fill="#3e6b4a"/><path d="M60 52h200v3H60z" fill="#e8a820"/>
-    <path d="M14 44c1-14 8-26 20-28h18v34H12z" fill="#2f3d48"/><path d="M20 22c4-3 9-4 14-4l-12 30h-6z" fill="#fff" opacity=".18"/>
-    ${win}
-    <rect x="242" y="22" width="12" height="26" rx="3" fill="#2f3d48"/>
-    <text x="160" y="72" text-anchor="middle" font-family="Heebo,Arial" font-weight="800" font-size="10" fill="#3e6b4a">שאטלים 820</text>
-    <rect x="8" y="62" width="10" height="5" rx="2" fill="#fff4c2"/><rect x="254" y="62" width="6" height="6" rx="1.5" fill="#d9534f"/>
-    <g class="wheel"><circle cx="58" cy="80" r="12" fill="#262a26"/><circle cx="58" cy="80" r="5.5" fill="#c9cdc5"/><rect x="56.8" y="69" width="2.4" height="22" fill="#6e736c"/></g>
-    <g class="wheel"><circle cx="208" cy="80" r="12" fill="#262a26"/><circle cx="208" cy="80" r="5.5" fill="#c9cdc5"/><rect x="206.8" y="69" width="2.4" height="22" fill="#6e736c"/></g>
-    <g class="wheel"><circle cx="234" cy="80" r="12" fill="#262a26"/><circle cx="234" cy="80" r="5.5" fill="#c9cdc5"/><rect x="232.8" y="69" width="2.4" height="22" fill="#6e736c"/></g>
-  </svg>`;
+const RI = d => `<svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true" focusable="false">${d}</svg>`;
+const REGION_ICON = {
+  "מרכז": RI('<path d="M3 21V9l4-2v14M7 21V4h6v17M13 21v-9h5v9M2 21h20"/>'),
+  "צפון": RI('<path d="M3 19l6-11 4 7 3-4 5 8H3z"/>'),
+  "דרום": RI('<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5 5l1.8 1.8M17.2 17.2L19 19M19 5l-1.8 1.8M6.8 17.2L5 19"/>'),
+  "ירושלים": RI('<path d="M4 20v-6a8 8 0 0 1 16 0v6M3 20h18M12 6V3.5"/>'),
+  "שבעתה": RI('<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.2 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.2 5.9-.8z"/>')
+};
+function heroX(body){
+  const t = ui.loginTab;
+  const cta = t==="staff" ? "לכניסת צוות ומפקדים" : ui.pickRegion ? "עוד צעד: כניסה" : "בחר מרחב ושמור מקום";
+  const hint = t==="staff" ? "טלפון וקוד כניסה ממנהל המערך" : "כניסה עם ת\"ז וטלפון";
+  return `<section class="hx" aria-label="ברוך הבא"><div class="hx-in">
+      <div class="hx-head">
+        <div class="hx-logo">מערך שאטלים <b>820</b></div>
+        <p class="eyebrow">ברוך הבא, נשמח לעמוד לשירותך</p>
+        <h1>הדרך שלך לבסיס ולבית מתחילה כאן</h1>
+        <p class="lead">בוחרים נסיעה, מאשרים הרשמה ויוצאים לדרך.</p>
+      </div>
+      <div class="hx-photo" role="img" aria-label="אוטובוס תיור נוסע בכביש בזריחה"></div>
+      <div class="hx-cta-row"><button type="button" class="hx-cta" data-act="hxGo">${cta} <span class="arr" aria-hidden="true"></span></button><p class="sub-hint">${hint}</p></div>
+    </div></section>
+    <div class="hx-entry" id="entry"><div class="card login-card">${body}</div></div>`;
 }
-function heroScene(cls){
-  return `<div class="scene ${cls}" aria-hidden="true"><div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div>
-    <svg class="hills" viewBox="0 0 1200 150" preserveAspectRatio="none">
-      <path d="M0 90 C150 40 300 70 420 55 C560 38 680 80 820 60 C960 40 1080 62 1200 50 V150 H0Z" fill="#cfd9b8"/>
-      <path d="M0 115 C180 80 320 105 480 92 C640 78 760 110 920 96 C1040 86 1120 98 1200 92 V150 H0Z" fill="#aec290"/>
-      <path d="M0 140 C200 118 400 136 600 126 C800 116 1000 138 1200 128 V150 H0Z" fill="#8fa871"/>
-    </svg>
-    <div class="road"><div class="dash"></div></div><div class="busrun">${bigBus()}</div></div>`;
-}
-function heroCopy(){
-  return `<div class="hero2-copy">${heroScene("s-mob")}<div class="hero-logo"><span aria-hidden="true">${busSvg("#2b3524",18)}</span> מערך שאטלים <b>820</b></div>
-    <p class="eyebrow">ברוך הבא, נשמח לעמוד לשירותך</p>
-    <h1>הדרך שלך לבסיס ולבית מתחילה כאן</h1>
-    <p class="lead">בוחרים נסיעה, מאשרים הרשמה ויוצאים לדרך.</p>
-    <p class="cta-hint">${ui.loginTab==="staff"?"כניסת צוות ומפקדים":ui.pickRegion?"עוד צעד: כניסה עם ת\"ז וטלפון":"בחר מרחב ושמור מקום"} <span class="arr" aria-hidden="true"></span></p></div>`;
-}
-function motionBtn(){ const st = document.body.classList.contains("still"); const t = st?"הפעלת אנימציה":"עצירת אנימציה"; return `<button class="hero-pause" data-act="toggleMotion" aria-pressed="${st}" aria-label="${t}" title="${t}"><span aria-hidden="true">${st?"▶":"⏸"}</span><span class="lbl" aria-hidden="true"> ${t}</span></button>`; }
 function loginProgress(done){
   const L = ["מרחב","יום ותאריך","שאטל ותחנה","אישור"];
-  return `<div class="mprog"><p class="stepno" style="margin:0">${done?"שלב 1 מתוך 4 ✓ · עכשיו כניסה, ואז בוחרים יום":"שלב 1 מתוך 4"}</p>
+  return `<div class="mprog"><p class="stepno">${done?"<b>שלב 1 מתוך 4 ✓</b> · עכשיו כניסה, ואז בוחרים יום":"<b>שלב 1 מתוך 4</b> · מרחב, יום, שאטל, אישור"}</p>
     <ol aria-hidden="true">${L.map((t,i)=>`<li class="${done&&i===0?"done":(!done&&i===0)||(done&&i===1)?"cur":""}">${t}</li>`).join("")}</ol></div>`;
 }
 function regionTiles(act, sel){
-  return `<div class="rtiles">${REGIONS.map(r=>`<button class="rtile ${sel===r?"on":""}" data-act="${act}" data-v="${r}"><span class="ri">${REGION_ICON[r]||"📍"}</span>${r}</button>`).join("")}</div>`;
+  return `<div class="rtiles">${REGIONS.map(r=>`<button class="rtile ${sel===r?"on":""}" data-act="${act}" data-v="${r}"><span class="ri">${REGION_ICON[r]||""}</span>${r}</button>`).join("")}</div>`;
 }
 function loginView(){
   const t = ui.loginTab;
@@ -903,7 +859,7 @@ function loginView(){
       ${regionTiles("pickRegion", null)}
       <div class="staff-link"><button class="lnk small" data-act="ltab" data-v="staff">כניסת צוות ומפקדים</button></div>`;
   } else {
-    const picked = loginProgress(true) + `<div class="picked"><span>${REGION_ICON[ui.pickRegion]||"📍"} מרחב <b>${esc(ui.pickRegion)}</b></span><button class="lnk chg" data-act="unpickRegion" aria-label="שינוי מרחב">שינוי</button></div>`;
+    const picked = loginProgress(true) + `<div class="picked"><span><span class="ri">${REGION_ICON[ui.pickRegion]||""}</span> מרחב <b>${esc(ui.pickRegion)}</b></span><button class="lnk chg" data-act="unpickRegion" aria-label="שינוי מרחב">שינוי</button></div>`;
     if (ui.signup) {
       body = picked + `<h2 class="step-t">כניסה ראשונה?</h2><div class="small muted" style="margin-bottom:12px" role="status">${esc(ui.signup.note||"")}<br>כניסה ראשונה? השלם שם, ואתה בפנים. כבר נרשמת בעבר? <button type="button" class="lnk small" data-act="unsignup">חזור ובדוק את מספר הטלפון</button>.</div>
       <form data-form="signup">
@@ -938,7 +894,7 @@ function loginView(){
       <button class="btn ghost sm" data-act="demoReset">↺ איפוס נתוני הבדיקה</button>
     </div></div>`;/*DEMO:end*/
   
-  return `<main id="main"><section class="hero2" aria-label="ברוך הבא">${heroScene("s-desk")}${motionBtn()}<div class="hero2-in">${heroCopy()}<div class="login-wrap"><div class="card login-card">${body}</div></div></div></section>${demo?`<div style="padding:16px 14px 50px">${demo}</div>`:""}</main>`;
+  return `<main id="main">${heroX(body)}${demo?`<div style="padding:0 14px 50px">${demo}</div>`:""}</main>`;
 }
 
 /* ---------- days ---------- */
@@ -1581,7 +1537,7 @@ document.addEventListener("click", async e => {
       case "goMine": closeModal(); ui.sview = "mine"; render(); window.scrollTo(0,0); break;
       case "sview": ui.sview = el.dataset.v; render(); window.scrollTo(0,0); break;
       case "focusDays": { const d = document.querySelector("#dayChips .dchip.on") || document.querySelector("#dayChips .dchip"); d && d.focus(); break; }
-      case "toggleMotion": { const on = !document.body.classList.contains("still"); document.body.classList.toggle("still", on); store.set("s820_still", on); el.outerHTML = motionBtn(); const nb = document.querySelector(".hero-pause"); nb && nb.focus(); break; }
+      case "hxGo": { const c = document.getElementById("entry"); if (!c) break; c.scrollIntoView({block:"start"}); const f = c.querySelector(".rtile, input, button"); f && f.focus({preventScroll:true}); break; }
       case "cancel": {
         const ok = await ask("ביטול שמירת מקום", "לבטל את שמירת המקום? המקום יתפנה לחייל אחר.", "כן, לבטל", true); if (!ok) return;
         await call("soldier_cancel", {...cred(), p_reg_id:id}); await reload(); toast("שמירת המקום בוטלה"); break;
@@ -1720,7 +1676,6 @@ setInterval(async () => {
 }, 30000);
 
 /* boot */
-try { if (store.get("s820_still")) document.body.classList.add("still"); } catch(e){}
 (async () => {
   if (session) { try { await load(); } catch(e){ session = null; store.del(SKEY); } }
   render();
