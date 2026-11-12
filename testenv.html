@@ -63,6 +63,8 @@ h1,h2,h3{margin:0;line-height:1.2}
 .btn.sm{padding:6px 11px;font-size:13px;border-radius:8px}
 .btn.block{width:100%}
 .lnk{background:none;border:0;color:var(--blue);cursor:pointer;padding:0;font-weight:600}
+.lnk.chg{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0 10px;border-radius:10px;font-size:13px;text-decoration:underline;text-underline-offset:3px;flex:0 0 auto}
+.lnk.chg:hover{background:var(--blue-soft)}
 
 /* chips */
 .chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:700;white-space:nowrap}
@@ -573,7 +575,7 @@ async function call(fn, args){
 /*DEMO:start*/
 /* ---------------- Demo backend (mirrors schema.sql) ---------------- */
 const Demo = (() => {
-  const KEY = "s820_testenv_v1"; let S = null;
+  const KEY = "s820_testenv_v2"; let S = null;
   const uid = () => Math.random().toString(36).slice(2,9) + Math.random().toString(36).slice(2,6);
   const fail = m => { throw new Error(m); };
   const nowISO = () => new Date().toISOString();
@@ -588,13 +590,22 @@ const Demo = (() => {
     const shuttles = [
       {id:"T1",region:"מרכז",route:"נסיעת דמה א׳",gather_place:"תחנת דמה א׳",stops:["עצירת דמה 1","עצירת דמה 2"],release_place:"בסיס דמה",release_time:"08:00",depart_at:at(1,6,30),capacity:10,commander_id:"tc1",notes:"משויכת למפקד הבדיקה"},
       {id:"T2",region:"מרכז",route:"נסיעת דמה ב׳",gather_place:"תחנת דמה ב׳",stops:[],release_place:"בסיס דמה",release_time:"08:00",depart_at:at(1,7,0),capacity:10,commander_id:"tc2",notes:"משויכת למפקד אחר — לא אמורה להופיע למפקד הבדיקה"},
-      {id:"T3",region:"מרכז",route:"נסיעת דמה ג׳",gather_place:"תחנת דמה ג׳",stops:[],release_place:"בסיס דמה",release_time:"08:30",depart_at:at(1,7,30),capacity:10,commander_id:null,notes:"ללא מפקד — לא אמורה להופיע למפקד הבדיקה"}
+      {id:"T3",region:"מרכז",route:"נסיעת דמה ג׳",gather_place:"תחנת דמה ג׳",stops:[],release_place:"בסיס דמה",release_time:"08:30",depart_at:at(1,7,30),capacity:10,commander_id:null,notes:"ללא מפקד — לא אמורה להופיע למפקד הבדיקה"},
+      // תרחישי נוסע: ביטול (יותר מ-24 שעות), גבול (פחות מ-24 שעות), שאטל מלא לרשימת המתנה
+      {id:"T4",region:"מרכז",route:"נסיעת דמה ד׳",gather_place:"תחנת דמה ד׳",stops:[],release_place:"בסיס דמה",release_time:"09:00",depart_at:at(3,8,0),capacity:10,commander_id:"tc2",notes:"בעוד 3 ימים — אפשר לבטל"},
+      {id:"T5",region:"מרכז",route:"נסיעת דמה ה׳",gather_place:"תחנת דמה ה׳",stops:[],release_place:"בסיס דמה",release_time:"",depart_at:new Date(Math.ceil((Date.now()+6*3600e3)/1800e3)*1800e3).toISOString(),capacity:10,commander_id:"tc2",notes:"בעוד כ-6 שעות — מתחת ל-24 שעות, אי אפשר לבטל"},
+      {id:"T6",region:"מרכז",route:"נסיעת דמה ו׳ (מלאה)",gather_place:"תחנת דמה ו׳",stops:[],release_place:"בסיס דמה",release_time:"09:30",depart_at:at(2,8,30),capacity:3,commander_id:"tc2",notes:"3 מקומות, כולם תפוסים — לבדיקת רשימת המתנה"}
     ];
     const soldiers = [];
+    soldiers.push({tz:"990000101",first_name:"חייל",last_name:"בדיקה",phone:"0590000101",region:"מרכז",blocked:false,block_note:null,appeal:null,created_at:nowISO()});
+    soldiers.push({tz:"990000102",first_name:"חייל",last_name:"בדיקה 2",phone:"0590000102",region:"מרכז",blocked:false,block_note:null,appeal:null,created_at:nowISO()});
     for (let i=1;i<=12;i++) soldiers.push({tz:String(990000000+i),first_name:"נוסע",last_name:"דמה "+i,phone:"059"+String(1000000+i).padStart(7,"0"),region:"מרכז",blocked:false,block_note:null,appeal:null,created_at:nowISO()});
     const regs = [];
     const add = (sh, list) => list.forEach((s,i)=>{ const shx = shuttles.find(x=>x.id===sh); const opts = stopOptions(shx); regs.push({id:uid(),shuttle_id:sh,tz:s.tz,status:"registered",resolved:false,stop:opts.length?opts[i%opts.length]:null,created_at:new Date(Date.now()-(list.length-i)*600e3).toISOString()}); });
-    add("T1", soldiers.slice(0,6)); add("T2", soldiers.slice(6,10)); add("T3", soldiers.slice(10,12));
+    const dm = soldiers.slice(2);   // נוסעי דמה 1..12
+    add("T1", dm.slice(0,6)); add("T2", dm.slice(6,10)); add("T3", dm.slice(10,12));
+    add("T4", [soldiers[0]]); add("T5", [soldiers[0]]);     // חייל בדיקה: אחת לביטול, אחת מתחת ל-24 שעות
+    add("T6", dm.slice(0,3));                                // שאטל מלא: נוסעי דמה 1-3
     return {staff, soldiers, shuttles, registrations:regs, waitlist:[]};
   }
   function load(){ S = store.get(KEY); if (!S || !S.staff) { S = seed(); save(); } }
@@ -892,7 +903,7 @@ function loginView(){
       ${regionTiles("pickRegion", null)}
       <div class="staff-link"><button class="lnk small" data-act="ltab" data-v="staff">כניסת צוות ומפקדים</button></div>`;
   } else {
-    const picked = loginProgress(true) + `<div class="picked"><span>${REGION_ICON[ui.pickRegion]||"📍"} מרחב <b>${esc(ui.pickRegion)}</b></span><button class="lnk small" data-act="unpickRegion" aria-label="שינוי מרחב">שינוי</button></div>`;
+    const picked = loginProgress(true) + `<div class="picked"><span>${REGION_ICON[ui.pickRegion]||"📍"} מרחב <b>${esc(ui.pickRegion)}</b></span><button class="lnk chg" data-act="unpickRegion" aria-label="שינוי מרחב">שינוי</button></div>`;
     if (ui.signup) {
       body = picked + `<h2 class="step-t">כניסה ראשונה?</h2><div class="small muted" style="margin-bottom:12px" role="status">${esc(ui.signup.note||"")}<br>כניסה ראשונה? השלם שם, ואתה בפנים. כבר נרשמת בעבר? <button type="button" class="lnk small" data-act="unsignup">חזור ובדוק את מספר הטלפון</button>.</div>
       <form data-form="signup">
@@ -914,10 +925,16 @@ function loginView(){
     }
   }
   /*DEMO:start*/  const demo = LIVE ? "" : `<div class="demo-box" style="max-width:460px;margin:16px auto"><h4>סביבת בדיקה — מפקד נסיעה</h4>
-    <p class="small" style="margin:0 0 8px">כניסת צוות: <b dir="ltr">0590000001</b> · קוד <b dir="ltr">1357</b> (מפקד בדיקה). לבדיקה: רק "נסיעת דמה א׳" אמורה להופיע לו. "ב׳" שייכת למפקד אחר ו"ג׳" בלי מפקד.</p>
+    <p class="small" style="margin:0 0 8px">מפקד בדיקה: <b dir="ltr">0590000001</b> · קוד <b dir="ltr">1357</b> — רואה רק את "נסיעת דמה א׳".<br>
+      חייל בדיקה: ת"ז <b dir="ltr">990000101</b> · טלפון <b dir="ltr">0590000101</b> — שמור בנסיעה ד׳ (אפשר לבטל) ובנסיעה ה׳ (פחות מ-24 שעות).<br>
+      חייל בדיקה 2: ת"ז <b dir="ltr">990000102</b> · טלפון <b dir="ltr">0590000102</b> · נוסע דמה 1: ת"ז <b dir="ltr">990000001</b> · טלפון <b dir="ltr">0591000001</b> (תופס מקום בנסיעה ו׳ המלאה).</p>
     <div class="demo-grid">
       <button class="btn ghost sm" data-act="demo" data-v="commander">🚌 כניסה כמפקד הבדיקה</button>
       <button class="btn ghost sm" data-act="demo" data-v="other">🚌 כניסה כמפקד האחר (להשוואה)</button>
+      <button class="btn ghost sm" data-act="demo" data-v="soldier">🪖 כניסה כחייל בדיקה</button>
+      <button class="btn ghost sm" data-act="demo" data-v="soldier2">🪖 כניסה כחייל בדיקה 2</button>
+      <button class="btn ghost sm" data-act="demo" data-v="pax1">🪖 כניסה כנוסע דמה 1</button>
+      <button class="btn ghost sm" data-act="demo" data-v="region">📍 כניסה כאיש קשר בדיקה</button>
       <button class="btn ghost sm" data-act="demoReset">↺ איפוס נתוני הבדיקה</button>
     </div></div>`;/*DEMO:end*/
   
@@ -987,7 +1004,7 @@ function stepsHTML(cur){
   ];
   return `<nav aria-label="שלבי שמירת מקום"><ol class="steps">${items.map(([t,v,act],i)=>{
     const n = i+1, st = n<cur ? "done" : n===cur ? "cur" : "todo";
-    return `<li class="${st}" ${n===cur?'aria-current="step"':""}><span class="sn" aria-hidden="true">${n<cur?"✓":n}</span><span class="st"><span class="sl">${t}</span>${v?`<b class="sv">${esc(v)}</b>`:""}</span>${act&&n<cur?`<button class="lnk tiny" data-act="${act}" aria-label="שינוי ${t}">שינוי</button>`:""}</li>`;
+    return `<li class="${st}" ${n===cur?'aria-current="step"':""}><span class="sn" aria-hidden="true">${n<cur?"✓":n}</span><span class="st"><span class="sl">${t}</span>${v?`<b class="sv">${esc(v)}</b>`:""}</span>${act&&n<cur?`<button class="lnk chg" data-act="${act}" aria-label="שינוי ${t}">שינוי</button>`:""}</li>`;
   }).join("")}</ol></nav>`;
 }
 function greet(){ const h = new Date().getHours(); return h<5?"לילה טוב":h<12?"בוקר טוב":h<17?"צהריים טובים":h<21?"ערב טוב":"לילה טוב"; }
@@ -1110,7 +1127,7 @@ function reserveDialog(sh, st){
   const opts = (sh.stops && sh.stops.length) ? stopOptions(sh) : [];
   const summary = `<dl class="dl sum"><dt>יום ותאריך</dt><dd>${longDay(sh.depart_at)}</dd><dt>שעת התייצבות</dt><dd>${fmtTime(sh.depart_at)}</dd><dt>מסלול</dt><dd>${esc(sh.gather_place||"")} ← ${esc(sh.release_place||"")}</dd>${st.step==="done"?`<dt>תחנת עלייה</dt><dd><b>${esc(st.stop)}</b></dd>`:""}</dl>`;
   if (st.step === "done") return `<h3>✓ המקום שלך אושר</h3>
-    <p class="okmsg">${st.already ? "כבר היה לך מקום שמור בשאטל הזה — לא נוצרה הרשמה נוספת." : "השרת אישר את שמירת המקום."}</p>${summary}
+    <p class="okmsg">${st.already ? "כבר היה לך מקום שמור בשאטל הזה — לא נוצרה הרשמה נוספת." : (LIVE ? "השרת אישר את שמירת המקום." : "המקום נשמר בסביבת ההדגמה — אין כאן שרת, והנתונים נשמרים רק בדפדפן הזה.")}</p>${summary}
     <p class="tiny muted">ביטול אפשרי עד 24 שעות לפני היציאה דרך "הנסיעות שלי".</p>
     <div class="row end"><button class="btn ghost" data-act="mclose">חזרה לשאטלים</button><button class="btn primary" data-act="goMine">לנסיעות שלי</button></div>`;
   const busy = st.step === "saving";
@@ -1503,7 +1520,11 @@ function staffForm(st){
    ====================================================================== */
 /*DEMO:start*/const DEMO_LOGINS = {
   commander:{type:"staff",phone:"0590000001",pin:"1357"},
-  other:{type:"staff",phone:"0590000002",pin:"2468"}
+  other:{type:"staff",phone:"0590000002",pin:"2468"},
+  region:{type:"staff",phone:"0590000009",pin:"9999"},
+  soldier:{type:"soldier",tz:"990000101",phone:"0590000101"},
+  soldier2:{type:"soldier",tz:"990000102",phone:"0590000102"},
+  pax1:{type:"soldier",tz:"990000001",phone:"0591000001"}
 };
 /*DEMO:end*/
 const findSh = id => data.shuttles.find(s=>s.id===id);

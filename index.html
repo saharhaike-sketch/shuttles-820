@@ -62,6 +62,8 @@ h1,h2,h3{margin:0;line-height:1.2}
 .btn.sm{padding:6px 11px;font-size:13px;border-radius:8px}
 .btn.block{width:100%}
 .lnk{background:none;border:0;color:var(--blue);cursor:pointer;padding:0;font-weight:600}
+.lnk.chg{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0 10px;border-radius:10px;font-size:13px;text-decoration:underline;text-underline-offset:3px;flex:0 0 auto}
+.lnk.chg:hover{background:var(--blue-soft)}
 
 /* chips */
 .chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:700;white-space:nowrap}
@@ -677,7 +679,7 @@ function loginView(){
       ${regionTiles("pickRegion", null)}
       <div class="staff-link"><button class="lnk small" data-act="ltab" data-v="staff">כניסת צוות ומפקדים</button></div>`;
   } else {
-    const picked = loginProgress(true) + `<div class="picked"><span>${REGION_ICON[ui.pickRegion]||"📍"} מרחב <b>${esc(ui.pickRegion)}</b></span><button class="lnk small" data-act="unpickRegion" aria-label="שינוי מרחב">שינוי</button></div>`;
+    const picked = loginProgress(true) + `<div class="picked"><span>${REGION_ICON[ui.pickRegion]||"📍"} מרחב <b>${esc(ui.pickRegion)}</b></span><button class="lnk chg" data-act="unpickRegion" aria-label="שינוי מרחב">שינוי</button></div>`;
     if (ui.signup) {
       body = picked + `<h2 class="step-t">כניסה ראשונה?</h2><div class="small muted" style="margin-bottom:12px" role="status">${esc(ui.signup.note||"")}<br>כניסה ראשונה? השלם שם, ואתה בפנים. כבר נרשמת בעבר? <button type="button" class="lnk small" data-act="unsignup">חזור ובדוק את מספר הטלפון</button>.</div>
       <form data-form="signup">
@@ -766,7 +768,7 @@ function stepsHTML(cur){
   ];
   return `<nav aria-label="שלבי שמירת מקום"><ol class="steps">${items.map(([t,v,act],i)=>{
     const n = i+1, st = n<cur ? "done" : n===cur ? "cur" : "todo";
-    return `<li class="${st}" ${n===cur?'aria-current="step"':""}><span class="sn" aria-hidden="true">${n<cur?"✓":n}</span><span class="st"><span class="sl">${t}</span>${v?`<b class="sv">${esc(v)}</b>`:""}</span>${act&&n<cur?`<button class="lnk tiny" data-act="${act}" aria-label="שינוי ${t}">שינוי</button>`:""}</li>`;
+    return `<li class="${st}" ${n===cur?'aria-current="step"':""}><span class="sn" aria-hidden="true">${n<cur?"✓":n}</span><span class="st"><span class="sl">${t}</span>${v?`<b class="sv">${esc(v)}</b>`:""}</span>${act&&n<cur?`<button class="lnk chg" data-act="${act}" aria-label="שינוי ${t}">שינוי</button>`:""}</li>`;
   }).join("")}</ol></nav>`;
 }
 function greet(){ const h = new Date().getHours(); return h<5?"לילה טוב":h<12?"בוקר טוב":h<17?"צהריים טובים":h<21?"ערב טוב":"לילה טוב"; }
@@ -889,7 +891,7 @@ function reserveDialog(sh, st){
   const opts = (sh.stops && sh.stops.length) ? stopOptions(sh) : [];
   const summary = `<dl class="dl sum"><dt>יום ותאריך</dt><dd>${longDay(sh.depart_at)}</dd><dt>שעת התייצבות</dt><dd>${fmtTime(sh.depart_at)}</dd><dt>מסלול</dt><dd>${esc(sh.gather_place||"")} ← ${esc(sh.release_place||"")}</dd>${st.step==="done"?`<dt>תחנת עלייה</dt><dd><b>${esc(st.stop)}</b></dd>`:""}</dl>`;
   if (st.step === "done") return `<h3>✓ המקום שלך אושר</h3>
-    <p class="okmsg">${st.already ? "כבר היה לך מקום שמור בשאטל הזה — לא נוצרה הרשמה נוספת." : "השרת אישר את שמירת המקום."}</p>${summary}
+    <p class="okmsg">${st.already ? "כבר היה לך מקום שמור בשאטל הזה — לא נוצרה הרשמה נוספת." : (LIVE ? "השרת אישר את שמירת המקום." : "המקום נשמר בסביבת ההדגמה — אין כאן שרת, והנתונים נשמרים רק בדפדפן הזה.")}</p>${summary}
     <p class="tiny muted">ביטול אפשרי עד 24 שעות לפני היציאה דרך "הנסיעות שלי".</p>
     <div class="row end"><button class="btn ghost" data-act="mclose">חזרה לשאטלים</button><button class="btn primary" data-act="goMine">לנסיעות שלי</button></div>`;
   const busy = st.step === "saving";
